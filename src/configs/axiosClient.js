@@ -2,7 +2,7 @@ import axios from "axios";
 import envClient from "../env";
 
 const axiosClient = axios.create({
-    baseURL: envClient.BASE_API_URL,
+    baseURL: envClient.BASE_API_URL || "http://localhost:3000/api/v1",
     headers: {
         "Content-Type": "application/json",
     },
@@ -25,11 +25,12 @@ axiosClient.interceptors.request.use(
 // Add a response interceptor
 axiosClient.interceptors.response.use(
     (response) => {
-        return response;
+        return response.data;
     },
     (error) => {
         // Handle response errors
-        console.error("API error:", error);
+        console.error("API error:", error.response.data);
+        if (error.response.data) throw error.response.data;
         throw error;
     }
 );
