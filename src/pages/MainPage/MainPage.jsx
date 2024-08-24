@@ -11,6 +11,8 @@ import {
 import SiderComponent from "../../components/SiderComponent";
 import useFetch from "../../hooks/useFetch";
 import userService from "../../apis/userApi";
+import Logout from "../../components/Logout";
+import useAuth from "../../hooks/useAuth";
 const { Header, Content, Footer, Sider } = Layout;
 
 const MainPage = () => {
@@ -18,14 +20,13 @@ const MainPage = () => {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
     const [collapsed, setCollapsed] = React.useState(false);
-
+    const { user } = useAuth();
     return (
         <>
-            (
             <div>
-                <h1>homepage</h1>
+                <Logout />
+                <h1>Hello {user.name}</h1>
             </div>
-            )
         </>
     );
     // return (

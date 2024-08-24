@@ -1,56 +1,51 @@
 import { createContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
-import { useNavigate } from "react-router-dom";
 import userApi from "../apis/userApi";
+import authApi from "../apis/authApi";
+import useFetch from "../hooks/useFetch";
+import { useNavigate } from "react-router-dom";
+import Loading from "../components/Loading";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const navigate = useNavigate();
     const [user, setUser] = useState(null);
-    const [isLogin, setIsLogin] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-
+    const [isLogin, setIsLogin] = useState(() => {
+        localStorage.getItem("ACCESS_TOKEN") ? true : false;
+    });
+    const { fetchData, isLoading, contextHolder } = useFetch();
+    const navigate = useNavigate();
     const handleLogin = (data) => {
         setIsLogin(true);
         setUser(data);
     };
 
     const handleLogout = () => {
-        setUser(null);
         setIsLogin(false);
-        localStorage.removeItem("ACCESS_TOKEN");
-    };
-
-    const handleAuthFail = () => {
         setUser(null);
-        setIsLogin(false);
-        localStorage.removeItem("ACCESS_TOKEN");
+        authApi.logout();
         navigate("/login");
     };
 
     useEffect(() => {
         (async () => {
-            setIsLoading(true);
             const accessToken = localStorage.getItem("ACCESS_TOKEN");
-            console.log(accessToken);
+
             if (!accessToken) {
-                handleAuthFail();
+                navigate("/login");
                 return;
             }
+            const data = await fetchData(userApi.getProfile);
+            if (!data.isOk) {
+                authApi.logout();
 
-            try {
-                const data = await userApi.getProfile();
-                setUser(data.data);
-                setIsLogin(true);
-            } catch (error) {
-                handleAuthFail();
-            } finally {
-                setIsLoading(false);
+                handleLogout();
+                return;
             }
+            setUser(data.data);
         })();
-    }, [user]);
+    }, [isLogin]);
 
     return (
         <AuthContext.Provider
@@ -58,11 +53,10 @@ export const AuthProvider = ({ children }) => {
                 user,
                 handleLogin,
                 handleLogout,
-                isLogin,
-                isLoading,
             }}
         >
-            {isLoading ? children : <div>Loading...</div>}
+            {contextHolder}
+            {isLoading ? <Loading /> : children}
         </AuthContext.Provider>
     );
 };

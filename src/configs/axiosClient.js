@@ -29,17 +29,25 @@ axiosClient.interceptors.response.use(
         return response.data;
     },
     (error) => {
-        if (error.response.status === 401) {
-            localStorage.removeItem("ACCESS_TOKEN");
-            localStorage.removeItem("REFRESH_TOKEN");
-            window.location.href = "/login";
+        console.log(error.response);
+
+        switch (error.response.status) {
+            case 401: {
+                authApi.logout();
+                break;
+            }
+
+            case 410: {
+                const refreshToken = localStorage.getItem("REFRESH_TOKEN");
+                const data = authApi.resetAccessToken(refreshToken);
+                break;
+            }
+
+            default: {
+                if (error.response?.data) throw error.response.data;
+                throw error.response;
+            }
         }
-        if (error.response.status === 410) {
-            const refreshToken = localStorage.getItem("REFRESH_TOKEN");
-            const data = authApi.resetAccessToken(refreshToken);
-        }
-        if (error.response.data) throw error.response.data;
-        throw error;
     }
 );
 

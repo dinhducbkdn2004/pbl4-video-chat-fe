@@ -7,6 +7,7 @@ const useFetch = () => {
     const fetchData = async (cb) => {
         try {
             setIsLoading(true);
+
             const data = await cb();
             console.log(data.data);
             api.success({
