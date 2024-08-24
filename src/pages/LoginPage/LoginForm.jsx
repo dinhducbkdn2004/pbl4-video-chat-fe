@@ -1,19 +1,26 @@
 import { Button, Checkbox, Form, Input } from "antd";
-import authService from "../services/auth.service";
-import useFetch from "../hooks/useFetch";
 
-import { useContext } from "react";
-import { AuthContext } from "../context/authContext";
+import useFetch from "../../hooks/useFetch";
 
-const LoginPage = () => {
-    const { handleLogin, user } = useContext(AuthContext);
+import { useNavigate } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
+import authApi from "../../apis/authApi";
 
+const LoginForm = () => {
+    const { handleLogin } = useAuth();
+    const navigate = useNavigate();
     const { isLoading, fetchData, contextHolder } = useFetch();
     const onFinish = async (values) => {
         const data = await fetchData(() =>
-            authService.login(values.email, values.password)
+            authApi.login(values.email, values.password)
         );
-        if (data.isOk) handleLogin(data.data);
+
+        if (data.isOk) {
+            localStorage.setItem("ACCESS_TOKEN", data?.data?.accessToken);
+            localStorage.setItem("REFRESH_TOKEN", data?.data?.refreshToken);
+            handleLogin(data.data);
+            navigate("/");
+        }
     };
 
     return (
@@ -92,4 +99,4 @@ const LoginPage = () => {
     );
 };
 
-export default LoginPage;
+export default LoginForm;

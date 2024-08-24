@@ -8,13 +8,14 @@ const useFetch = () => {
         try {
             setIsLoading(true);
             const data = await cb();
-            console.log(data);
+            console.log(data.data);
             api.success({
                 message: "Success!",
                 description: data.message,
             });
             return data;
         } catch (error) {
+            console.error(error);
             api.error({
                 message: "Error!",
                 description: error.message,

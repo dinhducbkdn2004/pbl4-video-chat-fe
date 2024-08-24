@@ -1,8 +1,9 @@
 import axios from "axios";
 import envClient from "../env";
+import authApi from "../apis/authApi";
 
 const axiosClient = axios.create({
-    baseURL: envClient.BASE_API_URL || "http://localhost:3000/api/v1",
+    baseURL: envClient.VITE_BASE_API_URL,
     headers: {
         "Content-Type": "application/json",
     },
@@ -11,9 +12,9 @@ const axiosClient = axios.create({
 
 axiosClient.interceptors.request.use(
     async (config) => {
-        const token = localStorage.getItem("Authorization");
+        const token = localStorage.getItem("ACCESS_TOKEN");
         if (token) {
-            config.headers.Authorization = `Bare ${token}`;
+            config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
     },
@@ -28,8 +29,15 @@ axiosClient.interceptors.response.use(
         return response.data;
     },
     (error) => {
-        // Handle response errors
-        console.error("API error:", error.response.data);
+        if (error.response.status === 401) {
+            localStorage.removeItem("ACCESS_TOKEN");
+            localStorage.removeItem("REFRESH_TOKEN");
+            window.location.href = "/login";
+        }
+        if (error.response.status === 410) {
+            const refreshToken = localStorage.getItem("REFRESH_TOKEN");
+            const data = authApi.resetAccessToken(refreshToken);
+        }
         if (error.response.data) throw error.response.data;
         throw error;
     }

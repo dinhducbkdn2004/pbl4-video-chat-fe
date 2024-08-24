@@ -1,12 +1,17 @@
 import axiosClient from "../configs/axiosClient";
 
-const authService = {
+const authApi = {
     login: async function (email, password) {
         return axiosClient.post("/auth/login", {
             email,
             password,
         });
     },
+    resetAccessToken: async function (refreshToken) {
+        return axiosClient.put("/auth/reset-token", {
+            refreshToken,
+        });
+    },
 };
 
-export default authService;
+export default authApi;
