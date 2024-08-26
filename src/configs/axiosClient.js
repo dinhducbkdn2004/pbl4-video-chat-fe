@@ -1,6 +1,10 @@
 import axios from "axios";
 import envClient from "../env";
+
 import authApi from "../apis/authApi";
+import { useDispatch } from "react-redux";
+import { authActions } from "../redux/features/auth/authSlice";
+import { store } from "./../redux/store";
 
 const axiosClient = axios.create({
     baseURL: envClient.VITE_BASE_API_URL,
@@ -16,6 +20,7 @@ axiosClient.interceptors.request.use(
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
+
         return config;
     },
     (error) => {
@@ -28,19 +33,43 @@ axiosClient.interceptors.response.use(
     (response) => {
         return response.data;
     },
-    (error) => {
-        console.log(error.response);
+
+    async (error) => {
+        const originalRequest = error.config;
 
         switch (error.response.status) {
             case 401: {
-                authApi.logout();
                 break;
             }
 
             case 410: {
-                const refreshToken = localStorage.getItem("REFRESH_TOKEN");
-                const data = authApi.resetAccessToken(refreshToken);
-                break;
+                if (!originalRequest._retry) {
+                    originalRequest._retry = true;
+                    const refreshToken = localStorage.getItem("REFRESH_TOKEN");
+                    const { isOk, data } = await authApi.resetAccessToken(
+                        refreshToken
+                    );
+
+                    if (isOk) {
+                        const { accessToken } = data;
+                        localStorage.setItem("ACCESS_TOKEN", accessToken);
+                        store.dispatch(
+                            authActions.setCredentials({
+                                accessToken,
+                                refreshToken,
+                            })
+                        );
+
+                        axiosClient.defaults.headers.common[
+                            "Authorization"
+                        ] = `Bearer ${accessToken}`;
+                        return axiosClient(originalRequest);
+                    }
+                    store.dispatch(authActions.logout());
+                    return Promise.reject(error);
+                }
+                store.dispatch(authActions.logout());
+                return Promise.reject(error);
             }
 
             default: {

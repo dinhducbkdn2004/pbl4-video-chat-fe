@@ -2,23 +2,26 @@ import { Button, Checkbox, Form, Input } from "antd";
 
 import useFetch from "../../hooks/useFetch";
 
+import { useDispatch } from "react-redux";
+import { authActions } from "../../redux/features/auth/authSlice";
+import authApi from "./../../apis/authApi";
 import { useNavigate } from "react-router-dom";
-import useAuth from "../../hooks/useAuth";
-import authApi from "../../apis/authApi";
 
 const LoginForm = () => {
-    const { handleLogin } = useAuth();
-    const navigate = useNavigate();
     const { isLoading, fetchData, contextHolder } = useFetch();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const onFinish = async (values) => {
-        const data = await fetchData(() =>
-            authApi.login(values.email, values.password)
-        );
+        const { isOk, data } = await fetchData(() => authApi.login(values));
 
-        if (data.isOk) {
-            localStorage.setItem("ACCESS_TOKEN", data?.data?.accessToken);
-            localStorage.setItem("REFRESH_TOKEN", data?.data?.refreshToken);
-            handleLogin(data.data);
+        if (isOk) {
+            const { accessToken, refreshToken } = data;
+            dispatch(
+                authActions.setCredentials({
+                    accessToken,
+                    refreshToken,
+                })
+            );
             navigate("/");
         }
     };

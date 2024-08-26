@@ -3,7 +3,9 @@ import { useState } from "react";
 
 const useFetch = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const [api, contextHolder] = notification.useNotification();
+    const [api, contextHolder] = notification.useNotification({
+        showProgress: true,
+    });
     const fetchData = async (cb) => {
         try {
             setIsLoading(true);

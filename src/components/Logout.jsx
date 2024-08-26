@@ -1,9 +1,15 @@
 import { Button } from "antd";
-
-import useAuth from "../hooks/useAuth";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { authActions } from "../redux/features/auth/authSlice";
 
 const Logout = () => {
-    const { handleLogout } = useAuth();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const handleLogout = () => {
+        dispatch(authActions.logout());
+        navigate("/login");
+    };
     return <Button onClick={handleLogout}>Logout</Button>;
 };
 

@@ -10,9 +10,14 @@ import {
 } from "@ant-design/icons";
 import SiderComponent from "../../components/SiderComponent";
 import useFetch from "../../hooks/useFetch";
-import userService from "../../apis/userApi";
+
 import Logout from "../../components/Logout";
-import useAuth from "../../hooks/useAuth";
+
+import { useDispatch, useSelector } from "react-redux";
+import { authSelector } from "../../redux/features/auth/authSelections";
+import userApi from "./../../apis/userApi";
+import Loading from "./../../components/Loading";
+import { authActions } from "../../redux/features/auth/authSlice";
 const { Header, Content, Footer, Sider } = Layout;
 
 const MainPage = () => {
@@ -20,14 +25,39 @@ const MainPage = () => {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
     const [collapsed, setCollapsed] = React.useState(false);
-    const { user } = useAuth();
+
+    const { user, isAuthenticated } = useSelector(authSelector);
+    const { fetchData, isLoading, contextHolder } = useFetch();
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        (async () => {
+            if (isAuthenticated) {
+                const { isOk, data } = await fetchData(userApi.getProfile);
+
+                if (isOk) {
+                    dispatch(authActions.setProfile(data));
+                    return;
+                }
+                dispatch(authActions.logout());
+            } else {
+                dispatch(authActions.logout());
+            }
+        })();
+    }, []);
+
     return (
-        <>
-            <div>
-                <Logout />
-                <h1>Hello {user.name}</h1>
-            </div>
-        </>
+        <div>
+            {isLoading ? (
+                <Loading />
+            ) : (
+                <>
+                    {contextHolder}
+                    <Logout />
+                    <h1>Hello {user?.name}</h1>
+                </>
+            )}
+        </div>
     );
     // return (
     //     <Layout>
