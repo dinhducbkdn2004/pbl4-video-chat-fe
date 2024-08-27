@@ -1,0 +1,26 @@
+.login-form-or {
+  text-align: center;
+  margin: 20px 0;
+  position: relative;
+
+  span {
+    display: inline-block;
+    padding: 0 10px;
+    font-size: 14px;
+    color: #666;
+    background-color: #fff;
+    position: relative;
+    z-index: 1;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: #ddd;
+    z-index: 0;
+  }
+}

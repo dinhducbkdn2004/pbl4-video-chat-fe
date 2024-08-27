@@ -9,13 +9,13 @@ import { store } from "./redux/store.js";
 import { ConfigProvider } from "antd";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-    <React.StrictMode>
-        <BrowserRouter>
-            <Provider store={store}>
-                <ConfigProvider>
-                    <App />
-                </ConfigProvider>
-            </Provider>
-        </BrowserRouter>
-    </React.StrictMode>
+  <React.StrictMode>
+    <BrowserRouter>
+      <Provider store={store}>
+        <ConfigProvider>
+          <App />
+        </ConfigProvider>
+      </Provider>
+    </BrowserRouter>
+  </React.StrictMode>
 );

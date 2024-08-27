@@ -1,14 +1,13 @@
-import { Button, Checkbox, Form, Input } from "antd";
-import { LockOutlined, UserOutlined, GoogleOutlined } from "@ant-design/icons";
+import React from "react";
+import { Form, Input, Button, Row, Col } from "antd";
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import useFetch from "../../hooks/useFetch";
 
-import { useDispatch } from "react-redux";
-import { authActions } from "../../redux/features/auth/authSlice";
-import authApi from "./../../apis/authApi";
 import { useNavigate } from "react-router-dom";
-import "./LoginForm.scss";
+// import useAuth from "../../hooks/useAuth";
+import authApi from "../../apis/authApi";
 
-const LoginForm = () => {
+const RegisterForm = () => {
   // const { handleLogin } = useAuth();
   const navigate = useNavigate();
   const { isLoading, fetchData, contextHolder } = useFetch();
@@ -29,7 +28,7 @@ const LoginForm = () => {
     <>
       {contextHolder}
       <Form
-        name="login"
+        name="register"
         layout="vertical"
         style={{
           maxWidth: 600,
@@ -38,19 +37,43 @@ const LoginForm = () => {
         initialValues={{
           remember: true,
         }}
-        requiredMark="optional"
         onFinish={onFinish}
         autoComplete="on"
       >
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item
+              label="First Name"
+              name="firstName"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your first name!",
+                },
+              ]}
+            >
+              <Input placeholder="Enter your first name" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              label="Last Name"
+              name="lastName"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your last name!",
+                },
+              ]}
+            >
+              <Input placeholder="Enter your last name" />
+            </Form.Item>
+          </Col>
+        </Row>
         <Form.Item
           label="Username"
           name="username"
-          rules={[
-            {
-              required: true,
-              message: "Please input your username!",
-            },
-          ]}
+          rules={[{ required: true, message: "Please input your username!" }]}
         >
           <Input prefix={<UserOutlined />} placeholder="Enter your username" />
         </Form.Item>
@@ -58,12 +81,7 @@ const LoginForm = () => {
         <Form.Item
           label="Password"
           name="password"
-          rules={[
-            {
-              required: true,
-              message: "Please input your password!",
-            },
-          ]}
+          rules={[{ required: true, message: "Please input your password!" }]}
         >
           <Input.Password
             prefix={<LockOutlined />}
@@ -71,18 +89,15 @@ const LoginForm = () => {
           />
         </Form.Item>
 
-        <Form.Item>
-          <Form.Item name="remember" valuePropName="checked" noStyle>
-            <Checkbox>Remember me</Checkbox>
-          </Form.Item>
-          <a
-            style={{
-              float: "right",
-            }}
-            href=""
-          >
-            Forgot password?
-          </a>
+        <Form.Item
+          label="Confirm Password"
+          name="confirmPassword"
+          rules={[{ required: true, message: "Please confirm your password!" }]}
+        >
+          <Input.Password
+            prefix={<LockOutlined />}
+            placeholder="Repeat password"
+          />
         </Form.Item>
 
         <Form.Item
@@ -100,27 +115,7 @@ const LoginForm = () => {
               padding: "15px 20px",
             }}
           >
-            Submit
-          </Button>
-        </Form.Item>
-
-        <div className="login-form-or">
-          <span>Or</span>
-        </div>
-
-        <Form.Item>
-          <Button
-            type="primary"
-            danger
-            htmlType="submit"
-            loading={isLoading}
-            style={{
-              width: "100%",
-              borderRadius: 30,
-              padding: "15px 20px",
-            }}
-          >
-            <GoogleOutlined /> Sign In with Google
+            Register
           </Button>
         </Form.Item>
       </Form>
@@ -128,4 +123,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default RegisterForm;
