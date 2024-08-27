@@ -1,117 +1,94 @@
-import React, { useEffect } from "react";
-import PropTypes from "prop-types";
-import { Button, Layout, Menu, theme } from "antd";
-import {
-    MenuFoldOutlined,
-    MenuUnfoldOutlined,
-    UploadOutlined,
-    UserOutlined,
-    VideoCameraOutlined,
-} from "@ant-design/icons";
-import SiderComponent from "../../components/SiderComponent";
+import { ContactsOutlined, MessageOutlined } from "@ant-design/icons";
+import { Image, Layout, Menu } from "antd";
+import { useEffect } from "react";
+
 import useFetch from "../../hooks/useFetch";
 
 import Logout from "../../components/Logout";
 
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { Outlet, useNavigate } from "react-router-dom";
 import { authSelector } from "../../redux/features/auth/authSelections";
+import { authActions } from "../../redux/features/auth/authSlice";
 import userApi from "./../../apis/userApi";
 import Loading from "./../../components/Loading";
-import { authActions } from "../../redux/features/auth/authSlice";
-const { Header, Content, Footer, Sider } = Layout;
+import { store } from "./../../redux/store";
+const { Header } = Layout;
 
 const MainPage = () => {
-    const {
-        token: { colorBgContainer, borderRadiusLG },
-    } = theme.useToken();
-    const [collapsed, setCollapsed] = React.useState(false);
-
-    const { user, isAuthenticated } = useSelector(authSelector);
+    const { isAuthenticated } = useSelector(authSelector);
     const { fetchData, isLoading, contextHolder } = useFetch();
-    const dispatch = useDispatch();
-
+    const naviage = useNavigate();
+    const handleNavigatie = (e) => {
+        naviage(`/${e.key}`);
+    };
     useEffect(() => {
         (async () => {
             if (isAuthenticated) {
                 const { isOk, data } = await fetchData(userApi.getProfile);
 
                 if (isOk) {
-                    dispatch(authActions.setProfile(data));
+                    store.dispatch(authActions.setProfile(data));
                     return;
                 }
-                dispatch(authActions.logout());
+                store.dispatch(authActions.logout());
             } else {
-                dispatch(authActions.logout());
+                store.dispatch(authActions.logout());
             }
         })();
     }, []);
+    if (isLoading) return <Loading />;
 
     return (
-        <div>
-            {isLoading ? (
-                <Loading />
-            ) : (
-                <>
-                    {contextHolder}
+        <>
+            {contextHolder}
+            <Layout>
+                <Header
+                    style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                    }}
+                >
+                    <Image
+                        src="https://i0.wp.com/help.zalo.me/wp-content/uploads/2022/04/Thumbnail.png?fit=720%2C720&ssl=1"
+                        height={80}
+                        width={80}
+                    />
+                    <Menu
+                        onClick={handleNavigatie}
+                        theme="dark"
+                        mode="horizontal"
+                        items={[
+                            {
+                                key: "message",
+                                icon: <MessageOutlined />,
+                                label: "Message",
+                            },
+                            {
+                                key: "contact",
+                                icon: <ContactsOutlined />,
+                                label: "Contact",
+                            },
+                        ]}
+                        style={{
+                            flex: 1,
+                            minWidth: 0,
+                            justifyContent: "center",
+                        }}
+                    />
                     <Logout />
-                    <h1>Hello {user?.name}</h1>
-                </>
-            )}
-        </div>
+                </Header>
+                <Layout
+                    style={{
+                        height: "100vh",
+                    }}
+                >
+                    <Outlet />
+                </Layout>
+            </Layout>
+        </>
     );
-    // return (
-    //     <Layout>
-    //         <SiderComponent collapsed={collapsed} />
-    //         <Layout>
-    //             <Header
-    //                 style={{
-    //                     padding: 0,
-    //                     background: colorBgContainer,
-    //                 }}
-    //             >
-    //                 <Button
-    //                     type="text"
-    //                     icon={
-    //                         collapsed ? (
-    //                             <MenuUnfoldOutlined />
-    //                         ) : (
-    //                             <MenuFoldOutlined />
-    //                         )
-    //                     }
-    //                     onClick={() => setCollapsed(!collapsed)}
-    //                     style={{
-    //                         fontSize: "16px",
-    //                         width: 64,
-    //                         height: 64,
-    //                     }}
-    //                 />
-    //             </Header>
-    //             <Content
-    //                 style={{
-    //                     margin: "24px 16px 0",
-    //                 }}
-    //             >
-    //                 <div
-    //                     style={{
-    //                         padding: 24,
-    //                         minHeight: 360,
-    //                         background: colorBgContainer,
-    //                         borderRadius: borderRadiusLG,
-    //                     }}
-    //                 >
-    //                     content
-    //                 </div>
-    //             </Content>
-    //             <Footer
-    //                 style={{
-    //                     textAlign: "center",
-    //                 }}
-    //             >
-    //                 Ant Design ©{new Date().getFullYear()} Created by Ant UED
-    //             </Footer>
-    //         </Layout>
-    //     </Layout>
-    // );
 };
 
 MainPage.propTypes = {};
