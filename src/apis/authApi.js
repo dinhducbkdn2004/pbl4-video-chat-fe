@@ -7,6 +7,10 @@ const authApi = {
             password,
         });
     },
+    register: async function ({ email, password, name }) {
+        return axiosClient.post("/auth/register", { email, password, name });
+    },
+
     resetAccessToken: async function (refreshToken) {
         return axiosClient.put("/auth/reset-token", {
             refreshToken,

@@ -1,8 +1,8 @@
+import { LoginOutlined, UserAddOutlined } from "@ant-design/icons";
+import { Tabs } from "antd";
 import React from "react";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
-import { Tabs } from "antd";
-import { LoginOutlined, UserAddOutlined } from "@ant-design/icons";
 
 const AuthTabs = () => {
   const items = [
