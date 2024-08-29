@@ -16,6 +16,9 @@ const authApi = {
             refreshToken,
         });
     },
+    loginByGoogle: async (credential) => {
+        return axiosClient.post("/auth/oauth2/google", { credential });
+    },
 };
 
 export default authApi;

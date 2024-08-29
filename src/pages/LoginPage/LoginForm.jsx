@@ -8,9 +8,12 @@ import { useNavigate } from "react-router-dom";
 import "./LoginForm.scss";
 import { store } from "../../redux/store";
 
+import GoogleLoginComponent from "./GoogleLoginComponent";
+
 const LoginForm = () => {
     const navigate = useNavigate();
     const { isLoading, fetchData, contextHolder } = useFetch();
+
     const onFinish = async (values) => {
         const { isOk, data } = await fetchData(() => authApi.login(values));
 
@@ -29,105 +32,110 @@ const LoginForm = () => {
     return (
         <>
             {contextHolder}
-            <Form
-                name="login"
-                layout="vertical"
-                style={{
-                    maxWidth: 600,
-                    margin: "0 auto",
-                }}
-                initialValues={{
-                    remember: true,
-                }}
-                requiredMark="optional"
-                onFinish={onFinish}
-                autoComplete="on"
-            >
-                <Form.Item
-                    label="Email"
-                    name="email"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Please input your email!",
-                        },
-                    ]}
-                >
-                    <Input
-                        prefix={<UserOutlined />}
-                        placeholder="Enter your email"
-                    />
-                </Form.Item>
-
-                <Form.Item
-                    label="Password"
-                    name="password"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Please input your password!",
-                        },
-                    ]}
-                >
-                    <Input.Password
-                        prefix={<LockOutlined />}
-                        placeholder="Enter your password"
-                    />
-                </Form.Item>
-
-                <Form.Item>
-                    <Form.Item name="remember" valuePropName="checked" noStyle>
-                        <Checkbox>Remember me</Checkbox>
-                    </Form.Item>
-                    <a
-                        style={{
-                            float: "right",
-                        }}
-                        href=""
-                    >
-                        Forgot password?
-                    </a>
-                </Form.Item>
-
-                <Form.Item
-                    wrapperCol={{
-                        span: 24,
+            <>
+                <Form
+                    name="login"
+                    layout="vertical"
+                    style={{
+                        maxWidth: 600,
+                        margin: "0 auto",
                     }}
+                    initialValues={{
+                        remember: true,
+                    }}
+                    requiredMark="optional"
+                    onFinish={onFinish}
+                    autoComplete="on"
                 >
-                    <Button
-                        type="primary"
-                        htmlType="submit"
-                        loading={isLoading}
-                        style={{
-                            width: "100%",
-                            borderRadius: 30,
-                            padding: "15px 20px",
+                    <Form.Item
+                        label="Email"
+                        name="email"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please input your email!",
+                            },
+                        ]}
+                    >
+                        <Input
+                            prefix={<UserOutlined />}
+                            placeholder="Enter your email"
+                        />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Password"
+                        name="password"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please input your password!",
+                            },
+                        ]}
+                    >
+                        <Input.Password
+                            prefix={<LockOutlined />}
+                            placeholder="Enter your password"
+                        />
+                    </Form.Item>
+
+                    <Form.Item>
+                        <Form.Item
+                            name="remember"
+                            valuePropName="checked"
+                            noStyle
+                        >
+                            <Checkbox>Remember me</Checkbox>
+                        </Form.Item>
+                        <a
+                            style={{
+                                float: "right",
+                            }}
+                            href=""
+                        >
+                            Forgot password?
+                        </a>
+                    </Form.Item>
+
+                    <Form.Item
+                        wrapperCol={{
+                            span: 24,
                         }}
                     >
-                        Submit
-                    </Button>
-                </Form.Item>
+                        <Button
+                            type="primary"
+                            htmlType="submit"
+                            loading={isLoading}
+                            style={{
+                                width: "100%",
+                                borderRadius: 30,
+                                padding: "15px 20px",
+                            }}
+                        >
+                            Submit
+                        </Button>
+                    </Form.Item>
 
-                <div className="login-form-or">
-                    <span>Or</span>
-                </div>
+                    <div className="login-form-or">
+                        <span>Or</span>
+                    </div>
+                </Form>
+            </>
 
-                <Form.Item>
-                    <Button
-                        type="primary"
-                        danger
-                        htmlType="submit"
-                        loading={isLoading}
-                        style={{
-                            width: "100%",
-                            borderRadius: 30,
-                            padding: "15px 20px",
-                        }}
-                    >
-                        <GoogleOutlined /> Sign In with Google
-                    </Button>
-                </Form.Item>
-            </Form>
+            <GoogleLoginComponent />
+            <Button
+                type="primary"
+                danger
+                htmlType="submit"
+                loading={isLoading}
+                style={{
+                    width: "100%",
+                    borderRadius: 30,
+                    padding: "15px 20px",
+                }}
+            >
+                <GoogleOutlined />
+            </Button>
         </>
     );
 };
