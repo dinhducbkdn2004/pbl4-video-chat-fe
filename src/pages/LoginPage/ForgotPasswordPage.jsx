@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Form, Input, Button, message, Typography, Space, Card } from "antd";
-import { MailOutlined } from "@ant-design/icons";
+import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import useFetch from "../../hooks/useFetch";
 import { useNavigate } from "react-router-dom";
 import authApi from "../../apis/authApi";
@@ -15,6 +15,9 @@ const ForgotPassword = () => {
   const [isOtpVisible, setIsOtpVisible] = useState(false);
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const [email, setEmail] = useState("");
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleEmailSubmit = async (values) => {
     setEmail(values.email);
@@ -34,7 +37,24 @@ const ForgotPassword = () => {
       authApi.verifyOtp(email, otpCode)
     );
     if (isOk) {
-      navigate("/reset-password");
+      setIsEmailVerified(true);
+      setIsOtpVisible(false);
+    } else {
+      message.error(data.message);
+    }
+  };
+
+  const handlePasswordSubmit = async () => {
+    if (password !== confirmPassword) {
+      message.error("Passwords do not match!");
+      return;
+    }
+    const { isOk, data } = await fetchData(() =>
+      authApi.resetPassword(email, password)
+    );
+    if (isOk) {
+      message.success("Password reset successfully!");
+      navigate("/login");
     } else {
       message.error(data.message);
     }
@@ -58,31 +78,74 @@ const ForgotPassword = () => {
               type="secondary"
               style={{ textAlign: "center" }}
             >
-              Enter your email address to receive a verification code.
+              {isEmailVerified
+                ? "Enter your new password."
+                : "Enter your email address to receive a verification code."}
             </Text>
             <Form
               name="forgot-password"
               layout="vertical"
-              onFinish={handleEmailSubmit}
+              onFinish={
+                isEmailVerified ? handlePasswordSubmit : handleEmailSubmit
+              }
               autoComplete="on"
             >
-              <Form.Item
-                label="Email"
-                name="email"
-                rules={[
-                  {
-                    required: true,
-                    type: "email",
-                    message: "Please input a valid email!",
-                  },
-                ]}
-              >
-                <Input
-                  prefix={<MailOutlined />}
-                  placeholder="Enter your email"
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </Form.Item>
+              {!isEmailVerified && (
+                <Form.Item
+                  label="Email"
+                  name="email"
+                  rules={[
+                    {
+                      required: true,
+                      type: "email",
+                      message: "Please input a valid email!",
+                    },
+                  ]}
+                >
+                  <Input
+                    prefix={<MailOutlined />}
+                    placeholder="Enter your email"
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </Form.Item>
+              )}
+
+              {isEmailVerified && (
+                <>
+                  <Form.Item
+                    label="New Password"
+                    name="password"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your new password!",
+                      },
+                    ]}
+                  >
+                    <Input.Password
+                      prefix={<LockOutlined />}
+                      placeholder="Enter new password"
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="Confirm Password"
+                    name="confirmPassword"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please confirm your new password!",
+                      },
+                    ]}
+                  >
+                    <Input.Password
+                      prefix={<LockOutlined />}
+                      placeholder="Confirm new password"
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
+                  </Form.Item>
+                </>
+              )}
 
               <Form.Item>
                 <Button
@@ -92,7 +155,7 @@ const ForgotPassword = () => {
                   block
                   className="forgot-password-submit-button"
                 >
-                  Submit
+                  {isEmailVerified ? "Reset Password" : "Submit"}
                 </Button>
               </Form.Item>
             </Form>

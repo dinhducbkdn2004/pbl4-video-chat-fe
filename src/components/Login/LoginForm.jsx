@@ -8,6 +8,7 @@ import "./LoginForm.scss";
 import { store } from "../../redux/store";
 import { useState } from "react";
 import OTPModal from "../OTPModal/OTPModal";
+import GoogleLoginComponent from "./GoogleLoginComponent";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -173,13 +174,16 @@ const LoginForm = () => {
           <div className="login-form-or">
             <span>Or</span>
           </div>
-
           <Form.Item>
+            <GoogleLoginComponent />
+          </Form.Item>
+          {/* <Form.Item>
+            <GoogleLoginComponent />
             <Button
               type="primary"
               danger
-              onClick={handleGoogleLogin}
-              // loading={isLoading}
+              htmlType="submit"
+              loading={isLoading}
               style={{
                 width: "100%",
                 borderRadius: 30,
@@ -188,7 +192,7 @@ const LoginForm = () => {
             >
               <GoogleOutlined /> Sign In with Google
             </Button>
-          </Form.Item>
+          </Form.Item> */}
         </Form>
       </div>
 

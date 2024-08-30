@@ -7,7 +7,6 @@ import MainPage from "./pages/MainPage/MainPage";
 import MessagePage from "./pages/MessagePage/MessagePage";
 import ContactPage from "./pages/ContactPage/ContactPage";
 import ForgotPassword from "./pages/LoginPage/ForgotPasswordPage";
-import ResetPassword from "./pages/LoginPage/ResetPasswordPage";
 
 function App() {
   return (
@@ -16,7 +15,6 @@ function App() {
       <Route element={<UnauthorizeRoute />}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
       </Route>
 
       {/* Protected route for authenticated users */}
