@@ -1,5 +1,5 @@
 import { Button, Checkbox, Form, Input, message } from "antd";
-import { LockOutlined, MailOutlined, GoogleOutlined } from "@ant-design/icons";
+import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import useFetch from "../../hooks/useFetch";
 import { authActions } from "../../redux/features/auth/authSlice";
 import authApi from "../../apis/authApi";
@@ -14,7 +14,6 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const { isLoading, fetchData, contextHolder } = useFetch();
   const [isOtpVisible, setIsOtpVisible] = useState(false);
-  const [otp, setOtp] = useState(new Array(6).fill(""));
   const [email, setEmail] = useState("");
 
   const onFinish = async (values) => {
@@ -38,52 +37,9 @@ const LoginForm = () => {
     navigate("/forgot-password");
   };
 
-  const handleEmailSubmit = async (values) => {
-    setEmail(values.email);
-    const { isOk, data } = await fetchData(() =>
-      authApi.checkEmail(values.email)
-    );
-    if (isOk) {
-      setIsOtpVisible(true);
-    } else {
-      message.error(data.message);
-    }
-  };
-
-  const handleOtpSubmit = async () => {
-    const otpCode = otp.join("");
-    const { isOk, data } = await fetchData(() =>
-      authApi.verifyOtp(email, otpCode)
-    );
-    if (isOk) {
-      navigate("/reset-password");
-    } else {
-      message.error(data.message);
-    }
-  };
-
-  const handleCloseOtpModal = () => {
+  const handleOtpSuccess = () => {
     setIsOtpVisible(false);
-  };
-
-  const handleGoogleLogin = async () => {
-    const { isOk, data } = await fetchData(() => authApi.googleLogin());
-
-    if (isOk) {
-      if (data.requiresOtp) {
-        setEmail(data.email);
-        setIsOtpVisible(true);
-      } else {
-        const { accessToken, refreshToken } = data;
-        store.dispatch(
-          authActions.setCredentials({
-            accessToken,
-            refreshToken,
-          })
-        );
-        navigate("/");
-      }
-    }
+    navigate("/reset-password");
   };
 
   return (
@@ -110,7 +66,8 @@ const LoginForm = () => {
             rules={[
               {
                 required: true,
-                message: "Please input your email!",
+                type: "email",
+                message: "Please input a valid email!",
               },
             ]}
           >
@@ -160,7 +117,7 @@ const LoginForm = () => {
             <Button
               type="primary"
               htmlType="submit"
-              // loading={isLoading}
+              loading={isLoading}
               style={{
                 width: "100%",
                 borderRadius: 30,
@@ -174,35 +131,21 @@ const LoginForm = () => {
           <div className="login-form-or">
             <span>Or</span>
           </div>
-          <Form.Item>
-            <GoogleLoginComponent />
-          </Form.Item>
-          {/* <Form.Item>
-            <GoogleLoginComponent />
-            <Button
-              type="primary"
-              danger
-              htmlType="submit"
-              loading={isLoading}
-              style={{
-                width: "100%",
-                borderRadius: 30,
-                padding: "15px 20px",
-              }}
-            >
-              <GoogleOutlined /> Sign In with Google
-            </Button>
-          </Form.Item> */}
+          <GoogleLoginComponent
+            style={{
+              width: "100%",
+              borderRadius: 30,
+              padding: "15px 20px",
+            }}
+          />
         </Form>
       </div>
 
       <OTPModal
         isVisible={isOtpVisible}
         email={email}
-        otp={otp}
-        setOtp={setOtp}
-        handleOtpSubmit={handleOtpSubmit}
-        handleCloseOtpModal={handleCloseOtpModal}
+        handleCloseOtpModal={() => setIsOtpVisible(false)}
+        onSuccess={handleOtpSuccess}
       />
     </>
   );
