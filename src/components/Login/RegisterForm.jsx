@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Input, Button, message } from "antd";
+import { Form, Input, Button } from "antd";
 import { MailOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
 import useFetch from "../../hooks/useFetch";
 import { useNavigate } from "react-router-dom";
@@ -10,40 +10,24 @@ const RegisterForm = () => {
   const navigate = useNavigate();
   const { isLoading, fetchData, contextHolder } = useFetch();
   const [isOtpVisible, setIsOtpVisible] = useState(false);
-  const [otp, setOtp] = useState(new Array(6).fill(""));
   const [email, setEmail] = useState("");
 
   const onFinish = async (values) => {
     setEmail(values.email);
-    const { data, isOk } = await fetchData(() =>
-      authApi.checkEmail(values.email)
+    const { email, password, name } = values;
+
+    const { isOk, data } = await fetchData(() =>
+      authApi.register({ email, password, name })
     );
 
     if (isOk) {
-      const { data, isOk } = await fetchData(() => authApi.register(values));
-      if (isOk) {
-        setIsOtpVisible(true);
-      }
-    }
-    // else {
-    //   message.error("Email is invalid or already exists. Please try again.");
-    // }
-  };
-
-  const handleOtpSubmit = async () => {
-    const otpCode = otp.join("");
-    const { data, isOk } = await fetchData(() =>
-      authApi.verifyOtp(email, otpCode)
-    );
-    if (isOk) {
-      navigate("/reset-password");
-    } else {
-      message.error("Invalid OTP. Please try again.");
+      setIsOtpVisible(true);
     }
   };
 
-  const handleCloseOtpModal = () => {
+  const handleOtpSuccess = () => {
     setIsOtpVisible(false);
+    navigate("/login");
   };
 
   return (
@@ -144,10 +128,8 @@ const RegisterForm = () => {
       <OTPModal
         isVisible={isOtpVisible}
         email={email}
-        otp={otp}
-        setOtp={setOtp}
-        handleOtpSubmit={handleOtpSubmit}
-        handleCloseOtpModal={handleCloseOtpModal}
+        handleCloseOtpModal={() => setIsOtpVisible(false)}
+        onSuccess={handleOtpSuccess}
       />
     </>
   );
