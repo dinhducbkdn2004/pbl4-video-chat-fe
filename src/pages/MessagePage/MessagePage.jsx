@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import { Layout, Menu } from "antd";
 import {
@@ -6,8 +6,15 @@ import {
     UserOutlined,
     VideoCameraOutlined,
 } from "@ant-design/icons";
+import { getSocket } from "../../configs/socketInstance";
 const { Sider, Content } = Layout;
 const MessagePage = (props) => {
+    const socket = getSocket();
+    useEffect(() => {
+        (async () => {
+            socket.emit("send-message", "aloalo");
+        })();
+    }, []);
     return (
         <Layout>
             <Sider trigger={null}>

@@ -13,6 +13,9 @@ import { authActions } from "../../redux/features/auth/authSlice";
 import userApi from "./../../apis/userApi";
 import Loading from "./../../components/Loading";
 import { store } from "./../../redux/store";
+import { io } from "socket.io-client";
+import { initializeSocket } from "../../configs/socketInstance";
+
 const { Header } = Layout;
 
 const MainPage = () => {
@@ -28,6 +31,7 @@ const MainPage = () => {
                 const { isOk, data } = await fetchData(userApi.getProfile);
 
                 if (isOk) {
+                    initializeSocket();
                     store.dispatch(authActions.setProfile(data));
                     return;
                 }
