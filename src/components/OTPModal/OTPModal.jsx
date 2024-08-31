@@ -1,15 +1,14 @@
-import React, { useEffect } from "react";
-import { Modal, Input, Button } from "antd";
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { Modal, Input, Button, message } from "antd";
 import { InfoCircleOutlined, CloseOutlined } from "@ant-design/icons";
+import useFetch from "../../hooks/useFetch";
+import authApi from "../../apis/authApi";
 
-const OTPModal = ({
-  isVisible,
-  email,
-  otp,
-  setOtp,
-  handleOtpSubmit,
-  handleCloseOtpModal,
-}) => {
+const OTPModal = ({ isVisible, email, handleCloseOtpModal, onSuccess }) => {
+  const [otp, setOtp] = useState(new Array(6).fill(""));
+  const { fetchData } = useFetch();
+
   useEffect(() => {
     if (isVisible) {
       document.getElementById("otp-input-0").focus();
@@ -30,6 +29,19 @@ const OTPModal = ({
       if (value === "" && index > 0) {
         document.getElementById(`otp-input-${index - 1}`).focus();
       }
+    }
+  };
+
+  const handleOtpSubmit = async () => {
+    const otpCode = otp.join("");
+    const { isOk, data } = await fetchData(() =>
+      authApi.verifyOtp(email, otpCode)
+    );
+    if (isOk) {
+      message.success("OTP verified successfully!");
+      onSuccess();
+    } else {
+      message.error(data.message);
     }
   };
 
@@ -84,6 +96,13 @@ const OTPModal = ({
       </Button>
     </Modal>
   );
+};
+
+OTPModal.propTypes = {
+  isVisible: PropTypes.bool.isRequired,
+  email: PropTypes.string.isRequired,
+  handleCloseOtpModal: PropTypes.func.isRequired,
+  onSuccess: PropTypes.func.isRequired,
 };
 
 export default OTPModal;

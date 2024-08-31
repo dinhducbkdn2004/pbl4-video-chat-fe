@@ -13,7 +13,6 @@ const ForgotPassword = () => {
   const navigate = useNavigate();
   const { isLoading, fetchData, contextHolder } = useFetch();
   const [isOtpVisible, setIsOtpVisible] = useState(false);
-  const [otp, setOtp] = useState(new Array(6).fill(""));
   const [email, setEmail] = useState("");
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [password, setPassword] = useState("");
@@ -22,26 +21,16 @@ const ForgotPassword = () => {
   const handleEmailSubmit = async (values) => {
     setEmail(values.email);
     const { isOk, data } = await fetchData(() =>
-      authApi.checkEmail(values.email)
+      authApi.forgotPassword(values.email)
     );
     if (isOk) {
       setIsOtpVisible(true);
-    } else {
-      message.error(data.message);
     }
   };
 
-  const handleOtpSubmit = async () => {
-    const otpCode = otp.join("");
-    const { isOk, data } = await fetchData(() =>
-      authApi.verifyOtp(email, otpCode)
-    );
-    if (isOk) {
-      setIsEmailVerified(true);
-      setIsOtpVisible(false);
-    } else {
-      message.error(data.message);
-    }
+  const handleOtpSuccess = () => {
+    setIsOtpVisible(false);
+    setIsEmailVerified(true);
   };
 
   const handlePasswordSubmit = async () => {
@@ -58,10 +47,6 @@ const ForgotPassword = () => {
     } else {
       message.error(data.message);
     }
-  };
-
-  const handleCloseOtpModal = () => {
-    setIsOtpVisible(false);
   };
 
   return (
@@ -166,10 +151,8 @@ const ForgotPassword = () => {
       <OTPModal
         isVisible={isOtpVisible}
         email={email}
-        otp={otp}
-        setOtp={setOtp}
-        handleOtpSubmit={handleOtpSubmit}
-        handleCloseOtpModal={handleCloseOtpModal}
+        handleCloseOtpModal={() => setIsOtpVisible(false)}
+        onSuccess={handleOtpSuccess}
       />
     </>
   );
