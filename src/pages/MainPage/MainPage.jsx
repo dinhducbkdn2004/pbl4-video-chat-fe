@@ -31,8 +31,8 @@ const MainPage = () => {
                 const { isOk, data } = await fetchData(userApi.getProfile);
 
                 if (isOk) {
-                    initializeSocket();
                     store.dispatch(authActions.setProfile(data));
+                    initializeSocket();
                     return;
                 }
                 store.dispatch(authActions.logout());
