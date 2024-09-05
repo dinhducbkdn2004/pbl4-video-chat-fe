@@ -23,7 +23,7 @@ const authApi = {
     return axiosClient.put("/auth/forgot-password", { email });
   },
   checkOtp: async (email, otp) => {
-    return axiosClient.get("/auth/check-otp", { email, otp });
+    return axiosClient.put("/auth/check-otp", { email, otp });
   },
 };
 

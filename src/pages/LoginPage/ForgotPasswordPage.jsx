@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Form, Input, Button, message, Typography, Space, Card } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import useFetch from "../../hooks/useFetch";
@@ -13,41 +13,43 @@ const ForgotPassword = () => {
   const navigate = useNavigate();
   const { isLoading, fetchData, contextHolder } = useFetch();
   const [isOtpVisible, setIsOtpVisible] = useState(false);
-  const [email, setEmail] = useState("");
-  const [isEmailVerified, setIsEmailVerified] = useState(false);
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [formState, setFormState] = useState({
+    email: "",
+    isEmailVerified: false,
+    password: "",
+    confirmPassword: "",
+  });
 
-  const handleEmailSubmit = async (values) => {
-    setEmail(values.email);
-    const { isOk, data } = await fetchData(() =>
-      authApi.forgotPassword(values.email)
-    );
-    if (isOk) {
-      setIsOtpVisible(true);
-    }
-  };
+  const handleEmailSubmit = useCallback(
+    async (values) => {
+      setFormState((prevState) => ({ ...prevState, email: values.email }));
+      const { isOk, data } = await fetchData(() =>
+        authApi.forgotPassword(values.email)
+      );
+      if (isOk) {
+        setIsOtpVisible(true);
+      }
+    },
+    [fetchData]
+  );
 
-  const handleOtpSuccess = () => {
+  const handleOtpSuccess = useCallback(() => {
     setIsOtpVisible(false);
-    setIsEmailVerified(true);
-  };
+    setFormState((prevState) => ({ ...prevState, isEmailVerified: true }));
+  }, []);
 
-  const handlePasswordSubmit = async () => {
+  const handlePasswordSubmit = useCallback(async () => {
+    const { email, password, confirmPassword } = formState;
     if (password !== confirmPassword) {
-      message.error("Passwords do not match!");
       return;
     }
-    const { isOk, data } = await fetchData(() =>
-      authApi.resetPassword(email, password)
-    );
+    // const { isOk, data } = await fetchData(() =>
+    //   authApi.resetPassword(email, password)
+    // );
     if (isOk) {
-      message.success("Password reset successfully!");
       navigate("/login");
-    } else {
-      message.error(data.message);
     }
-  };
+  }, [fetchData, formState, navigate]);
 
   return (
     <>
@@ -63,7 +65,7 @@ const ForgotPassword = () => {
               type="secondary"
               style={{ textAlign: "center" }}
             >
-              {isEmailVerified
+              {formState.isEmailVerified
                 ? "Enter your new password."
                 : "Enter your email address to receive a verification code."}
             </Text>
@@ -71,11 +73,13 @@ const ForgotPassword = () => {
               name="forgot-password"
               layout="vertical"
               onFinish={
-                isEmailVerified ? handlePasswordSubmit : handleEmailSubmit
+                formState.isEmailVerified
+                  ? handlePasswordSubmit
+                  : handleEmailSubmit
               }
               autoComplete="on"
             >
-              {!isEmailVerified && (
+              {!formState.isEmailVerified && (
                 <Form.Item
                   label="Email"
                   name="email"
@@ -90,12 +94,17 @@ const ForgotPassword = () => {
                   <Input
                     prefix={<MailOutlined />}
                     placeholder="Enter your email"
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) =>
+                      setFormState((prevState) => ({
+                        ...prevState,
+                        email: e.target.value,
+                      }))
+                    }
                   />
                 </Form.Item>
               )}
 
-              {isEmailVerified && (
+              {formState.isEmailVerified && (
                 <>
                   <Form.Item
                     label="New Password"
@@ -110,7 +119,12 @@ const ForgotPassword = () => {
                     <Input.Password
                       prefix={<LockOutlined />}
                       placeholder="Enter new password"
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          password: e.target.value,
+                        }))
+                      }
                     />
                   </Form.Item>
                   <Form.Item
@@ -126,7 +140,12 @@ const ForgotPassword = () => {
                     <Input.Password
                       prefix={<LockOutlined />}
                       placeholder="Confirm new password"
-                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      onChange={(e) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          confirmPassword: e.target.value,
+                        }))
+                      }
                     />
                   </Form.Item>
                 </>
@@ -140,7 +159,7 @@ const ForgotPassword = () => {
                   block
                   className="forgot-password-submit-button"
                 >
-                  {isEmailVerified ? "Reset Password" : "Submit"}
+                  {formState.isEmailVerified ? "Reset Password" : "Submit"}
                 </Button>
               </Form.Item>
             </Form>
@@ -150,7 +169,7 @@ const ForgotPassword = () => {
 
       <OTPModal
         isVisible={isOtpVisible}
-        email={email}
+        email={formState.email}
         handleCloseOtpModal={() => setIsOtpVisible(false)}
         onSuccess={handleOtpSuccess}
       />

@@ -1,0 +1,47 @@
+// // Variables
+// $primary-color: #1890ff;
+// $header-height: 64px;
+// $menu-item-hover-bg: #e6f7ff;
+// $menu-item-active-bg: #bae7ff;
+
+// // Header Styling
+// .header {
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   background-color: $primary-color;
+//   padding: 0 20px;
+//   height: $header-height;
+// }
+
+// // Image Styling
+// .header-image {
+//   object-fit: cover;
+//   object-position: center;
+//   height: 50px;
+//   width: 50px;
+//   border-radius: 50%;
+// }
+
+// // Menu Styling
+// .header-menu {
+//   flex: 1;
+//   min-width: 0;
+//   justify-content: center;
+//   background: transparent;
+//   border-bottom: none;
+
+//   .ant-menu-item {
+//     &:hover {
+//       background-color: $menu-item-hover-bg;
+//     }
+//     &.ant-menu-item-selected {
+//       background-color: $menu-item-active-bg;
+//     }
+//   }
+// }
+
+// // Layout Styling
+// .main-layout {
+//   height: calc(100vh - $header-height);
+// }

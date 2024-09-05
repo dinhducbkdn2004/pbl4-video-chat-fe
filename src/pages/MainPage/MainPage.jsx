@@ -15,8 +15,7 @@ import Loading from "./../../components/Loading/Loading";
 import { store } from "./../../redux/store";
 import { io } from "socket.io-client";
 import { initializeSocket } from "../../configs/socketInstance";
-
-const { Header } = Layout;
+import SideBar from "./SideBar";
 
 const MainPage = () => {
   const { isAuthenticated } = useSelector(authSelector);
@@ -45,50 +44,9 @@ const MainPage = () => {
   return (
     <>
       {contextHolder}
-      <Layout>
-        <Header
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Image
-            src="https://i0.wp.com/help.zalo.me/wp-content/uploads/2022/04/Thumbnail.png?fit=720%2C720&ssl=1"
-            height={80}
-            width={80}
-          />
-          <Menu
-            onClick={handleNavigatie}
-            theme="dark"
-            mode="horizontal"
-            items={[
-              {
-                key: "message",
-                icon: <MessageOutlined />,
-                label: "Message",
-              },
-              {
-                key: "contact",
-                icon: <ContactsOutlined />,
-                label: "Contact",
-              },
-            ]}
-            style={{
-              flex: 1,
-              minWidth: 0,
-              justifyContent: "center",
-            }}
-          />
-          <Logout />
-        </Header>
-        <Layout
-          style={{
-            height: "100vh",
-          }}
-        >
-          <Outlet />
-        </Layout>
+      <Layout style={{ height: "100vh" }}>
+        <SideBar />
+        <Logout />
       </Layout>
     </>
   );
