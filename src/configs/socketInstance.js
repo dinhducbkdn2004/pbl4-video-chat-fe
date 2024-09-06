@@ -13,7 +13,7 @@ export const initializeSocket = () => {
         query: {
             name: user.name,
             userId: user._id,
-            accessToken: accessToken,
+            authorization: accessToken,
         },
     });
     // Listen for connection
