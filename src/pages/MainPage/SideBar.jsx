@@ -7,15 +7,22 @@ import { IoCallOutline, IoSettingsOutline } from "react-icons/io5";
 import { LuContact2 } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
-import user from "../../assets/user.jpg";
+
 import { handleLogout } from "../../components/Logout";
 import "./SideBar.scss";
+import assets from "../../assets";
+import { store } from "../../redux/store";
+
+import { authSelector } from "../../redux/features/auth/authSelections";
+import { useSelector } from "react-redux";
 
 const { Sider } = Layout;
 
 const Sidebar = () => {
     const logout = handleLogout();
     const navigate = useNavigate();
+    const { user } = useSelector(authSelector);
+    console.log(user);
     const menu = (
         <Menu>
             <Menu.Item key="setting">
@@ -80,7 +87,7 @@ const Sidebar = () => {
                     <Dropdown overlay={menu} trigger={["click"]}>
                         <div className="avatar-container">
                             <Badge count={1} status="success">
-                                <Avatar size={46} src={user} />
+                                <Avatar size={46} src={user?.avatar} />
                             </Badge>
                         </div>
                     </Dropdown>

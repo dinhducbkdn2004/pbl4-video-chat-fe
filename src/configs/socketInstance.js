@@ -7,14 +7,14 @@ let socket;
 
 export const initializeSocket = () => {
     const { user, accessToken } = store.getState(authSelector).auth;
-    if (!user) return;
+    console.log(accessToken);
+    if (!user || !accessToken) return;
 
     socket = io("http://localhost:3000", {
-        query: {
-            name: user.name,
-            userId: user._id,
-            authorization: accessToken,
-        },
+      
+        extraHeaders:{
+authorization: accessToken,
+        }
     });
     // Listen for connection
     socket.on("connect", () => {

@@ -47,7 +47,7 @@ const MainPage = () => {
             <Layout style={{ height: "100vh" }}>
                 <SideBar />
                 <Layout>
-                    <Content style={{ display: "flex", flexDirection: "row" }}>
+                    <Content>
                         <Outlet />
                     </Content>
                 </Layout>
