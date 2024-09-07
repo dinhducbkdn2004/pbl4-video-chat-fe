@@ -5,9 +5,11 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import MainPage from "./pages/MainPage/MainPage";
 import ContactPage from "./pages/MessagePage/ContactPage/ContactPage";
 import MessagePage from "./pages/MessagePage/MessagePage";
-import SearchPage from "./pages/SearchPage";
+
 import ProtectedRoute from "./routes/ProtectedRoute";
 import UnauthorizeRoute from "./routes/UnauthorizeRoute";
+import SearchPage from "./pages/SearchPage/SearchPage";
+import UserPage from "./pages/User/UserPage";
 
 function App() {
     return (
@@ -24,6 +26,7 @@ function App() {
                     <Route path="/message" element={<MessagePage />} />
                     <Route path="/contact" element={<ContactPage />} />
                     <Route path="/search" element={<SearchPage />} />
+                    <Route path="/user/:id" element={<UserPage />} />
                 </Route>
             </Route>
 
