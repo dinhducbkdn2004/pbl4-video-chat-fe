@@ -1,13 +1,13 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import UnauthorizeRoute from "./routes/UnauthorizeRoute";
-import LoginPage from "./pages/LoginPage/LoginPage";
-import ProtectedRoute from "./routes/ProtectedRoute";
-import MainPage from "./pages/MainPage/MainPage";
-import ChatPage from "./pages/ChatPage/ChatPage";
-import ContactPage from "./pages/ContactPage/ContactPage";
 import ForgotPassword from "./pages/LoginPage/ForgotPasswordPage";
+import LoginPage from "./pages/LoginPage/LoginPage";
+import MainPage from "./pages/MainPage/MainPage";
+import ContactPage from "./pages/MessagePage/ContactPage/ContactPage";
+import MessagePage from "./pages/MessagePage/MessagePage";
 import SearchPage from "./pages/SearchPage";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import UnauthorizeRoute from "./routes/UnauthorizeRoute";
 
 function App() {
     return (
