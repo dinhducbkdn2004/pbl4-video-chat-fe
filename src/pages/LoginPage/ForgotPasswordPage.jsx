@@ -40,12 +40,9 @@ const ForgotPassword = () => {
 
   const handlePasswordSubmit = useCallback(async () => {
     const { email, password, confirmPassword } = formState;
-    if (password !== confirmPassword) {
-      return;
-    }
-    // const { isOk, data } = await fetchData(() =>
-    //   authApi.resetPassword(email, password)
-    // );
+    const { isOk, data } = await fetchData(() =>
+      authApi.resetPassword(email, password, confirmPassword)
+    );
     if (isOk) {
       navigate("/login");
     }

@@ -1,20 +1,20 @@
 import React, { useEffect } from "react";
 import { Layout } from "antd";
 import { getSocket } from "../../configs/socketInstance";
-import "./MessagePage.scss";
+import "./ChatPage.scss";
 
 const { Content } = Layout;
 
-const MessagePage = () => {
+const ChatPage = () => {
   const socket = getSocket();
 
   useEffect(() => {
     socket.emit("send-message", "aloalo");
   }, [socket]);
 
-  return <div>MessagePage</div>;
+  return <div>ChatPage</div>;
 };
 
-MessagePage.propTypes = {};
+ChatPage.propTypes = {};
 
-export default MessagePage;
+export default ChatPage;

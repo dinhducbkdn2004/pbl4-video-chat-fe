@@ -22,6 +22,13 @@ const authApi = {
   forgotPassword: async (email) => {
     return axiosClient.put("/auth/forgot-password", { email });
   },
+  resetPassword: async (email, password, confirmPassword) => {
+    return axiosClient.put("/auth/reset-password", {
+      email,
+      password,
+      confirmPassword,
+    });
+  },
   checkOtp: async (email, otp) => {
     return axiosClient.put("/auth/check-otp", { email, otp });
   },
