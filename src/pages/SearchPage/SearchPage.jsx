@@ -1,36 +1,47 @@
-import React from "react";
-import { Avatar, Button, Input } from "antd";
-import { Container } from "postcss";
-import UserCard from "../../components/Search/UserCard";
+import { Input } from 'antd';
+import { useEffect, useState } from 'react';
+import UserCard from '../../components/Search/UserCard';
+import userApi from './../../apis/userApi';
+import Loading from './../../components/Loading/Loading';
+import useFetch from './../../hooks/useFetch';
+import Container from '../../components/Container';
+import { Menu } from 'antd';
 const { Search } = Input;
+const menuItems = [
+    {
+        key: 'Users',
+        label: 'Users'
+        // icon: <MailOutlined />
+    },
+    {
+        key: 'Groups',
+        label: 'Groups'
+        // icon: <MailOutlined />
+    }
+];
 const SearchPage = () => {
-    const users = [
-        {
-            name: "Thao nguyen",
-            avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXb4pT4uOsvRQYT4H9MI9TwfkMAMRHXWscAw&s",
-            email: "nguyen123@gmail.com",
-            isFriend: true,
-        },
-        {
-            name: "Thao nguyen",
-            avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXb4pT4uOsvRQYT4H9MI9TwfkMAMRHXWscAw&s",
-            email: "nguyen123@gmail.com",
-            isFriend: false,
-        },
-    ];
-    return (
-        <div className="max-w-[500px] mx-auto">
-            <Search placeholder="input search loading default" loading />
-            <div
-                className="flex flex-col gap-5 "
-                onClick={() => {
+    const { fetchData, isLoading } = useFetch();
+    const [users, setUsers] = useState([]);
 
-                }}
-            >
-                {users.map((user, index) => 
-                   <UserCard key={index} data={user}/>
-                )}
-            </div>
+    useEffect(() => {
+        (async () => {
+            const data = await fetchData(() => userApi.getAllUser());
+
+            if (data.isOk) {
+                setUsers(data.data);
+            }
+        })();
+    }, []);
+
+    return (
+        <div className='flex'>
+            <Menu items={menuItems} />
+            <Container>
+                <Search placeholder='input search loading default' loading />
+                <div className='mt-5 flex flex-col gap-5'>
+                    {isLoading ? <Loading /> : users.map((user) => <UserCard key={user._id} data={user} />)}
+                </div>
+            </Container>
         </div>
     );
 };
