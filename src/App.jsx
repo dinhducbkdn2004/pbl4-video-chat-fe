@@ -1,4 +1,3 @@
-
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import ForgotPassword from './pages/LoginPage/ForgotPasswordPage';
@@ -14,6 +13,7 @@ import UserPage from './pages/User/UserPage';
 import FriendListPage from './pages/MessagePage/ContactPage/FriendListPage/FriendListPage';
 import FriendRequestPage from './pages/MessagePage/ContactPage/FriendRequestPage/FriendRequestPage';
 import { SocketContextProvider } from './context/SocketContext';
+import ChatPage from './pages/MessagePage/ChatPage/ChatPage';
 
 function App() {
     return (
@@ -44,7 +44,7 @@ function App() {
             {/* Optional: Catch-all route for undefined paths */}
             <Route path='*' element={<Navigate to='/' replace />} />
         </Routes>
-    )
+    );
 }
 
-export default App
+export default App;

@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { List, Avatar, Typography, Divider, Dropdown, Space, Input, Menu } from 'antd'
+import React, { useState } from 'react';
+import { List, Avatar, Typography, Divider, Dropdown, Space, Input, Menu } from 'antd';
 import {
     SearchOutlined,
     MoreOutlined,
@@ -7,13 +7,13 @@ import {
     PlusOutlined,
     UsergroupAddOutlined,
     UserAddOutlined
-} from '@ant-design/icons'
-import { MdOutlinePushPin } from 'react-icons/md'
-import { BiMessageSquareDots } from 'react-icons/bi'
-import { useNavigate } from 'react-router-dom'
-import './ChatList.scss'
+} from '@ant-design/icons';
 
-const { Text } = Typography
+import { BiMessageSquareDots } from 'react-icons/bi';
+import { useNavigate } from 'react-router-dom';
+import './ChatList.scss';
+
+const { Text } = Typography;
 
 const onlineUsers = [
     { id: 1, avatar: 'https://via.placeholder.com/40' },
@@ -21,7 +21,7 @@ const onlineUsers = [
     { id: 3, avatar: 'https://via.placeholder.com/40' },
     { id: 4, avatar: 'https://via.placeholder.com/40' },
     { id: 5, avatar: 'https://via.placeholder.com/40' }
-]
+];
 
 const recentChats = [
     {
@@ -64,38 +64,38 @@ const recentChats = [
         avatar: 'https://via.placeholder.com/40',
         unread: 0
     }
-]
+];
 
 const ChatList = () => {
-    const navigate = useNavigate()
-    const [open, setOpen] = useState(false)  
-    const [searchValue, setSearchValue] = useState('')
-    const [showSearchBar, setShowSearchBar] = useState(false)
-    const [moreDropdownOpen, setMoreDropdownOpen] = useState(false)
+    const navigate = useNavigate();
+    const [open, setOpen] = useState(false);
+    const [searchValue, setSearchValue] = useState('');
+    const [showSearchBar, setShowSearchBar] = useState(false);
+    const [moreDropdownOpen, setMoreDropdownOpen] = useState(false);
 
     const handleMenuClick = (e) => {
         if (e.key === '3') {
-            setOpen(false)
+            setOpen(false);
         }
-    }
+    };
 
     const handleOpenChange = (nextOpen, info) => {
         if (info.source === 'trigger' || nextOpen) {
-            setOpen(nextOpen)
+            setOpen(nextOpen);
         }
-    }
+    };
 
     const handleSearchChange = (e) => {
-        setSearchValue(e.target.value)
-    }
+        setSearchValue(e.target.value);
+    };
 
     const toggleSearchBar = () => {
-        setShowSearchBar(!showSearchBar)
-    }
+        setShowSearchBar(!showSearchBar);
+    };
 
     const toggleMoreDropdown = () => {
-        setMoreDropdownOpen(!moreDropdownOpen)
-    }
+        setMoreDropdownOpen(!moreDropdownOpen);
+    };
 
     const moreMenu = (
         <Menu>
@@ -109,11 +109,11 @@ const ChatList = () => {
                 Invite Others
             </Menu.Item>
         </Menu>
-    )
+    );
 
     const handleChatClick = (chat) => {
-        navigate(`/message/${chat.id}`)
-    }
+        navigate(`/message/userId=${chat.id}`);
+    };
 
     const items = [
         {
@@ -128,7 +128,7 @@ const ChatList = () => {
             label: 'Pinned Chat',
             key: '3'
         }
-    ]
+    ];
 
     return (
         <div className='chat-list'>
@@ -214,7 +214,7 @@ const ChatList = () => {
                 />
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default ChatList
+export default ChatList;

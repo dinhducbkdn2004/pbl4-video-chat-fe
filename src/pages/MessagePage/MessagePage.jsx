@@ -1,14 +1,14 @@
-import { Layout } from 'antd'
-import ChatList from './ChatList/ChatList'
-import { Outlet } from 'react-router-dom'
-import useFetch from '../../hooks/useFetch'
+import { Layout } from 'antd';
+import ChatList from './ChatList/ChatList';
+import { Outlet } from 'react-router-dom';
+import useFetch from '../../hooks/useFetch';
 
-import './MessagePage.scss'
+import './MessagePage.scss';
 
-const { Content, Sider } = Layout
+const { Content, Sider } = Layout;
 
 const MessagePage = () => {
-    const { fetchData, isLoading, contextHolder } = useFetch()
+    const { fetchData, isLoading, contextHolder } = useFetch();
     return (
         <>
             {contextHolder}
@@ -21,7 +21,7 @@ const MessagePage = () => {
                 </Content>
             </Layout>
         </>
-    )
-}
+    );
+};
 
-export default MessagePage
+export default MessagePage;
