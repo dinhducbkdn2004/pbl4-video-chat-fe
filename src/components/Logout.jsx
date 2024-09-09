@@ -1,16 +1,17 @@
-import { Button } from "antd";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { authActions } from "../redux/features/auth/authSlice";
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { authActions } from '../redux/features/auth/authSlice';
+import { useSocket } from './../hooks/useSocket';
 
-const Logout = () => {
+export const handleLogout = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const handleLogout = () => {
+    const { socket } = useSocket();
+    return () => {
         dispatch(authActions.logout());
-        navigate("/login");
+        navigate('/login');
+        socket.close();
     };
-    return <Button onClick={handleLogout}>Logout</Button>;
 };
 
-export default Logout;
+export default handleLogout;

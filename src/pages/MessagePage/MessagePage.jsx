@@ -1,20 +1,27 @@
-import React, { useEffect } from "react";
-import { Layout } from "antd";
-import { getSocket } from "../../configs/socketInstance";
-import "./MessagePage.scss";
+import { Layout } from 'antd';
+import ChatList from './ChatList/ChatList';
+import { Outlet } from 'react-router-dom';
+import useFetch from '../../hooks/useFetch';
 
-const { Content } = Layout;
+import './MessagePage.scss';
+
+const { Content, Sider } = Layout;
 
 const MessagePage = () => {
-  const socket = getSocket();
-
-  useEffect(() => {
-    socket.emit("send-message", "aloalo");
-  }, [socket]);
-
-  return <div>MessagePage</div>;
+    const { fetchData, isLoading, contextHolder } = useFetch();
+    return (
+        <>
+            {contextHolder}
+            <Layout style={{ height: '100vh' }}>
+                <Sider width={350}>
+                    <ChatList />
+                </Sider>
+                <Content>
+                    <Outlet />
+                </Content>
+            </Layout>
+        </>
+    );
 };
-
-MessagePage.propTypes = {};
 
 export default MessagePage;

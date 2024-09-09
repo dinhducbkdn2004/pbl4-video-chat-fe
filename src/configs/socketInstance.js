@@ -1,30 +1,28 @@
-import { io } from "socket.io-client";
-import { authSelector } from "../redux/features/auth/authSelections";
-import { store } from "../redux/store";
+import { io } from 'socket.io-client';
+import { authSelector } from '../redux/features/auth/authSelections';
+import { store } from '../redux/store';
 
-// Create a socket instance and export it
+// Listen for disconnection
 let socket;
-
 export const initializeSocket = () => {
-    const { user, accessToken } = store.getState(authSelector).auth;
-    if (!user) return;
+    const { accessToken } = store.getState(authSelector).auth;
+ 
 
-    socket = io("http://localhost:3000", {
-        query: {
-            name: user.name,
-            userId: user._id,
-            authorization: accessToken,
-        },
+    if (!accessToken) return;
+
+    socket = io('http://localhost:3000', {
+        extraHeaders: {
+            authorization: accessToken
+        }
     });
     // Listen for connection
-    socket.on("connect", () => {
-        console.log("Socket connected: ", socket.id);
+    socket.on('connect', () => {
+        console.log('Socket connected: ', socket.id);
     });
-
-    // Listen for disconnection
-    socket.on("disconnect", () => {
-        console.log("Socket disconnected");
+    socket.on('sever-send-friend-request', (e) => {
+        console.log(e);
     });
+    return socket;
 };
 
 export const getSocket = () => {
