@@ -1,16 +1,19 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
 
-import ForgotPassword from './pages/LoginPage/ForgotPasswordPage'
-import LoginPage from './pages/LoginPage/LoginPage'
-import MainPage from './pages/MainPage/MainPage'
-import ContactPage from './pages/MessagePage/ContactPage/ContactPage'
-import MessagePage from './pages/MessagePage/MessagePage'
+import { Navigate, Route, Routes } from 'react-router-dom';
 
-import ProtectedRoute from './routes/ProtectedRoute'
-import UnauthorizeRoute from './routes/UnauthorizeRoute'
-import SearchPage from './pages/SearchPage/SearchPage'
-import UserPage from './pages/User/UserPage'
-import ChatPage from './pages/MessagePage/ChatPage/ChatPage'
+import ForgotPassword from './pages/LoginPage/ForgotPasswordPage';
+import LoginPage from './pages/LoginPage/LoginPage';
+import MainPage from './pages/MainPage/MainPage';
+import ContactPage from './pages/MessagePage/ContactPage/ContactPage';
+import MessagePage from './pages/MessagePage/MessagePage';
+
+import ProtectedRoute from './routes/ProtectedRoute';
+import UnauthorizeRoute from './routes/UnauthorizeRoute';
+import SearchPage from './pages/SearchPage/SearchPage';
+import UserPage from './pages/User/UserPage';
+import FriendListPage from './pages/MessagePage/ContactPage/FriendListPage/FriendListPage';
+import FriendRequestPage from './pages/MessagePage/ContactPage/FriendRequestPage/FriendRequestPage';
+import { SocketContextProvider } from './context/SocketContext';
 
 function App() {
     return (
@@ -28,6 +31,11 @@ function App() {
                         <Route path=':chatId' element={<ChatPage />} />
                     </Route>
                     <Route path='/contact' element={<ContactPage />} />
+                    <Route path='/message' element={<MessagePage />} />
+                    <Route path='/contact' element={<ContactPage />}>
+                        <Route path='/contact/friend-list' element={<FriendListPage />} />
+                        <Route path='/contact/friend-request' element={<FriendRequestPage />} />
+                    </Route>
                     <Route path='/search' element={<SearchPage />} />
                     <Route path='/user/:id' element={<UserPage />} />
                 </Route>

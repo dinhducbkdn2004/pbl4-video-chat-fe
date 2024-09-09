@@ -1,34 +1,31 @@
-import { Layout } from "antd";
-import { useEffect } from "react";
-import useFetch from "../../hooks/useFetch";
+import { Layout } from 'antd';
+import { useEffect } from 'react';
+import useFetch from '../../hooks/useFetch';
 
-import { useSelector } from "react-redux";
-import { Outlet } from "react-router-dom";
-import { initializeSocket } from "../../configs/socketInstance";
-import { authSelector } from "../../redux/features/auth/authSelections";
-import { authActions } from "../../redux/features/auth/authSlice";
-import userApi from "./../../apis/userApi";
-import Loading from "./../../components/Loading/Loading";
-import { store } from "./../../redux/store";
-import "./MainPage.scss";
+import { useSelector } from 'react-redux';
+import { Outlet } from 'react-router-dom';
+import { initializeSocket } from '../../configs/socketInstance';
+import { authSelector } from '../../redux/features/auth/authSelections';
+import { authActions } from '../../redux/features/auth/authSlice';
+import userApi from './../../apis/userApi';
+import Loading from './../../components/Loading/Loading';
+import { store } from './../../redux/store';
+import './MainPage.scss';
 
-import SideBar from "./SideBar";
+import SideBar from './SideBar';
 
 const { Content } = Layout;
 
 const MainPage = () => {
     const { isAuthenticated } = useSelector(authSelector);
     const { fetchData, isLoading, contextHolder } = useFetch();
-    // const naviage = useNavigate();
-    // const handleNavigatie = (e) => {
-    //   naviage(`/${e.key}`);
-    // };
+
     useEffect(() => {
         (async () => {
             if (isAuthenticated) {
                 const { isOk, data } = await fetchData(userApi.getProfile);
                 if (isOk) {
-                    initializeSocket();
+                    // initializeSocket();
                     store.dispatch(authActions.setProfile(data));
                     return;
                 }
@@ -44,10 +41,10 @@ const MainPage = () => {
         <>
             {contextHolder}
 
-            <Layout style={{ height: "100vh" }}>
+            <Layout style={{ height: '100vh' }}>
                 <SideBar />
                 <Layout>
-                    <Content>
+                    <Content style={{ height: '100vh', overflow: 'auto' }}>
                         <Outlet />
                     </Content>
                 </Layout>
