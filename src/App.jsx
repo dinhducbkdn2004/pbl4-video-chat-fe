@@ -1,3 +1,4 @@
+
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import ForgotPassword from './pages/LoginPage/ForgotPasswordPage';
@@ -26,6 +27,10 @@ function App() {
             {/* Protected route for authenticated users */}
             <Route element={<ProtectedRoute />}>
                 <Route path='/' element={<MainPage />}>
+                    <Route path='/message' element={<MessagePage />}>
+                        <Route path=':chatId' element={<ChatPage />} />
+                    </Route>
+                    <Route path='/contact' element={<ContactPage />} />
                     <Route path='/message' element={<MessagePage />} />
                     <Route path='/contact' element={<ContactPage />}>
                         <Route path='/contact/friend-list' element={<FriendListPage />} />
@@ -39,7 +44,7 @@ function App() {
             {/* Optional: Catch-all route for undefined paths */}
             <Route path='*' element={<Navigate to='/' replace />} />
         </Routes>
-    );
+    )
 }
 
-export default App;
+export default App
