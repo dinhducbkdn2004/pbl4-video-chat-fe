@@ -12,6 +12,7 @@ import SearchPage from './pages/SearchPage/SearchPage';
 import UserPage from './pages/User/UserPage';
 import FriendListPage from './pages/MessagePage/ContactPage/FriendListPage/FriendListPage';
 import FriendRequestPage from './pages/MessagePage/ContactPage/FriendRequestPage/FriendRequestPage';
+import { SocketContextProvider } from './context/SocketContext';
 
 function App() {
     return (

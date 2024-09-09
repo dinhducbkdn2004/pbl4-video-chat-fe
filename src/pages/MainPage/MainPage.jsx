@@ -25,7 +25,7 @@ const MainPage = () => {
             if (isAuthenticated) {
                 const { isOk, data } = await fetchData(userApi.getProfile);
                 if (isOk) {
-                    initializeSocket();
+                    // initializeSocket();
                     store.dispatch(authActions.setProfile(data));
                     return;
                 }
