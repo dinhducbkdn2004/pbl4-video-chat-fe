@@ -1,46 +1,50 @@
-import React, { useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
-import { Modal, Input, Button } from 'antd'
-import { InfoCircleOutlined, CloseOutlined } from '@ant-design/icons'
-import useFetch from '../../hooks/useFetch'
-import authApi from '../../apis/authApi'
+import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import { Modal, Input, Button } from 'antd';
+import { InfoCircleOutlined, CloseOutlined } from '@ant-design/icons';
+import useFetch from '../../hooks/useFetch';
+import authApi from '../../apis/authApi';
 
 const OTPModal = ({ isVisible, email, handleCloseOtpModal, onSuccess }) => {
-    const [otp, setOtp] = useState(new Array(6).fill(''))
-    const { isLoading, fetchData, contextHolder } = useFetch()
+    const [otp, setOtp] = useState(new Array(6).fill(''));
+    const { isLoading, fetchData, contextHolder } = useFetch();
 
     useEffect(() => {
         if (isVisible) {
-            document.getElementById('otp-input-0').focus()
+            document.getElementById('otp-input-0').focus();
         }
-    }, [isVisible])
+    }, [isVisible]);
 
     const handleOtpChange = (element, index) => {
-        const value = element.value
+        const value = element.value;
         if (/^[0-9]$/.test(value) || value === '') {
-            const newOtp = [...otp]
-            newOtp[index] = value
-            setOtp(newOtp)
+            const newOtp = [...otp];
+            newOtp[index] = value;
+            setOtp(newOtp);
 
             if (value !== '' && index < 5) {
-                document.getElementById(`otp-input-${index + 1}`).focus()
+                document.getElementById(`otp-input-${index + 1}`).focus();
             }
 
             if (value === '' && index > 0) {
-                document.getElementById(`otp-input-${index - 1}`).focus()
+                document.getElementById(`otp-input-${index - 1}`).focus();
             }
         }
-    }
+    };
 
     const handleOtpSubmit = async () => {
-        const otpCode = otp.join('')
-        const { isOk, data } = await fetchData(() => authApi.checkOtp(email, otpCode))
-        console.log(data)
-        if (isOk) {
-            localStorage.setItem('verifiedOtp', otpCode)
-            onSuccess()
+        const otpCode = otp.join('');
+        try {
+            const { isOk, data } = await fetchData(() => authApi.checkOtp(email, otpCode));
+            console.log(data);
+            if (isOk) {
+                localStorage.setItem('verifiedOtp', otpCode);
+                onSuccess();
+            }
+        } catch (error) {
+            console.log('OTP verification failed:', error);
         }
-    }
+    };
 
     return (
         <>
@@ -88,14 +92,14 @@ const OTPModal = ({ isVisible, email, handleCloseOtpModal, onSuccess }) => {
                 </Button>
             </Modal>
         </>
-    )
-}
+    );
+};
 
 OTPModal.propTypes = {
     isVisible: PropTypes.bool.isRequired,
     email: PropTypes.string.isRequired,
     handleCloseOtpModal: PropTypes.func.isRequired,
     onSuccess: PropTypes.func.isRequired
-}
+};
 
-export default OTPModal
+export default OTPModal;

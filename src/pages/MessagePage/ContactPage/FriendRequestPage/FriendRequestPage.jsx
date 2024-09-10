@@ -35,16 +35,18 @@ const FriendRequestBox = () => {
     }, []);
 
     return (
-        <div>
-            <h1 className='py-6'>Lời mời đã nhận</h1>
-            <div className='flex flex-wrap gap-4'>
-                {isLoading ? (
-                    <Loading />
-                ) : (
-                    requests.map((request) => <FriendRequestCard key={request._id} request={request} />)
-                )}
+        <>
+            <div>
+                <h1 className='py-6'>Lời mời đã nhận</h1>
+                <div className='flex flex-wrap gap-4'>
+                    {isLoading ? (
+                        <Loading />
+                    ) : (
+                        requests.map((request) => <FriendRequestCard key={request._id} request={request} />)
+                    )}
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 export default FriendRequestPage;

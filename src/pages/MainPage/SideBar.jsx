@@ -20,17 +20,42 @@ const Sidebar = () => {
     const navigate = useNavigate();
     const { user } = useSelector(authSelector);
 
-    const menu = (
-        <Menu>
-            <Menu.Item key='setting'>
-                <IoSettingsOutline size={15} />
-                <span>Setting</span>
-            </Menu.Item>
-            <Menu.Item key='logout' onClick={logout}>
-                <RiLogoutCircleRLine size={15} /> <span>Logout</span>
-            </Menu.Item>
-        </Menu>
-    );
+    const menuItems = [
+        {
+            key: 'setting',
+            icon: <IoSettingsOutline size={15} />,
+            label: <span>Setting</span>
+        },
+        {
+            key: 'logout',
+            icon: <RiLogoutCircleRLine size={15} />,
+            label: <span>Logout</span>,
+            onClick: logout
+        }
+    ];
+
+    const sidebarItems = [
+        {
+            key: 'message',
+            icon: <BiMessageSquareDots size={20} />,
+            className: 'custom-menu-item'
+        },
+        {
+            key: 'call',
+            icon: <TbPhoneCall size={20} />,
+            className: 'custom-menu-item'
+        },
+        {
+            key: 'contact',
+            icon: <LuContact2 size={20} />,
+            className: 'custom-menu-item'
+        },
+        {
+            key: 'search',
+            icon: <TbWorldSearch size={20} />,
+            className: 'custom-menu-item'
+        }
+    ];
 
     return (
         <Sider width={72} className='sidebar-container'>
@@ -43,22 +68,17 @@ const Sidebar = () => {
                 onClick={(e) => {
                     navigate(e.key);
                 }}
-            >
-                <Menu.Item key='message' icon={<BiMessageSquareDots size={20} />} className='custom-menu-item' />
-                <Menu.Item key='call' icon={<TbPhoneCall size={20} />} className='custom-menu-item' />
-                <Menu.Item key='contact' icon={<LuContact2 size={20} />} className='custom-menu-item' />
-                <Menu.Item key='search' icon={<TbWorldSearch size={20} />} className='custom-menu-item' />
-
-                <div className='bottom-menu-items'>
-                    <Dropdown overlay={menu} trigger={['click']}>
-                        <div className='avatar-container'>
-                            <Badge count={1} status='success'>
-                                <Avatar size={46} src={user?.avatar} />
-                            </Badge>
-                        </div>
-                    </Dropdown>
-                </div>
-            </Menu>
+                items={sidebarItems}
+            />
+            <div className='bottom-menu-items'>
+                <Dropdown menu={{ items: menuItems }} trigger={['click']}>
+                    <div className='avatar-container'>
+                        <Badge count={1} status='success'>
+                            <Avatar size={46} src={user?.avatar} />
+                        </Badge>
+                    </div>
+                </Dropdown>
+            </div>
         </Sider>
     );
 };

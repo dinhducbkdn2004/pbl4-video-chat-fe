@@ -1,13 +1,6 @@
 import React, { useState } from 'react';
 import { List, Avatar, Typography, Divider, Dropdown, Space, Input, Menu } from 'antd';
-import {
-    SearchOutlined,
-    MoreOutlined,
-    DownOutlined,
-    PlusOutlined,
-    UsergroupAddOutlined,
-    UserAddOutlined
-} from '@ant-design/icons';
+import { SearchOutlined, MoreOutlined, PlusOutlined, UsergroupAddOutlined, UserAddOutlined } from '@ant-design/icons';
 
 import { BiMessageSquareDots } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
@@ -68,22 +61,9 @@ const recentChats = [
 
 const ChatList = () => {
     const navigate = useNavigate();
-    const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState('');
     const [showSearchBar, setShowSearchBar] = useState(false);
     const [moreDropdownOpen, setMoreDropdownOpen] = useState(false);
-
-    const handleMenuClick = (e) => {
-        if (e.key === '3') {
-            setOpen(false);
-        }
-    };
-
-    const handleOpenChange = (nextOpen, info) => {
-        if (info.source === 'trigger' || nextOpen) {
-            setOpen(nextOpen);
-        }
-    };
 
     const handleSearchChange = (e) => {
         setSearchValue(e.target.value);
@@ -97,65 +77,40 @@ const ChatList = () => {
         setMoreDropdownOpen(!moreDropdownOpen);
     };
 
-    const moreMenu = (
-        <Menu>
-            <Menu.Item key='1' icon={<PlusOutlined />}>
-                New Chat
-            </Menu.Item>
-            <Menu.Item key='2' icon={<UsergroupAddOutlined />}>
-                Create Group
-            </Menu.Item>
-            <Menu.Item key='3' icon={<UserAddOutlined />}>
-                Invite Others
-            </Menu.Item>
-        </Menu>
-    );
+    const moreMenuItems = [
+        {
+            key: '1',
+            icon: <PlusOutlined />,
+            label: 'New Chat'
+        },
+        {
+            key: '2',
+            icon: <UsergroupAddOutlined />,
+            label: 'Create Group'
+        },
+        {
+            key: '3',
+            icon: <UserAddOutlined />,
+            label: 'Invite Others'
+        }
+    ];
 
     const handleChatClick = (chat) => {
         navigate(`/message/userId=${chat.id}`);
     };
 
-    const items = [
-        {
-            label: 'All Chat',
-            key: '1'
-        },
-        {
-            label: 'Archive Chat',
-            key: '2'
-        },
-        {
-            label: 'Pinned Chat',
-            key: '3'
-        }
-    ];
-
     return (
         <div className='chat-list'>
             {/* All Chat */}
             <div className='header'>
-                <Dropdown
-                    menu={{
-                        items,
-                        onClick: handleMenuClick
-                    }}
-                    onOpenChange={handleOpenChange}
-                    open={open}
-                >
-                    <a onClick={(e) => e.preventDefault()} className='dropdown-link'>
-                        <Space>
-                            All Chats
-                            <DownOutlined className='down-icon' />
-                        </Space>
-                    </a>
-                </Dropdown>
+                <div className='title'>All Chats</div>
                 <div className='icons'>
                     <SearchOutlined className='icon' onClick={toggleSearchBar} />
                     <Dropdown
-                        overlay={moreMenu}
+                        menu={{ items: moreMenuItems }}
                         trigger={['click']}
-                        visible={moreDropdownOpen}
-                        onVisibleChange={setMoreDropdownOpen}
+                        open={moreDropdownOpen}
+                        onOpenChange={setMoreDropdownOpen}
                         placement='bottomRight'
                     >
                         <MoreOutlined className='icon' onClick={toggleMoreDropdown} />
@@ -181,7 +136,15 @@ const ChatList = () => {
                 <h4>Online Now</h4>
                 <div className='avatars'>
                     {onlineUsers.map((user) => (
-                        <Avatar key={user.id} src={user.avatar} className='avatar' />
+                        <Avatar
+                            key={user.id}
+                            src={user.avatar}
+                            className='avatar'
+                            onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = 'fallback-image-url';
+                            }}
+                        />
                     ))}
                 </div>
             </div>
@@ -199,7 +162,16 @@ const ChatList = () => {
                     renderItem={(item) => (
                         <List.Item className='list-item' key={item.id} onClick={() => handleChatClick(item)}>
                             <List.Item.Meta
-                                avatar={<Avatar src={item.avatar} className='avatar' />}
+                                avatar={
+                                    <Avatar
+                                        src={item.avatar}
+                                        className='avatar'
+                                        onError={(e) => {
+                                            e.target.onerror = null;
+                                            e.target.src = 'fallback-image-url';
+                                        }}
+                                    />
+                                }
                                 title={
                                     <div className='meta'>
                                         <span className='title'>{item.name}</span>

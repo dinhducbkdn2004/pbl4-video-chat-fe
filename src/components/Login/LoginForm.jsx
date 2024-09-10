@@ -1,48 +1,52 @@
-import { Button, Checkbox, Form, Input } from 'antd'
-import { LockOutlined, MailOutlined } from '@ant-design/icons'
-import useFetch from '../../hooks/useFetch'
-import { authActions } from '../../redux/features/auth/authSlice'
-import authApi from '../../apis/authApi'
-import { useNavigate } from 'react-router-dom'
-import './LoginForm.scss'
-import { store } from '../../redux/store'
-import { useState } from 'react'
-import OTPModal from '../OTPModal/OTPModal'
-import GoogleLoginComponent from './GoogleLoginComponent'
+import { Button, Checkbox, Form, Input } from 'antd';
+import { LockOutlined, MailOutlined } from '@ant-design/icons';
+import useFetch from '../../hooks/useFetch';
+import { authActions } from '../../redux/features/auth/authSlice';
+import authApi from '../../apis/authApi';
+import { useNavigate } from 'react-router-dom';
+import './LoginForm.scss';
+import { store } from '../../redux/store';
+import { useState } from 'react';
+import OTPModal from '../OTPModal/OTPModal';
+import GoogleLoginComponent from './GoogleLoginComponent';
 
 const LoginForm = () => {
-    const navigate = useNavigate()
-    const { isLoading, fetchData, contextHolder } = useFetch()
-    const [isOtpVisible, setIsOtpVisible] = useState(false)
-    const [email, setEmail] = useState('')
+    const navigate = useNavigate();
+    const { isLoading, fetchData, contextHolder } = useFetch();
+    const [isOtpVisible, setIsOtpVisible] = useState(false);
+    const [email, setEmail] = useState('');
 
     const onFinish = async (values) => {
-        setEmail(values.email)
-        const { isOk, data, message } = await fetchData(() => authApi.login(values))
+        setEmail(values.email);
+        try {
+            const { isOk, data, message } = await fetchData(() => authApi.login(values));
 
-        if (isOk) {
-            const { accessToken, refreshToken } = data
-            store.dispatch(
-                authActions.setCredentials({
-                    accessToken,
-                    refreshToken
-                })
-            )
-            navigate('/')
-        } else if (message.includes("Your account hasn't been verified")) {
-            setIsOtpVisible(true)
+            if (isOk) {
+                const { accessToken, refreshToken } = data;
+                store.dispatch(
+                    authActions.setCredentials({
+                        accessToken,
+                        refreshToken
+                    })
+                );
+                navigate('/');
+            } else if (message.includes("Your account hasn't been verified")) {
+                setIsOtpVisible(true);
+            }
+        } catch (error) {
+            console.log('Login failed:', error);
         }
-    }
+    };
 
     const handleForgotPasswordClick = (e) => {
-        e.preventDefault()
-        navigate('/forgot-password')
-    }
+        e.preventDefault();
+        navigate('/forgot-password');
+    };
 
     const handleOtpSuccess = () => {
-        setIsOtpVisible(false)
-        navigate('/')
-    }
+        setIsOtpVisible(false);
+        navigate('/');
+    };
 
     return (
         <>
@@ -140,7 +144,7 @@ const LoginForm = () => {
                 onSuccess={handleOtpSuccess}
             />
         </>
-    )
-}
+    );
+};
 
-export default LoginForm
+export default LoginForm;
