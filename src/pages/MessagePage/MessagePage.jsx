@@ -1,15 +1,25 @@
-import ChatList from "../../components/ChatList/ChatList";
-import ChatWindow from "../../components/ChatWindow/ChatWindow";
+import { Layout } from 'antd';
+import ChatList from './ChatList/ChatList';
+import { Outlet } from 'react-router-dom';
+import useFetch from '../../hooks/useFetch';
+
+import './MessagePage.scss';
+
+const { Content, Sider } = Layout;
 
 const MessagePage = () => {
+    const { fetchData, isLoading, contextHolder } = useFetch();
     return (
         <>
-            <div className="chat-list-container">
-                <ChatList />
-            </div>
-            <div className="chat-window-container">
-                <ChatWindow />
-            </div>
+            {contextHolder}
+            <Layout style={{ height: '100vh' }}>
+                <Sider width={350}>
+                    <ChatList />
+                </Sider>
+                <Content>
+                    <Outlet />
+                </Content>
+            </Layout>
         </>
     );
 };

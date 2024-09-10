@@ -15,6 +15,8 @@ import FriendRequestPage from './pages/MessagePage/ContactPage/FriendRequestPage
 import SearchUsers from './components/Search/SearchUsers';
 import SearchGroup from './components/Search/SearchGroup';
 
+import ChatPage from './pages/MessagePage/ChatPage/ChatPage';
+
 function App() {
     return (
         <Routes>
@@ -27,6 +29,10 @@ function App() {
             {/* Protected route for authenticated users */}
             <Route element={<ProtectedRoute />}>
                 <Route path='/' element={<MainPage />}>
+                    <Route path='/message' element={<MessagePage />}>
+                        <Route path=':chatId' element={<ChatPage />} />
+                    </Route>
+                    <Route path='/contact' element={<ContactPage />} />
                     <Route path='/message' element={<MessagePage />} />
                     <Route path='/contact' element={<ContactPage />}>
                         <Route path='/contact/friend-list' element={<FriendListPage />} />

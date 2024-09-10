@@ -12,17 +12,15 @@ import envClient from './env.js';
 import { SocketContextProvider } from './context/SocketContext.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-    <React.StrictMode>
-        <BrowserRouter>
-            <Provider store={store}>
-                <ConfigProvider>
-                    <GoogleOAuthProvider clientId={envClient.GOOGLE_OATH_CLIENT_ID}>
-                        <SocketContextProvider>
-                            <App />
-                        </SocketContextProvider>
-                    </GoogleOAuthProvider>
-                </ConfigProvider>
-            </Provider>
-        </BrowserRouter>
-    </React.StrictMode>
+    <BrowserRouter>
+        <Provider store={store}>
+            <ConfigProvider>
+                <GoogleOAuthProvider clientId={envClient.GOOGLE_OATH_CLIENT_ID}>
+                    <SocketContextProvider>
+                        <App />
+                    </SocketContextProvider>
+                </GoogleOAuthProvider>
+            </ConfigProvider>
+        </Provider>
+    </BrowserRouter>
 );
