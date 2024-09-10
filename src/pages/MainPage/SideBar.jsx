@@ -46,12 +46,12 @@ const Sidebar = () => {
             className: 'custom-menu-item'
         },
         {
-            key: 'contact',
+            key: 'contact/friend-list',
             icon: <LuContact2 size={20} />,
             className: 'custom-menu-item'
         },
         {
-            key: 'search',
+            key: 'search/users',
             icon: <TbWorldSearch size={20} />,
             className: 'custom-menu-item'
         }

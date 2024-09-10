@@ -23,7 +23,7 @@ const FriendRequestPage = () => {
     );
 };
 const FriendRequestBox = () => {
-    const { fetchData, isLoading } = useFetch();
+    const { fetchData, isLoading } = useFetch({ showSuccess: false });
     const [requests, setRequests] = useState([]);
     useEffect(() => {
         (async () => {

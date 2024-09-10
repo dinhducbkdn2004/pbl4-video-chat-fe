@@ -10,7 +10,7 @@ const { Search } = Input;
 const FriendListPage = () => {
     const onSearch = (value) => console.log(value);
     const [users, setUsers] = useState([]);
-    const { isLoading, fetchData } = useFetch();
+    const { isLoading, fetchData } = useFetch({ showSuccess: false });
     const { user } = useSelector(authSelector);
 
     useEffect(() => {

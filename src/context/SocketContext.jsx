@@ -26,16 +26,19 @@ export const SocketContextProvider = ({ children }) => {
 
         // Listen for connection
         socket.on('connect', () => {
-            console.log('Socket connected: ', socket.id);
+            console.log('Socket connected: ', socket);
         });
         socket.on('sever-send-friend-request', (e) => {
             console.log(e);
         });
+        if (user) {
+            console.log(user);
 
-        socket.on('online-users', (users) => {
-            setOnlineUsers(users);
-        });
-    }, [accessToken]);
+            socket.on('online-users', (users) => {
+                setOnlineUsers(users.filter((onlineUser) => onlineUser.userId !== user?._id));
+            });
+        }
+    }, [accessToken, user]);
 
     return <SocketContext.Provider value={{ socket, onlineUsers }}>{children}</SocketContext.Provider>;
 };

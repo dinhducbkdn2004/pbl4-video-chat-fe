@@ -16,7 +16,12 @@ const SearchSideBar = () => {
     const navigate = useNavigate();
     return (
         <>
-            <Menu className='h-svh' items={menuItems} onClick={(e) => navigate(`/search/${e.key}`)} />
+            <Menu
+                className='h-svh'
+                items={menuItems}
+                onClick={(e) => navigate(`/search/${e.key}`)}
+                defaultSelectedKeys='users'
+            />
         </>
     );
 };

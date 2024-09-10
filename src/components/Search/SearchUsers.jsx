@@ -9,7 +9,7 @@ import useFetch from './../../hooks/useFetch';
 
 const { Search } = Input;
 const SearchUsers = () => {
-    const { fetchData, isLoading } = useFetch();
+    const { fetchData, isLoading } = useFetch({ showSuccess: false });
     const [users, setUsers] = useState([]);
     useEffect(() => {
         (async () => {

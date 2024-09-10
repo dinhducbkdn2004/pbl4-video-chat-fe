@@ -5,6 +5,7 @@ import { SearchOutlined, MoreOutlined, PlusOutlined, UsergroupAddOutlined, UserA
 import { BiMessageSquareDots } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
 import './ChatList.scss';
+import OnlineUsers from '../../../components/ChatList/OnlineUsers';
 
 const { Text } = Typography;
 
@@ -132,22 +133,7 @@ const ChatList = () => {
             </div>
 
             {/* Online Now */}
-            <div className='online-now'>
-                <h4>Online Now</h4>
-                <div className='avatars'>
-                    {onlineUsers.map((user) => (
-                        <Avatar
-                            key={user.id}
-                            src={user.avatar}
-                            className='avatar'
-                            onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src = 'fallback-image-url';
-                            }}
-                        />
-                    ))}
-                </div>
-            </div>
+            <OnlineUsers />
 
             {/* Body Chat */}
             <div className='body-chat'>

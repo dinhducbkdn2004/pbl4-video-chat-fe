@@ -1,7 +1,12 @@
 import { notification } from 'antd';
 import { useState, useEffect } from 'react';
 
-const useFetch = () => {
+const useFetch = (
+    config = {
+        showSuccess: true,
+        showError: true
+    }
+) => {
     const [isLoading, setIsLoading] = useState(false);
     const [api, contextHolder] = notification.useNotification({
         showProgress: true
@@ -30,11 +35,11 @@ const useFetch = () => {
 
             const data = await cb();
 
-            setNotificationData({ type: 'success', message: data.message });
+            config?.showSuccess && setNotificationData({ type: 'success', message: data.message });
             return data;
         } catch (error) {
             console.error(error);
-            setNotificationData({ type: 'error', message: error.message });
+            config?.showError && setNotificationData({ type: 'error', message: error.message });
             return error;
         } finally {
             setIsLoading(false);
