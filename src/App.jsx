@@ -12,7 +12,8 @@ import SearchPage from './pages/SearchPage/SearchPage';
 import UserPage from './pages/User/UserPage';
 import FriendListPage from './pages/MessagePage/ContactPage/FriendListPage/FriendListPage';
 import FriendRequestPage from './pages/MessagePage/ContactPage/FriendRequestPage/FriendRequestPage';
-import { SocketContextProvider } from './context/SocketContext';
+import SearchUsers from './components/Search/SearchUsers';
+import SearchGroup from './components/Search/SearchGroup';
 
 function App() {
     return (
@@ -31,7 +32,10 @@ function App() {
                         <Route path='/contact/friend-list' element={<FriendListPage />} />
                         <Route path='/contact/friend-request' element={<FriendRequestPage />} />
                     </Route>
-                    <Route path='/search' element={<SearchPage />} />
+                    <Route path='/search' element={<SearchPage />}>
+                        <Route path='/search/users' element={<SearchUsers />} />
+                        <Route path='/search/groups' element={<SearchGroup />} />
+                    </Route>
                     <Route path='/user/:id' element={<UserPage />} />
                 </Route>
             </Route>

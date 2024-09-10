@@ -11,7 +11,6 @@ const useFetch = () => {
             setIsLoading(true);
 
             const data = await cb();
-            console.log(data);
 
             api.success({
                 message: 'Success!',

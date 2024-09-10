@@ -20,6 +20,7 @@ import {
 import { MdOutlinePushPin } from "react-icons/md";
 import { BiMessageSquareDots } from "react-icons/bi";
 import "./ChatList.scss";
+import OnlineUsers from "./OnlineUsers";
 
 const { Text } = Typography;
 
@@ -183,14 +184,7 @@ const ChatList = () => {
       </div>
 
       {/* Online Now */}
-      <div className="online-now">
-        <h4>Online Now</h4>
-        <div className="avatars">
-          {onlineUsers.map((user) => (
-            <Avatar key={user.id} src={user.avatar} className="avatar" />
-          ))}
-        </div>
-      </div>
+      <OnlineUsers />
 
       {/* Body Chat */}
       <div className="body-chat">

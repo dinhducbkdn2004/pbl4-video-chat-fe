@@ -25,6 +25,15 @@ const userApi = {
     },
     getFriendList: (userId) => {
         return axiosClient.get(`/users/get-detail/${userId}/friend-list`);
+    },
+    searchUsers: (name, page = 1, limit = 10) => {
+        return axiosClient.get('/search/users', {
+            params: {
+                name,
+                page,
+                limit
+            }
+        });
     }
 };
 export default userApi;

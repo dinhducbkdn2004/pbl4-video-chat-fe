@@ -2,7 +2,6 @@ import { createContext, useEffect, useState } from 'react';
 
 import io from 'socket.io-client';
 import { authSelector } from '../redux/features/auth/authSelections';
-import { store } from '../redux/store';
 
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
@@ -12,7 +11,7 @@ export const SocketContext = createContext();
 export const SocketContextProvider = ({ children }) => {
     const [socket, setSocket] = useState(null);
     const [onlineUsers, setOnlineUsers] = useState([]);
-    const { accessToken } = useSelector(authSelector);
+    const { accessToken, user } = useSelector(authSelector);
 
     useEffect(() => {
         if (!accessToken) return;
@@ -22,6 +21,7 @@ export const SocketContextProvider = ({ children }) => {
                 authorization: accessToken
             }
         });
+
         setSocket(socket);
 
         // Listen for connection
@@ -32,10 +32,9 @@ export const SocketContextProvider = ({ children }) => {
             console.log(e);
         });
 
-        socket.on('getOnlineUsers', (users) => {
+        socket.on('online-users', (users) => {
             setOnlineUsers(users);
         });
-        return () => socket && socket.close();
     }, [accessToken]);
 
     return <SocketContext.Provider value={{ socket, onlineUsers }}>{children}</SocketContext.Provider>;
