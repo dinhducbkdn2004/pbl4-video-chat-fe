@@ -1,34 +1,46 @@
-.sidebar-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  height: 100%;
+.custom-menu-item {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 0;
+}
+.ant-dropdown-menu-title-content {
+    display: flex;
+    align-items: center;
+}
+.ant-dropdown-menu-title-content span {
+    margin-left: 10px;
+}
+.ant-menu-light .ant-menu-item:not(.ant-menu-item-selected):not(.ant-menu-submenu-selected):hover {
+    color: #1890ff;
+}
+.avatar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 15px;
+    cursor: pointer;
 }
 
-.sidebar-container .custom-menu {
-  border-inline-end: none !important;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.ant-menu-light.ant-menu-root.ant-menu-vertical {
+    border-inline-end: none;
 }
-
-.sidebar-container .custom-menu-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.ant-menu .ant-menu-item .ant-menu-item-icon + span {
+    margin-inline-start: 10px;
+    margin-inline: 0;
+    opacity: 1;
+    transition:
+        opacity 0.3s cubic-bezier(0.645, 0.045, 0.355, 1),
+        margin 0.3s,
+        color 0.2s;
 }
-
-.sidebar-container :where(.css-dev-only-do-not-override-11lehqq).ant-menu .ant-menu-submenu-title .anticon + span {
-  margin-inline-start: 0 !important;
-  opacity: 1;
-  transition: opacity 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), margin 0.3s, color 0.3s;
+.ant-menu-vertical > .ant-menu-item {
+    height: 42px;
 }
-
-.sidebar-container .avatar-container {
-  margin-bottom: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}/*# sourceMappingURL=SideBar.css.map */
+.ant-layout-sider-children {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}

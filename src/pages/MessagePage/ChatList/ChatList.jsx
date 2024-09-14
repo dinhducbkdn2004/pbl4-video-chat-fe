@@ -1,21 +1,11 @@
 import React, { useState } from 'react';
-import { List, Avatar, Typography, Divider, Dropdown, Space, Input, Menu } from 'antd';
+import { List, Avatar, Divider, Dropdown, Input } from 'antd';
 import { SearchOutlined, MoreOutlined, PlusOutlined, UsergroupAddOutlined, UserAddOutlined } from '@ant-design/icons';
 
 import { BiMessageSquareDots } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
 import './ChatList.scss';
 import OnlineUsers from '../../../components/ChatList/OnlineUsers';
-
-const { Text } = Typography;
-
-const onlineUsers = [
-    { id: 1, avatar: 'https://via.placeholder.com/40' },
-    { id: 2, avatar: 'https://via.placeholder.com/40' },
-    { id: 3, avatar: 'https://via.placeholder.com/40' },
-    { id: 4, avatar: 'https://via.placeholder.com/40' },
-    { id: 5, avatar: 'https://via.placeholder.com/40' }
-];
 
 const recentChats = [
     {
@@ -52,6 +42,14 @@ const recentChats = [
     },
     {
         id: 5,
+        name: 'Lila Moss',
+        message: 'I am fine',
+        time: 'Yesterday',
+        avatar: 'https://via.placeholder.com/40',
+        unread: 0
+    },
+    {
+        id: 6,
         name: 'Lila Moss',
         message: 'I am fine',
         time: 'Yesterday',
@@ -148,16 +146,7 @@ const ChatList = () => {
                     renderItem={(item) => (
                         <List.Item className='list-item' key={item.id} onClick={() => handleChatClick(item)}>
                             <List.Item.Meta
-                                avatar={
-                                    <Avatar
-                                        src={item.avatar}
-                                        className='avatar'
-                                        onError={(e) => {
-                                            e.target.onerror = null;
-                                            e.target.src = 'fallback-image-url';
-                                        }}
-                                    />
-                                }
+                                avatar={<Avatar src={item.avatar} className='avatar' />}
                                 title={
                                     <div className='meta'>
                                         <span className='title'>{item.name}</span>

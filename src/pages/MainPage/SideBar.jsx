@@ -3,16 +3,14 @@ import { Avatar, Badge, Dropdown, Layout, Menu } from 'antd';
 import { RiLogoutCircleRLine } from 'react-icons/ri';
 import { BiMessageSquareDots } from 'react-icons/bi';
 import { IoSettingsOutline } from 'react-icons/io5';
-
 import { LuContact2 } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
-import logo from '../../assets/logo.png';
-
 import { handleLogout } from '../../components/Logout';
-import './SideBar.scss';
-
 import { authSelector } from '../../redux/features/auth/authSelections';
 import { useSelector } from 'react-redux';
+import assets from '../../assets/index';
+import './SideBar.css';
+
 const { Sider } = Layout;
 
 const Sidebar = () => {
@@ -58,21 +56,24 @@ const Sidebar = () => {
     ];
 
     return (
-        <Sider width={72} className='sidebar-container'>
-            <div className='logo-container'>
-                <img src={logo} alt='Logo' className='logo' />
+        <Sider
+            width={72}
+            className='flex h-full flex-col items-center justify-between border-r border-purple-100 bg-white-default py-4'
+        >
+            <div className='mb-5 flex items-center justify-center'>
+                <img src={assets.logo_sidebar1} alt='Logo' className='h-9 w-9' />
             </div>
             <Menu
                 mode='vertical'
-                className='custom-menu'
+                className='flex flex-grow flex-col items-center justify-start bg-white-default'
                 onClick={(e) => {
                     navigate(e.key);
                 }}
                 items={sidebarItems}
             />
-            <div className='bottom-menu-items'>
+            <div className='mt-auto flex flex-col items-center'>
                 <Dropdown menu={{ items: menuItems }} trigger={['click']}>
-                    <div className='avatar-container'>
+                    <div className='mt-4 flex cursor-pointer flex-col items-center'>
                         <Badge count={1} status='success'>
                             <Avatar size={46} src={user?.avatar} />
                         </Badge>

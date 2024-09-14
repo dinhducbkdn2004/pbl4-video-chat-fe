@@ -3,13 +3,13 @@ import { useParams } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch';
 import userApi from '../../apis/userApi';
 import Loading from '../../components/Loading/Loading';
-import { Avatar, Button, Image } from 'antd';
+import { Button, Image } from 'antd';
 import Container from '../../components/Container';
 
 const UserPage = () => {
     const { id } = useParams();
     const [user, setUser] = useState(null);
-    const { isLoading, fetchData } = useFetch();
+    const { isLoading, fetchData } = useFetch(false);
     useEffect(() => {
         (async () => {
             const data = await fetchData(() => userApi.getUser(id));

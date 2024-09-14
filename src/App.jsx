@@ -30,10 +30,8 @@ function App() {
             <Route element={<ProtectedRoute />}>
                 <Route path='/' element={<MainPage />}>
                     <Route path='/message' element={<MessagePage />}>
-                        <Route path=':chatId' element={<ChatPage />} />
+                        <Route path='/message/:chatId' element={<ChatPage />} />
                     </Route>
-                    <Route path='/contact' element={<ContactPage />} />
-                    <Route path='/message' element={<MessagePage />} />
                     <Route path='/contact' element={<ContactPage />}>
                         <Route path='/contact/friend-list' element={<FriendListPage />} />
                         <Route path='/contact/friend-request' element={<FriendRequestPage />} />

@@ -1,8 +1,6 @@
 import { createContext, useEffect, useState } from 'react';
-
 import io from 'socket.io-client';
 import { authSelector } from '../redux/features/auth/authSelections';
-
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
