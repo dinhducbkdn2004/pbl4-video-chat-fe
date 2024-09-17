@@ -6,7 +6,6 @@ import { store } from '../redux/store';
 let socket;
 export const initializeSocket = () => {
     const { accessToken } = store.getState(authSelector).auth;
- 
 
     if (!accessToken) return;
 

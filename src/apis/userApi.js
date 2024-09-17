@@ -1,5 +1,5 @@
 import axiosClient from '../configs/axiosClient';
-import { getSocket } from '../configs/socketInstance';
+import { getSocket, initializeSocket } from '../configs/socketInstance';
 
 const userApi = {
     getProfile: () => {
@@ -20,8 +20,15 @@ const userApi = {
         });
     },
     addFriend: (senderId, type) => {
-        const socket = getSocket();
-        socket.emit('client-update-friend-request', senderId, type);
+        let socket = getSocket();
+        if (!socket) {
+            socket = initializeSocket();
+        }
+        if (socket) {
+            socket.emit('client-update-friend-request', senderId, type);
+        } else {
+            console.error('Socket is not defined');
+        }
     },
     getFriendList: (userId) => {
         return axiosClient.get(`/users/get-detail/${userId}/friend-list`);

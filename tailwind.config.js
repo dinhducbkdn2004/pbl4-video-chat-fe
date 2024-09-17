@@ -20,7 +20,7 @@ export default {
                     default: '#FFFFFF',
                     dark: '#CDCECF'
                 },
-                gray: '#6F767E'
+                gray: '#72767D'
             }
         }
     },
