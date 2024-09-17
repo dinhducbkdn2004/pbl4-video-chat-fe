@@ -15,6 +15,7 @@ import { useSocket } from '../../../hooks/useSocket';
 import './ChatPage.css';
 
 const ChatPage = () => {
+    const roomId = '66df269f0e493038ea4cb6f8';
     const { socket } = useSocket();
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
@@ -22,19 +23,17 @@ const ChatPage = () => {
     const [isVoiceCallModalVisible, setIsVoiceCallModalVisible] = useState(false);
 
     /*Check if the socket is connected*/
-    // useEffect(() => {
-    //     if (socket) {
-    //         socket.on('server-send-message', (incomingMessage) => {
-    //             setMessages((prevMessages) => [...prevMessages, incomingMessage]);
-    //         });
-    //     }
+    useEffect(() => {
+        socket?.on('server-send-message', (incomingMessage) => {
+            console.log(incomingMessage);
 
-    //     return () => {
-    //         if (socket) {
-    //             socket.off('server-send-message');
-    //         }
-    //     };
-    // }, [socket]);
+            setMessages((prevMessages) => [...prevMessages, incomingMessage]);
+        });
+
+        return () => {
+            socket?.off('server-send-message');
+        };
+    }, [socket]);
 
     /* test-username-roomId */
     // const userName = 'YourUserName';
@@ -49,10 +48,8 @@ const ChatPage = () => {
     // };
 
     const handleSendMessage = () => {
-        if (!message || !socket) return;
-
-        socket.emit('client-send-message', message);
-        setMessages([...messages, { user: 'You', message }]);
+        if (!message) return;
+        socket?.emit('client-send-message', message, roomId);
         setMessage('');
     };
 

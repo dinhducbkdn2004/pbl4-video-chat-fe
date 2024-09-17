@@ -41,6 +41,9 @@ const userApi = {
                 limit
             }
         });
+    },
+    editProfile: (data) => {
+        return axiosClient.put('/users/me/edit-profile', data);
     }
 };
 export default userApi;
