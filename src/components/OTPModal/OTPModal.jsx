@@ -54,40 +54,30 @@ const OTPModal = ({ isVisible, email, handleCloseOtpModal, onSuccess }) => {
                     type='text'
                     icon={<CloseOutlined />}
                     onClick={handleCloseOtpModal}
-                    style={{ position: 'absolute', top: '10px', right: '10px' }}
+                    className='absolute right-2.5 top-2.5'
                 />
-                <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                    <InfoCircleOutlined style={{ fontSize: '24px', color: '#52c41a' }} />
-                    <h3>Verify account</h3>
+                <div className='mb-5 text-center'>
+                    <InfoCircleOutlined className='text-3xl text-green-500' />
+                    <h3 className='text-lg font-semibold'>Verify account</h3>
                     <p>
                         Please enter the OTP code sent to email <strong>{email}</strong> to verify your account
                     </p>
                 </div>
-                <div className='otp-inputs'>
-                    {otp.map((data, index) => (
-                        <Input
-                            key={index}
-                            id={`otp-input-${index}`}
-                            value={data}
-                            onChange={(e) => handleOtpChange(e.target, index)}
-                            maxLength='1'
-                            style={{
-                                width: '50px',
-                                height: '50px',
-                                textAlign: 'center',
-                                marginRight: '8px'
-                            }}
-                        />
-                    ))}
+                <div className='mb-5 flex justify-center'>
+                    <div className='flex gap-2'>
+                        {otp.map((data, index) => (
+                            <Input
+                                key={index}
+                                id={`otp-input-${index}`}
+                                value={data}
+                                onChange={(e) => handleOtpChange(e.target, index)}
+                                maxLength='1'
+                                className='h-12 w-12 text-center'
+                            />
+                        ))}
+                    </div>
                 </div>
-                <Button
-                    className='otp-submit'
-                    type='primary'
-                    block
-                    size='large'
-                    onClick={handleOtpSubmit}
-                    loading={isLoading}
-                >
+                <Button className='h-12 w-full' type='primary' onClick={handleOtpSubmit} loading={isLoading}>
                     Confirm
                 </Button>
             </Modal>

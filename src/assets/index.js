@@ -1,16 +1,18 @@
-import bg from "./bg.svg";
-import login from "./login.svg";
-import logo from "./logo.png";
-import logo_1 from "./logo_1.png";
-import logo_2 from "./logo_2.png";
-import user from "./user.jpg";
+import bg from './bg.svg';
+import loginpage from './loginpage.png';
+import logo_sidebar1 from './logo_sidebar1.png';
+import logo_sidebar2 from './logo_sidebar2.svg';
+import user from './user.jpg';
+import chatpage_1 from './chatpage_1.png';
+import chatpage_2 from './chatpage_2.jpg';
 
 const assets = {
     bg,
-    login,
-    logo,
-    logo_1,
-    logo_2,
+    loginpage,
+    logo_sidebar1,
+    logo_sidebar2,
     user,
+    chatpage_1,
+    chatpage_2
 };
 export default assets;

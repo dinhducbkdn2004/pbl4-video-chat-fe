@@ -10,8 +10,8 @@ const OnlineUsers = () => {
             <div className='avatars gap-x-5'>
                 {onlineUsers.length === 0
                     ? 'No one onlines now'
-                    : onlineUsers.map((user) => (
-                          <div key={user.userId} className='flex flex-col items-center'>
+                    : onlineUsers.map((user, index) => (
+                          <div key={user.userId || index} className='flex flex-col items-center'>
                               <Avatar src={user.avatar} className='avatar' />
                               <h1>{user.name}</h1>
                           </div>

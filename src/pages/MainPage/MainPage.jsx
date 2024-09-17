@@ -10,7 +10,6 @@ import { authActions } from '../../redux/features/auth/authSlice';
 import userApi from './../../apis/userApi';
 import Loading from './../../components/Loading/Loading';
 import { store } from './../../redux/store';
-import './MainPage.scss';
 
 import SideBar from './SideBar';
 
@@ -40,15 +39,12 @@ const MainPage = () => {
     return (
         <>
             {contextHolder}
-
-            <Layout style={{ height: '100vh' }}>
-                <SideBar />
-                <Layout>
-                    <Content style={{ height: '100vh', overflow: 'auto' }}>
-                        <Outlet />
-                    </Content>
-                </Layout>
-            </Layout>
+            <div className='flex h-screen'>
+                <SideBar className='w-88' /> {/* 350px */}
+                <div className='h-screen flex-1 overflow-auto bg-white-default'>
+                    <Outlet />
+                </div>
+            </div>
         </>
     );
 };

@@ -1,16 +1,14 @@
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-.ant-spin-dot {
-  font-size: 40px;
-  color: #1890ff;
+.custom-spinner {
+    font-size: 2rem;
+    color: blue;
+    animation: spin 1s linear infinite;
 }
 
-.ant-spin-dot i {
-  animation: spin 1s infinite linear;
-}/*# sourceMappingURL=Loading.css.map */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

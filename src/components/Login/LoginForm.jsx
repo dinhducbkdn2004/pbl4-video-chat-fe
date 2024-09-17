@@ -4,7 +4,7 @@ import useFetch from '../../hooks/useFetch';
 import { authActions } from '../../redux/features/auth/authSlice';
 import authApi from '../../apis/authApi';
 import { useNavigate } from 'react-router-dom';
-import './LoginForm.scss';
+import 'tailwindcss/tailwind.css';
 import { store } from '../../redux/store';
 import { useState } from 'react';
 import OTPModal from '../OTPModal/OTPModal';
@@ -51,7 +51,7 @@ const LoginForm = () => {
     return (
         <>
             {contextHolder}
-            <div className={isOtpVisible ? 'dimmed-background' : ''}>
+            <div className={isOtpVisible ? 'pointer-events-none blur-sm filter' : ''}>
                 <Form
                     name='login'
                     layout='vertical'
@@ -103,7 +103,8 @@ const LoginForm = () => {
                         </Form.Item>
                         <a
                             style={{
-                                float: 'right'
+                                float: 'right',
+                                color: '#1890ff'
                             }}
                             href=''
                             onClick={handleForgotPasswordClick}
@@ -131,8 +132,13 @@ const LoginForm = () => {
                         </Button>
                     </Form.Item>
 
-                    <div className='login-form-or'>
-                        <span>Or</span>
+                    <div className='relative my-5 flex items-center'>
+                        <div
+                            className='border-gray-100 red flex-grow border-t'
+                            style={{ borderColor: '#e0e0e0' }}
+                        ></div>
+                        <span className='text-gray-600 bg-white px-2 text-sm'>Or</span>
+                        <div className='border-gray-100 flex-grow border-t' style={{ borderColor: '#e0e0e0' }}></div>
                     </div>
                 </Form>
             </div>
