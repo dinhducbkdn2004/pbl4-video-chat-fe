@@ -22,6 +22,14 @@ const Sidebar = () => {
 
     const menuItems = [
         {
+            key: 'profile',
+            icon: <Avatar src={user?.avatar} />,
+            label: <span>Profile</span>,
+            onClick: () => {
+                navigate(`/user/${user?._id}`);
+            }
+        },
+        {
             key: 'setting',
             icon: <IoSettingsOutline size={15} />,
             label: <span>Setting</span>
