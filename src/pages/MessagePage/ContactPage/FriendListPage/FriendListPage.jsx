@@ -7,6 +7,7 @@ import useFetch from '../../../../hooks/useFetch';
 import { authSelector } from '../../../../redux/features/auth/authSelections';
 import UserCard from '../../../../components/Search/UserCard';
 const { Search } = Input;
+
 const FriendListPage = () => {
     const onSearch = (value) => console.log(value);
     const [users, setUsers] = useState([]);
@@ -31,20 +32,15 @@ const FriendListPage = () => {
 
     return (
         <>
-            <div className='bg-white-default px-4 py-5'>
-                <h1 className='w-full'>Danh sách bạn bè</h1>
+            <div className='rounded-md bg-white-default px-4 py-5 shadow-md'>
+                <h1 className='w-full text-2xl font-semibold'>Danh sách bạn bè</h1>
             </div>
-            <div className='px-4 py-5'>
-                <h1>Bạn bè ({users.length})</h1>
-                <Search
-                    placeholder='input search text'
-                    allowClear
-                    onSearch={onSearch}
-                    style={{
-                        width: 200
-                    }}
-                />
-                <div>{isLoading ? <Loading /> : users.map((user) => <UserCard key={user._id} data={user} />)}</div>
+            <div className='space-y-6 px-4 py-5'>
+                <h1 className='text-xl font-semibold'>Bạn bè ({users.length})</h1>
+                <Search placeholder='Tìm kiếm bạn bè' allowClear onSearch={onSearch} className='w-full max-w-xs' />
+                <div className='flex flex-wrap gap-4'>
+                    {isLoading ? <Loading /> : users.map((user) => <UserCard key={user._id} data={user} />)}
+                </div>
             </div>
         </>
     );
