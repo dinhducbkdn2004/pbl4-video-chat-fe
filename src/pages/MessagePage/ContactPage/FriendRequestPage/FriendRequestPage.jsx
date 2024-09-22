@@ -7,24 +7,34 @@ import useFetch from '../../../../hooks/useFetch';
 const FriendRequestPage = () => {
     return (
         <>
-            <div className='bg-white-default px-4 py-5'>
-                <h1 className='w-full'>Lời mời kết bạn</h1>
+            <div className='bg-white rounded-lg px-6 py-5 shadow-md'>
+                <h1 className='text-gray-800 text-3xl font-semibold'>Lời mời kết bạn</h1>
             </div>
-            <div className='px-4 py-5'>
+            <div className='space-y-8 px-6 py-6'>
                 <FriendRequestBox />
-                <div>
-                    <h1>Lời mời đã gửi</h1>
+                <div className='space-y-4'>
+                    <h2 className='text-gray-800 text-xl font-semibold'>Lời mời đã gửi</h2>
+                    {/* Danh sách lời mời đã gửi */}
+                    <div className='text-gray-500 flex items-center justify-center rounded-md border border-dashed py-4'>
+                        Không có lời mời đã gửi
+                    </div>
                 </div>
-                <div>
-                    <h1>Gợi ý kết bạn</h1>
+                <div className='space-y-4'>
+                    <h2 className='text-gray-800 text-xl font-semibold'>Gợi ý kết bạn</h2>
+                    {/* Danh sách gợi ý kết bạn */}
+                    <div className='text-gray-500 flex items-center justify-center rounded-md border border-dashed py-4'>
+                        Không có gợi ý kết bạn
+                    </div>
                 </div>
             </div>
         </>
     );
 };
+
 const FriendRequestBox = () => {
     const { fetchData, isLoading } = useFetch({ showSuccess: false });
     const [requests, setRequests] = useState([]);
+
     useEffect(() => {
         (async () => {
             const data = await fetchData(() => userApi.getFriendRequest(0, 10));
@@ -37,16 +47,19 @@ const FriendRequestBox = () => {
     return (
         <>
             <div>
-                <h1 className='py-6'>Lời mời đã nhận</h1>
-                <div className='flex flex-wrap gap-4'>
-                    {isLoading ? (
+                <h2 className='py-4 text-xl font-semibold'>Lời mời đã nhận</h2>
+            </div>
+            <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
+                {isLoading ? (
+                    <div className='flex h-40 w-full items-center justify-center'>
                         <Loading />
-                    ) : (
-                        requests.map((request) => <FriendRequestCard key={request._id} request={request} />)
-                    )}
-                </div>
+                    </div>
+                ) : (
+                    requests.map((request) => <FriendRequestCard key={request._id} request={request} />)
+                )}
             </div>
         </>
     );
 };
+
 export default FriendRequestPage;

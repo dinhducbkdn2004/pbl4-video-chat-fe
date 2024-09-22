@@ -28,11 +28,6 @@ const Sidebar = () => {
             }
         },
         {
-            key: 'setting',
-            icon: <IoSettingsOutline size={15} />,
-            label: <span>Setting</span>
-        },
-        {
             key: 'logout',
             icon: <RiLogoutCircleRLine size={15} />,
             label: <span>Logout</span>,
@@ -59,6 +54,11 @@ const Sidebar = () => {
         {
             key: 'search/users',
             icon: <TbWorldSearch size={20} />,
+            className: 'custom-menu-item'
+        },
+        {
+            key: 'settings',
+            icon: <IoSettingsOutline size={20} />,
             className: 'custom-menu-item'
         }
     ];

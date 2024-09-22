@@ -15,7 +15,7 @@ const uploadApi = {
             console.log(res.data.url);
 
             const uploadResponse = await axiosClient.post(res.data.url, formData);
-            console.log('Thaành công');
+            console.log('Thành công');
 
             console.log(uploadResponse);
         }

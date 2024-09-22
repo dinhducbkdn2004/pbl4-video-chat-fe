@@ -12,7 +12,7 @@ const userApi = {
         return axiosClient.get(`/users/getAll`);
     },
     getFriendRequest: (page, limit) => {
-        return axiosClient.get(`/users/friend-request`, {
+        return axiosClient.get(`/friend-requests/get-my`, {
             params: {
                 page,
                 limit
@@ -34,7 +34,7 @@ const userApi = {
         return axiosClient.get(`/users/get-detail/${userId}/friend-list`);
     },
     searchUsers: (name, page = 1, limit = 10) => {
-        return axiosClient.get('/search/users', {
+        return axiosClient.get('/users/search', {
             params: {
                 name,
                 page,
@@ -43,7 +43,8 @@ const userApi = {
         });
     },
     editProfile: (data) => {
-        return axiosClient.put('/users/me/edit-profile', data);
+        return axiosClient.patch('/users/me/edit-profile', data);
     }
 };
+
 export default userApi;

@@ -12,7 +12,10 @@ const OnlineUsers = () => {
                     ? 'No one onlines now'
                     : onlineUsers.map((user, index) => (
                           <div key={user.userId || index} className='flex flex-col items-center'>
-                              <Avatar src={user.avatar} className='avatar' />
+                              <div className='relative'>
+                                  <Avatar src={user.avatar} className='avatar' />
+                                  <span className='border-white-default absolute bottom-0 right-3 h-4 w-4 rounded-full border-2 bg-green-500'></span>
+                              </div>
                               <h1>{user.name}</h1>
                           </div>
                       ))}

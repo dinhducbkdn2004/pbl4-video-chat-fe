@@ -92,6 +92,57 @@
         }
     }
 
+    .search-results {
+        position: absolute;
+        top: 120px; /* Adjust based on the height of the search bar */
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 0 0 5px 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        z-index: 2;
+        max-height: 300px; /* Adjust based on your preference */
+        overflow-y: auto;
+
+        .list-item {
+            border: none;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 8px;
+            padding: 10px;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #e6f7ff;
+            }
+
+            .meta {
+                .title {
+                    font-size: 15px;
+                    font-weight: 500;
+                    color: #424242;
+                }
+
+                .message {
+                    font-size: 13px;
+                    color: #888;
+                }
+            }
+
+            .unread {
+                background-color: #f5222d;
+                color: white;
+                border-radius: 50%;
+                width: 20px;
+                height: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 12px;
+            }
+        }
+    }
+
     .online-now {
         padding: 24px 24px 0;
 
