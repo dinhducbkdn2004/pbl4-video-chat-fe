@@ -24,14 +24,12 @@ export const SocketContextProvider = ({ children }) => {
 
         // Listen for connection
         socket.on('connect', () => {
-            console.log('Socket connected: ', socket);
+            console.log('Socket connected: ');
         });
         socket.on('sever-send-friend-request', (e) => {
             console.log(e);
         });
         if (user) {
-            console.log(user);
-
             socket.on('online-users', (users) => {
                 setOnlineUsers(users.filter((onlineUser) => onlineUser.userId !== user?._id));
             });

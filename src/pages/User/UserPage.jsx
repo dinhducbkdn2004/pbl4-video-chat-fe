@@ -31,7 +31,7 @@ const UserPage = () => {
         <Container>
             <Image width={'100%'} src={user.backgroundImage} />
             <div className='relative -top-[100px] flex flex-col items-center gap-y-6'>
-                <Image src={user.avatar} className='mx-auto h-auto w-[100px] rounded-full' width={200} />
+                <Image src={user.avatar} className='mx-auto rounded-full object-cover' width={240} height={240} />
                 <h1 className='mb-5 text-center'>{user.name}</h1>
                 <div className='flex items-center justify-center gap-x-4'>
                     <Button>Thêm bạn bè</Button>
