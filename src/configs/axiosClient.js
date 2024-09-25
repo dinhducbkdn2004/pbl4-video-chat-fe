@@ -6,7 +6,7 @@ import { authActions } from '../redux/features/auth/authSlice';
 import { store } from './../redux/store';
 
 const axiosClient = axios.create({
-    baseURL: import.meta.env.VITE_BASE_API_URL + '/api/v1',
+    baseURL: import.meta.env.VITE_BASE_API_URL_PRO + '/api/v1',
     headers: {
         'Content-Type': 'application/json'
     },
