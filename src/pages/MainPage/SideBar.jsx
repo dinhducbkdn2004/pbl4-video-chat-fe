@@ -60,6 +60,11 @@ const Sidebar = () => {
             key: 'settings',
             icon: <IoSettingsOutline size={20} />,
             className: 'custom-menu-item'
+        },
+        {
+            key: 'notification',
+            icon: <IoSettingsOutline size={20} />,
+            className: 'custom-menu-item'
         }
     ];
 

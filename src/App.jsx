@@ -16,6 +16,7 @@ import SearchUsers from './components/Search/SearchUsers';
 import SearchGroup from './components/Search/SearchGroup';
 
 import ChatPage from './pages/MessagePage/ChatPage/ChatPage';
+import NotificationPage from './pages/NotificationPage/NotificationPage';
 
 function App() {
     return (
@@ -41,6 +42,7 @@ function App() {
                         <Route path='/search/groups' element={<SearchGroup />} />
                     </Route>
                     <Route path='/user/:id' element={<UserPage />} />
+                    <Route path='/notification' element={<NotificationPage />} />
                 </Route>
             </Route>
 
