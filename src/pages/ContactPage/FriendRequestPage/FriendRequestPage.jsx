@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import userApi from '../../../../apis/userApi';
-import FriendRequestCard from '../../../../components/FriendRequest/FriendRequestCard';
-import Loading from '../../../../components/Loading/Loading';
-import useFetch from '../../../../hooks/useFetch';
+import useFetch from '../../../hooks/useFetch';
+import userApi from '../../../apis/userApi';
+import Loading from '../../../components/Loading/Loading';
+import FriendRequestCard from './../../../components/FriendRequest/FriendRequestCard';
 
 const FriendRequestPage = () => {
     return (

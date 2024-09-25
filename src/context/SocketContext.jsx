@@ -3,18 +3,20 @@ import io from 'socket.io-client';
 import { authSelector } from '../redux/features/auth/authSelections';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
+import { notificationsApi } from '../apis/notificationApi';
 
 export const SocketContext = createContext();
 
 export const SocketContextProvider = ({ children }) => {
     const [socket, setSocket] = useState(null);
     const [onlineUsers, setOnlineUsers] = useState([]);
+    const [notifications, setNotifications] = useState([]);
     const { accessToken, user } = useSelector(authSelector);
 
     useEffect(() => {
         if (!accessToken) return;
 
-        const socket = io('http://localhost:3000', {
+        const socket = io(import.meta.env.VITE_BASE_API_URL_PRO, {
             extraHeaders: {
                 authorization: accessToken
             }
@@ -31,12 +33,26 @@ export const SocketContextProvider = ({ children }) => {
         });
         if (user) {
             socket.on('online-users', (users) => {
-                setOnlineUsers(users.filter((onlineUser) => onlineUser.userId !== user?._id));
+                setOnlineUsers(users);
             });
         }
     }, [accessToken, user]);
+    useEffect(() => {
+        (async () => {
+            const { data, isOk } = await notificationsApi.getAll();
+            if (isOk) setNotifications(data);
 
-    return <SocketContext.Provider value={{ socket, onlineUsers }}>{children}</SocketContext.Provider>;
+            socket?.on('new notification', (data) => {
+                setNotifications[(pre) => [data, ...pre]];
+            });
+
+            return () => {
+                socket?.off('new notification');
+            };
+        })();
+    }, [socket]);
+
+    return <SocketContext.Provider value={{ socket, onlineUsers, notifications }}>{children}</SocketContext.Provider>;
 };
 
 SocketContextProvider.propTypes = {

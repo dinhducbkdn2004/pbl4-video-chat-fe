@@ -1,11 +1,12 @@
 import { Input } from 'antd';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import userApi from '../../../../apis/userApi';
-import Loading from '../../../../components/Loading/Loading';
-import useFetch from '../../../../hooks/useFetch';
-import { authSelector } from '../../../../redux/features/auth/authSelections';
-import UserCard from '../../../../components/Search/UserCard';
+import useFetch from '../../../hooks/useFetch';
+import { authSelector } from '../../../redux/features/auth/authSelections';
+import userApi from '../../../apis/userApi';
+import Loading from '../../../components/Loading/Loading';
+import UserCard from '../../../components/Search/UserCard';
+
 const { Search } = Input;
 
 const FriendListPage = () => {

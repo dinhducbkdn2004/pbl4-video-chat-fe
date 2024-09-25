@@ -1,10 +1,8 @@
 import axiosClient from '../configs/axiosClient';
 
 const RoomChatApi = {
-    createChatRoom: (users = [], name = '') => {
-        const typeRoom = 'PRIVATE';
-        const isGroupChat = users.length > 1;
-        return axiosClient.post('/chat-rooms', { name, users, typeRoom, isGroupChat });
+    createChatRoom: (users = [], name = '', privacy) => {
+        return axiosClient.post('/chat-rooms', { name, users, privacy });
     },
     searchChatroomByName: (name, getMy) => {
         return axiosClient.get('/chat-rooms/search', {

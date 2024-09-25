@@ -47,7 +47,7 @@ const ChatList = () => {
     const handleAddRoom = async (values) => {
         console.log('New Room Data:', values);
         try {
-            const data = await fetchData(() => RoomChatApi.createChatRoom(values.members, values.roomName));
+            const data = await fetchData(() => RoomChatApi.createChatRoom(values.members, values.roomName, 'PRIVATE'));
             if (data.isOk) {
                 console.log('Add Room Success:', data.data);
             }

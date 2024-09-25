@@ -1,20 +1,10 @@
-import { useEffect, useState } from 'react';
-import { notificationsApi } from '../../apis/notificationApi';
 import Container from '../../components/Container';
-import Loading from '../../components/Loading/Loading';
-import useFetch from '../../hooks/useFetch';
+import { useSocket } from '../../hooks/useSocket';
 
 const NotificationPage = () => {
-    const { fetchData, isLoading } = useFetch({ showSuccess: false, showError: false });
-    const [notifications, setNotifications] = useState([]);
-    useEffect(() => {
-        (async () => {
-            const { data, isOk } = fetchData(() => notificationsApi.getAll());
-            if (isOk) setNotifications(data);
-        })();
-    }, []);
+    const { notifications } = useSocket();
     console.log(notifications);
-    if (isLoading) return <Loading />;
+
     return <Container></Container>;
 };
 
