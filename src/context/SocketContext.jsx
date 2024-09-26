@@ -4,19 +4,22 @@ import { authSelector } from '../redux/features/auth/authSelections';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { notificationsApi } from '../apis/notificationApi';
-
+import { notification } from 'antd';
+import envClient from '../env';
 export const SocketContext = createContext();
 
 export const SocketContextProvider = ({ children }) => {
     const [socket, setSocket] = useState(null);
     const [onlineUsers, setOnlineUsers] = useState([]);
     const [notifications, setNotifications] = useState([]);
-    const { accessToken, user } = useSelector(authSelector);
-
+    const { accessToken } = useSelector(authSelector);
+    const [api, contextHolder] = notification.useNotification({
+        showProgress: true
+    });
     useEffect(() => {
         if (!accessToken) return;
 
-        const socket = io(import.meta.env.VITE_BASE_API_URL_PRO, {
+        const socket = io(envClient.VITE_BASE_API_URL, {
             extraHeaders: {
                 authorization: accessToken
             }
@@ -28,31 +31,38 @@ export const SocketContextProvider = ({ children }) => {
         socket.on('connect', () => {
             console.log('Socket connected: ');
         });
-        socket.on('sever-send-friend-request', (e) => {
-            console.log(e);
+
+        socket.on('online-users', (users) => {
+            setOnlineUsers(users);
         });
-        if (user) {
-            socket.on('online-users', (users) => {
-                setOnlineUsers(users);
+
+        socket.on('new notification', (data) => {
+            api.info({
+                message: 'Bạn có 1 thông báo mới!',
+                description: data.message
             });
-        }
-    }, [accessToken, user]);
+
+            setNotifications((pre) => [data, ...pre]);
+        });
+        return () => {
+            socket.off('connect');
+            socket.off('new notification');
+            socket.off('online-users');
+        };
+    }, [accessToken]);
     useEffect(() => {
         (async () => {
             const { data, isOk } = await notificationsApi.getAll();
             if (isOk) setNotifications(data);
-
-            socket?.on('new notification', (data) => {
-                setNotifications[(pre) => [data, ...pre]];
-            });
-
-            return () => {
-                socket?.off('new notification');
-            };
         })();
-    }, [socket]);
+    }, [accessToken]);
 
-    return <SocketContext.Provider value={{ socket, onlineUsers, notifications }}>{children}</SocketContext.Provider>;
+    return (
+        <SocketContext.Provider value={{ socket, onlineUsers, notifications }}>
+            {contextHolder}
+            {children}
+        </SocketContext.Provider>
+    );
 };
 
 SocketContextProvider.propTypes = {

@@ -21,7 +21,12 @@ const RoomChatApi = {
                 chatRoomId: id
             }
         });
-    }
+    },
+    getOneToOneChatRoom: (toId) =>
+        axiosClient.get('/chat-rooms/getOneToOne', {
+            params: {
+                to: toId
+            }
+        })
 };
-
 export default RoomChatApi;
