@@ -13,3 +13,7 @@
     background-color: #eeeeee;
     border-radius: 5px;
 }
+
+.custom-spinner .ant-spin-dot i {
+    animation-duration: 0.5s;
+}

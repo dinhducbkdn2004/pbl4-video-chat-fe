@@ -55,11 +55,7 @@ const AddRoomModal = ({ open, onCreate, onCancel }) => {
             onOk={handleOk}
         >
             <Form form={form} layout='vertical' name='form_in_modal' initialValues={{ modifier: 'public' }}>
-                <Form.Item
-                    name='roomName'
-                    label='Room Name'
-                    rules={[{ required: true, message: 'Please enter the room name!' }]}
-                >
+                <Form.Item name='roomName' label='Room Name' rules={[{ message: 'Please enter the room name!' }]}>
                     <Input placeholder='Enter room name' />
                 </Form.Item>
                 <Form.Item
@@ -73,6 +69,16 @@ const AddRoomModal = ({ open, onCreate, onCancel }) => {
                                 {user.name}
                             </Option>
                         ))}
+                    </Select>
+                </Form.Item>
+                <Form.Item
+                    name='privacy'
+                    label='Privacy'
+                    rules={[{ required: true, message: 'Please select the privacy!' }]}
+                >
+                    <Select placeholder='Select privacy'>
+                        <Option value='PRIVATE'>Private</Option>
+                        <Option value='PUBLIC'>Public</Option>
                     </Select>
                 </Form.Item>
             </Form>

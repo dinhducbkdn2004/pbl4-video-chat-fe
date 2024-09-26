@@ -1,5 +1,6 @@
-import { Avatar } from 'antd';
+import { Avatar, Badge, Space } from 'antd';
 import { useSocket } from './../../hooks/useSocket';
+import { truncateString } from '../../helpers/utils';
 
 const OnlineUsers = () => {
     const { onlineUsers } = useSocket();
@@ -9,14 +10,17 @@ const OnlineUsers = () => {
             <h4>Online Now</h4>
             <div className='avatars gap-x-5'>
                 {onlineUsers.length === 0
-                    ? 'No one onlines now'
+                    ? 'No one online now'
                     : onlineUsers.map((user, index) => (
                           <div key={user.userId || index} className='flex flex-col items-center'>
                               <div className='relative'>
-                                  <Avatar src={user.avatar} className='avatar' />
-                                  <span className='border-white-default absolute bottom-0 right-3 h-4 w-4 rounded-full border-2 bg-green-500'></span>
+                                  <Space>
+                                      <Badge dot color='#52c41a' size='small' offset={[-16, 40]}>
+                                          <Avatar src={user.avatar} className='avatar' />
+                                      </Badge>
+                                  </Space>
                               </div>
-                              <h1>{user.name}</h1>
+                              <h1>{truncateString(user.name, 10)}</h1>
                           </div>
                       ))}
             </div>
