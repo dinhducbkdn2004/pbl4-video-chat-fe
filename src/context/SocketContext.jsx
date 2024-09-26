@@ -4,19 +4,22 @@ import { authSelector } from '../redux/features/auth/authSelections';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { notificationsApi } from '../apis/notificationApi';
-
+import { notification } from 'antd';
+import envClient from '../env';
 export const SocketContext = createContext();
 
 export const SocketContextProvider = ({ children }) => {
     const [socket, setSocket] = useState(null);
     const [onlineUsers, setOnlineUsers] = useState([]);
     const [notifications, setNotifications] = useState([]);
-    const { accessToken, user } = useSelector(authSelector);
-
+    const { accessToken } = useSelector(authSelector);
+    const [api, contextHolder] = notification.useNotification({
+        showProgress: true
+    });
     useEffect(() => {
         if (!accessToken) return;
 
-        const socket = io(import.meta.env.VITE_BASE_API_URL_PRO, {
+        const socket = io(envClient.VITE_BASE_API_URL, {
             extraHeaders: {
                 authorization: accessToken
             }
@@ -29,36 +32,36 @@ export const SocketContextProvider = ({ children }) => {
             console.log('Socket connected: ');
         });
 
-        socket.on('sever-send-friend-request', (e) => {
-            console.log(e);
+        socket.on('online-users', (users) => {
+            setOnlineUsers(users);
         });
 
-        socket.off('new online friend');
-        socket.off('disconnect friend');
-
-        if (user) {
-            socket.on('online friends', (users) => {
-                setOnlineUsers(users.filter((onlineUser) => onlineUser.userId !== user?._id));
+        socket.on('new notification', (data) => {
+            api.info({
+                message: 'Bạn có 1 thông báo mới!',
+                description: data.message
             });
 
-            socket.on('new online friend', (newFriend) => {
-                setOnlineUsers((prevUsers) => {
-                    const isAlreadyOnline = prevUsers.some((user) => user._id === newFriend._id);
-                    if (!isAlreadyOnline) {
-                        return [...prevUsers, newFriend];
-                    }
-                    return prevUsers;
-                });
-            });
-
-            socket.on('disconnect friend', (disconnectedFriend) => {
-                setOnlineUsers((prevUsers) => prevUsers.filter((user) => user._id !== disconnectedFriend._id));
-            });
-        }
-    }, [accessToken, user]);
+            setNotifications((pre) => [data, ...pre]);
+        });
+        return () => {
+            socket.off('connect');
+            socket.off('new notification');
+            socket.off('online-users');
+        };
+    }, [accessToken]);
+    useEffect(() => {
+        (async () => {
+            const { data, isOk } = await notificationsApi.getAll();
+            if (isOk) setNotifications(data);
+        })();
+    }, [accessToken]);
 
     return (
-        <SocketContext.Provider value={{ socket, onlineUsers, currentUser: user }}>{children}</SocketContext.Provider>
+        <SocketContext.Provider value={{ socket, onlineUsers, notifications }}>
+            {contextHolder}
+            {children}
+        </SocketContext.Provider>
     );
 };
 

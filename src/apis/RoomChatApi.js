@@ -37,5 +37,4 @@ const RoomChatApi = {
         return axiosClient.post('/messages', payload);
     }
 };
-
 export default RoomChatApi;

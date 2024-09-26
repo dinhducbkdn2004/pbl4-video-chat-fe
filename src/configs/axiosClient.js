@@ -4,9 +4,10 @@ import authApi from '../apis/authApi';
 
 import { authActions } from '../redux/features/auth/authSlice';
 import { store } from './../redux/store';
+import envClient from '../env';
 
 const axiosClient = axios.create({
-    baseURL: import.meta.env.VITE_BASE_API_URL_PRO + '/api/v1',
+    baseURL: envClient.VITE_BASE_API_URL + '/api/v1',
     headers: {
         'Content-Type': 'application/json'
     },
