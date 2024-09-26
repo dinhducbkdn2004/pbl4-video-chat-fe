@@ -32,7 +32,7 @@ function App() {
             <Route element={<ProtectedRoute />}>
                 <Route path='/' element={<MainPage />}>
                     <Route path='/message' element={<MessagePage />}>
-                        <Route path='/message/:chatId' element={<ChatPage />} />
+                        <Route path='/message/:chatRoomId' element={<ChatPage />} />
                     </Route>
                     <Route path='/contact' element={<ContactPage />}>
                         <Route path='/contact/friend-list' element={<FriendListPage />} />

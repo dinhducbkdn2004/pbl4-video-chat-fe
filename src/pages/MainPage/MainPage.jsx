@@ -1,10 +1,8 @@
-import { Layout } from 'antd';
 import { useEffect } from 'react';
 import useFetch from '../../hooks/useFetch';
 
 import { useSelector } from 'react-redux';
 import { Outlet } from 'react-router-dom';
-import { initializeSocket } from '../../configs/socketInstance';
 import { authSelector } from '../../redux/features/auth/authSelections';
 import { authActions } from '../../redux/features/auth/authSlice';
 import userApi from './../../apis/userApi';
@@ -12,8 +10,6 @@ import Loading from './../../components/Loading/Loading';
 import { store } from './../../redux/store';
 
 import SideBar from './SideBar';
-
-const { Content } = Layout;
 
 const MainPage = () => {
     const { isAuthenticated } = useSelector(authSelector);

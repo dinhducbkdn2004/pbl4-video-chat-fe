@@ -1,15 +1,12 @@
 import { Avatar, Button, Card } from 'antd';
 
 import { useNavigate } from 'react-router-dom';
-import { getSocket } from '../../configs/socketInstance';
-
 
 import PropTypes from 'prop-types';
 
 const UserCard = ({ data }) => {
     const { name, email, avatar, isFriend = false, _id } = data;
     const navigate = useNavigate();
-    const socket = getSocket();
 
     return (
         <Card
@@ -31,10 +28,6 @@ const UserCard = ({ data }) => {
                 <Button
                     onClick={() => {
                         if (!isFriend) {
-                            socket.emit('client-send-friend-request', {
-                                recieverId: _id,
-                                caption: 'Hãy kết bạn với tôi'
-                            });
                             return;
                         }
                     }}

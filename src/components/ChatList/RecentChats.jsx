@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, Avatar, Divider } from 'antd';
+import { List, Avatar, Divider, Badge } from 'antd';
 import { BiMessageSquareDots } from 'react-icons/bi';
 
 const RecentChats = ({ recentChats, handleChatClick }) => {
@@ -15,7 +15,11 @@ const RecentChats = ({ recentChats, handleChatClick }) => {
                 renderItem={(item) => (
                     <List.Item className='list-item' key={item._id} onClick={() => handleChatClick(item)}>
                         <List.Item.Meta
-                            avatar={<Avatar src={item.avatar} className='avatar' />}
+                            avatar={
+                                <Badge dot color={item.isOnline ? '#52c41a' : 'red'} offset={[-5, 30]}>
+                                    <Avatar src={item.chatRoomImage} className='avatar' />
+                                </Badge>
+                            }
                             title={
                                 <div className='meta'>
                                     <span className='title'>{item.name}</span>

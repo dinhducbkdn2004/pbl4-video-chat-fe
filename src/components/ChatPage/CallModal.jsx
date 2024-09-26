@@ -1,10 +1,22 @@
-import React from 'react';
-import { Modal } from 'antd';
+import React, { useState } from 'react';
+import { Button, Modal, Popover } from 'antd';
+import { VideoCameraOutlined } from '@ant-design/icons';
 
-const CallModal = ({ title, isVisible, handleOk, handleCancel, children }) => (
-    <Modal title={title} open={isVisible} onOk={handleOk} onCancel={handleCancel}>
-        {children}
-    </Modal>
-);
+const CallModal = () => {
+    const [isVideoCallModalVisible, setIsVoiceCallModalVisible] = useState(false);
+    const toggleModalVisibility = (isVisible) => {
+        setIsVoiceCallModalVisible(isVisible);
+    };
+    return (
+        <>
+            <Popover content='Video Call' overlayStyle={{ borderRadius: '8px' }}>
+                <Button icon={<VideoCameraOutlined />} className='rounded-full p-3' onClick={toggleModalVisibility} />
+            </Popover>
+            <Modal open={isVideoCallModalVisible} onCancel={() => setIsVoiceCallModalVisible(false)}>
+                <p>Voice call content goes here...</p>
+            </Modal>
+        </>
+    );
+};
 
 export default CallModal;

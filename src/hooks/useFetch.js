@@ -1,5 +1,5 @@
 import { notification } from 'antd';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 const useFetch = (
     config = {
@@ -29,22 +29,25 @@ const useFetch = (
         }
     }, [notificationData, api]);
 
-    const fetchData = async (cb) => {
-        try {
-            setIsLoading(true);
+    const fetchData = useCallback(
+        async (cb) => {
+            try {
+                setIsLoading(true);
 
-            const data = await cb();
+                const data = await cb();
 
-            config?.showSuccess && setNotificationData({ type: 'success', message: data.message });
-            return data;
-        } catch (error) {
-            console.error(error);
-            config?.showError && setNotificationData({ type: 'error', message: error.message });
-            return error;
-        } finally {
-            setIsLoading(false);
-        }
-    };
+                config?.showSuccess && setNotificationData({ type: 'success', message: data.message });
+                return data;
+            } catch (error) {
+                console.error(error);
+                config?.showError && setNotificationData({ type: 'error', message: error.message });
+                return error;
+            } finally {
+                setIsLoading(false);
+            }
+        },
+        [config.showError, config.showSuccess]
+    );
 
     return {
         contextHolder,
