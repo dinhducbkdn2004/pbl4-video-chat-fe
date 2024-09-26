@@ -35,6 +35,13 @@ const RoomChatApi = {
             payload.file = file;
         }
         return axiosClient.post('/messages', payload);
-    }
+    },
+
+    getOneToOneChatRoom: (toId) =>
+        axiosClient.get('/chat-rooms/getOneToOne', {
+            params: {
+                to: toId
+            }
+        })
 };
 export default RoomChatApi;
