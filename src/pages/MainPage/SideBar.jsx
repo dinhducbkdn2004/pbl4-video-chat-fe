@@ -74,7 +74,7 @@ const Sidebar = () => {
             className='flex h-full flex-col items-center justify-between border-r border-purple-100 bg-white-default py-4'
         >
             <div className='mb-5 flex items-center justify-center'>
-                <img src={assets.logo_sidebar1} alt='Logo' className='h-9 w-9' />
+                <img src={assets.logo_sidebar1} alt='Logo' className='h-9 w-9 cursor-pointer' onClick={() => navigate('/message')} />
             </div>
             <Menu
                 mode='vertical'

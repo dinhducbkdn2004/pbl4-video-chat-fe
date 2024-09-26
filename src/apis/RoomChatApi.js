@@ -2,7 +2,8 @@ import axiosClient from '../configs/axiosClient';
 
 const RoomChatApi = {
     createChatRoom: (users = [], name = '', privacy) => {
-        return axiosClient.post('/chat-rooms', { name, users, privacy });
+        const isGroupChat = users.length > 1;
+        return axiosClient.post('/chat-rooms', { name, users, privacy, isGroupChat });
     },
     searchChatroomByName: (name, getMy) => {
         return axiosClient.get('/chat-rooms/search', {
@@ -12,15 +13,28 @@ const RoomChatApi = {
             }
         });
     },
-    getAllChatrooms: () => {
-        return axiosClient.get('/chat-rooms/search');
-    },
-    getChatRoomById: (id) => {
-        return axiosClient.get('/messages/byRoomchatId', {
+    getAllChatrooms: (getMy = true) => {
+        return axiosClient.get('/chat-rooms/search', {
             params: {
-                chatRoomId: id
+                getMy
             }
         });
+    },
+    getChatRoomById: (id, page = 1, limit = 10) => {
+        return axiosClient.get('/messages/byRoomchatId', {
+            params: {
+                chatRoomId: id,
+                page,
+                limit
+            }
+        });
+    },
+    createMessage: (content, chatRoomId, type, file = null) => {
+        const payload = { content, chatRoomId, type };
+        if (file) {
+            payload.file = file;
+        }
+        return axiosClient.post('/messages', payload);
     }
 };
 

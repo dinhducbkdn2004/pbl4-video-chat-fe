@@ -28,31 +28,38 @@ export const SocketContextProvider = ({ children }) => {
         socket.on('connect', () => {
             console.log('Socket connected: ');
         });
+
         socket.on('sever-send-friend-request', (e) => {
             console.log(e);
         });
+
+        socket.off('new online friend');
+        socket.off('disconnect friend');
+
         if (user) {
-            socket.on('online-users', (users) => {
-                setOnlineUsers(users);
+            socket.on('online friends', (users) => {
+                setOnlineUsers(users.filter((onlineUser) => onlineUser.userId !== user?._id));
+            });
+
+            socket.on('new online friend', (newFriend) => {
+                setOnlineUsers((prevUsers) => {
+                    const isAlreadyOnline = prevUsers.some((user) => user._id === newFriend._id);
+                    if (!isAlreadyOnline) {
+                        return [...prevUsers, newFriend];
+                    }
+                    return prevUsers;
+                });
+            });
+
+            socket.on('disconnect friend', (disconnectedFriend) => {
+                setOnlineUsers((prevUsers) => prevUsers.filter((user) => user._id !== disconnectedFriend._id));
             });
         }
     }, [accessToken, user]);
-    useEffect(() => {
-        (async () => {
-            const { data, isOk } = await notificationsApi.getAll();
-            if (isOk) setNotifications(data);
 
-            socket?.on('new notification', (data) => {
-                setNotifications[(pre) => [data, ...pre]];
-            });
-
-            return () => {
-                socket?.off('new notification');
-            };
-        })();
-    }, [socket]);
-
-    return <SocketContext.Provider value={{ socket, onlineUsers, notifications }}>{children}</SocketContext.Provider>;
+    return (
+        <SocketContext.Provider value={{ socket, onlineUsers, currentUser: user }}>{children}</SocketContext.Provider>
+    );
 };
 
 SocketContextProvider.propTypes = {

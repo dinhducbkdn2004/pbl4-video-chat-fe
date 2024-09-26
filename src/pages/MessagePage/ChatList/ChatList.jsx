@@ -1,25 +1,18 @@
-import { useState, useCallback, useEffect } from 'react';
-import { List, Avatar, Divider, Input } from 'antd';
+import { useState, useEffect } from 'react';
+import { List, Avatar, Input } from 'antd';
 import { SearchOutlined, UsergroupAddOutlined } from '@ant-design/icons';
-import { BiMessageSquareDots } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
 import { debounce } from 'lodash';
-import './ChatList.scss';
 import OnlineUsers from '../../../components/ChatList/OnlineUsers';
 import AddRoomModal from '../../../components/ChatList/AddRoomModal';
 import useFetch from '../../../hooks/useFetch';
 import RoomChatApi from '../../../apis/RoomChatApi';
+import RecentChats from '../../../components/ChatList/RecentChats';
+import './ChatList.css';
 
 const debouncedSearch = debounce(async (value, fetchData, setSearchResults) => {
-    try {
-        const data = await fetchData(() => RoomChatApi.searchChatroomByName(value, true));
-        if (data.isOk) {
-            setSearchResults(data.data);
-            console.log('Search Results:', data.data);
-        }
-    } catch (error) {
-        console.log('Search Error:', error);
-    }
+    const data = await fetchData(() => RoomChatApi.searchChatroomByName(value, true));
+    if (data.isOk) setSearchResults(data.data);
 }, 350);
 
 const ChatList = () => {
@@ -45,15 +38,7 @@ const ChatList = () => {
     };
 
     const handleAddRoom = async (values) => {
-        console.log('New Room Data:', values);
-        try {
-            const data = await fetchData(() => RoomChatApi.createChatRoom(values.members, values.roomName, 'PRIVATE'));
-            if (data.isOk) {
-                console.log('Add Room Success:', data.data);
-            }
-        } catch (error) {
-            console.log('Add Room Failed:', error);
-        }
+        await fetchData(() => RoomChatApi.createChatRoom(values.members, values.roomName, values.privacy));
         setIsAddRoomModalVisible(false);
     };
 
@@ -62,26 +47,15 @@ const ChatList = () => {
     };
 
     const handleChatClick = (chat) => {
-        if (chat._id) {
-            navigate(`/message/${chat._id}`, { state: { roomName: chat.name, members: chat.participants } });
-        } else {
-            console.error('Chat ID is undefined or null:', chat);
-        }
+        if (chat._id) navigate(`/message/${chat._id}`, { state: { roomName: chat.name, members: chat.participants } });
+    };
+
+    const fetchRecentChats = async () => {
+        const data = await fetchData(() => RoomChatApi.getAllChatrooms());
+        if (data.isOk) setRecentChats(data.data);
     };
 
     useEffect(() => {
-        const fetchRecentChats = async () => {
-            try {
-                const data = await fetchData(() => RoomChatApi.getAllChatrooms());
-                if (data.isOk) {
-                    setRecentChats(data.data);
-                    console.log('Recent Chats:', data.data);
-                }
-            } catch (error) {
-                console.log('Fetch Recent Chats Error:', error);
-            }
-        };
-
         fetchRecentChats();
     }, []);
 
@@ -138,32 +112,8 @@ const ChatList = () => {
                 {/* Online Now */}
                 <OnlineUsers />
 
-                {/* Body Chat */}
-                <div className='body-chat'>
-                    {/* Recent Chat */}
-                    <Divider orientation='left' className='divider'>
-                        <BiMessageSquareDots className='icon' />
-                        Recent Chat
-                    </Divider>
-                    <List
-                        itemLayout='horizontal'
-                        dataSource={recentChats}
-                        renderItem={(item) => (
-                            <List.Item className='list-item' key={item._id} onClick={() => handleChatClick(item)}>
-                                <List.Item.Meta
-                                    avatar={<Avatar src={item.avatar} className='avatar' />}
-                                    title={
-                                        <div className='meta'>
-                                            <span className='title'>{item.name}</span>
-                                        </div>
-                                    }
-                                    description={<span className='message'>{item.message}</span>}
-                                />
-                                {item.unread > 0 && <div className='unread'>{item.unread}</div>}
-                            </List.Item>
-                        )}
-                    />
-                </div>
+                {/* Recent Chats */}
+                <RecentChats recentChats={recentChats} handleChatClick={handleChatClick} />
 
                 {/* Add Room Modal */}
                 <AddRoomModal open={isAddRoomModalVisible} onCreate={handleAddRoom} onCancel={handleCancel} />
