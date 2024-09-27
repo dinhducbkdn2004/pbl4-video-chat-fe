@@ -13,7 +13,7 @@ const MessageComponent = ({ msg, members }) => {
             {sender._id !== currentUser._id && (
                 <Badge
                     className='mr-2'
-                    dot={members.find((member) => member._id === sender._id)?.isOnline}
+                    dot={members?.find((member) => member._id === sender._id)?.isOnline}
                     color='#52c41a'
                     size='small'
                     offset={[-5, 30]}
@@ -34,13 +34,7 @@ const MessageComponent = ({ msg, members }) => {
                 </div>
             </div>
             {sender._id === currentUser._id && (
-                <Badge
-                    className='ml-2'
-                    dot={members.find((member) => member._id === sender._id)?.isOnline}
-                    color='#52c41a'
-                    size='small'
-                    offset={[-5, 30]}
-                >
+                <Badge className='ml-2' dot={true} color='#52c41a' size='small' offset={[-5, 30]}>
                     <Avatar src={sender.avatar} className='avatar' />
                 </Badge>
             )}
@@ -50,7 +44,7 @@ const MessageComponent = ({ msg, members }) => {
 
 MessageComponent.propTypes = {
     msg: PropTypes.object.isRequired,
-    members: PropTypes.arrayOf(PropTypes.object).isRequired
+    members: PropTypes.arrayOf(PropTypes.object)
 };
 
 export default MessageComponent;
