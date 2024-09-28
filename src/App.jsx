@@ -18,6 +18,7 @@ import ChatPage from './pages/MessagePage/ChatPage/ChatPage';
 import NotificationPage from './pages/NotificationPage/NotificationPage';
 import FriendListPage from './pages/ContactPage/FriendListPage/FriendListPage';
 import FriendRequestPage from './pages/ContactPage/FriendRequestPage/FriendRequestPage';
+import VideoCall from './components/VideoCall';
 
 function App() {
     return (
@@ -45,6 +46,7 @@ function App() {
                     <Route path='/user/:id' element={<UserPage />} />
                     <Route path='/notification' element={<NotificationPage />} />
                 </Route>
+                <Route path='/video-call/:chatRoomId' element={<VideoCall />} />
             </Route>
 
             {/* Optional: Catch-all route for undefined paths */}
