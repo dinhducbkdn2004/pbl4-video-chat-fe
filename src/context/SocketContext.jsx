@@ -3,7 +3,7 @@ import io from 'socket.io-client';
 import { authSelector } from '../redux/features/auth/authSelections';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
-import { notificationsApi } from '../apis/notificationApi';
+import notificationsApi from '../apis/notificationApi';
 import { notification } from 'antd';
 import envClient from '../env';
 export const SocketContext = createContext();
@@ -32,15 +32,25 @@ export const SocketContextProvider = ({ children }) => {
             console.log('Socket connected: ');
         });
 
-        socket.on('online friends', (users) => {
-            setOnlineUsers(users);
-        });
-        socket.on('new online friend', (newOnlineUser) => {
-            setOnlineUsers([newOnlineUser, ...onlineUsers]);
-        });
-        socket.on('disconnect friend', (offlineUser) => {
-            setOnlineUsers(onlineUsers.filter((user) => user._id === offlineUser._id));
-        });
+        if (user) {
+            socket.on('online friends', (users) => {
+                setOnlineUsers(users);
+            });
+
+            socket.on('new online friend', (newFriend) => {
+                setOnlineUsers((prevUsers) => {
+                    const isAlreadyOnline = prevUsers.some((user) => user._id === newFriend._id);
+                    if (!isAlreadyOnline) {
+                        return [...prevUsers, newFriend];
+                    }
+                    return prevUsers;
+                });
+            });
+
+            socket.on('disconnect friend', (disconnectedFriend) => {
+                setOnlineUsers((prevUsers) => prevUsers.filter((user) => user._id !== disconnectedFriend._id));
+            });
+        }
 
         socket.on('new notification', (data) => {
             api.info({
@@ -53,7 +63,9 @@ export const SocketContextProvider = ({ children }) => {
         return () => {
             socket.off('connect');
             socket.off('new notification');
-            socket.off('online-users');
+            socket.off('online friends');
+            socket.off('new online friend');
+            socket.off('disconnect friend');
         };
     }, [accessToken, user]);
     useEffect(() => {

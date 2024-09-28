@@ -1,7 +1,9 @@
 import axiosClient from '../configs/axiosClient';
 
-export const notificationsApi = {
+const notificationsApi = {
     getAll: async () => {
         return axiosClient.get('/notifications');
     }
 };
+
+export default notificationsApi;
