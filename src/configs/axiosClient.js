@@ -7,7 +7,7 @@ import { store } from './../redux/store';
 import envClient from '../env';
 
 const axiosClient = axios.create({
-    baseURL: envClient.VITE_BASE_API_URL,
+    baseURL: envClient.VITE_BASE_API_URL + '/api/v1',
     headers: {
         'Content-Type': 'application/json'
     },

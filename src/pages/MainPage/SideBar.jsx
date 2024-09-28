@@ -57,11 +57,6 @@ const Sidebar = () => {
             className: 'custom-menu-item'
         },
         {
-            key: 'settings',
-            icon: <IoSettingsOutline size={20} />,
-            className: 'custom-menu-item'
-        },
-        {
             key: 'notification',
             icon: <IoSettingsOutline size={20} />,
             className: 'custom-menu-item'
@@ -74,7 +69,12 @@ const Sidebar = () => {
             className='flex h-full flex-col items-center justify-between border-r border-purple-100 bg-white-default py-4'
         >
             <div className='mb-5 flex items-center justify-center'>
-                <img src={assets.logo_sidebar1} alt='Logo' className='h-9 w-9 cursor-pointer' onClick={() => navigate('/message')} />
+                <img
+                    src={assets.logo_sidebar1}
+                    alt='Logo'
+                    className='h-9 w-9 cursor-pointer'
+                    onClick={() => navigate('/message')}
+                />
             </div>
             <Menu
                 mode='vertical'

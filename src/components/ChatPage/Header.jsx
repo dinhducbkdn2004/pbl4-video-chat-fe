@@ -4,7 +4,7 @@ import { Avatar, Badge, Button, Popover, Tooltip } from 'antd';
 import { useLocation } from 'react-router-dom';
 import CallModal from './CallModal';
 
-const Header = () => {
+const Header = ({ toggleSidebar }) => {
     const location = useLocation();
 
     const { name: roomName, participants: members, typeRoom, chatRoomImage, isOnline } = location.state;
@@ -14,7 +14,7 @@ const Header = () => {
             <div className='flex items-center'>
                 {typeRoom === 'OneToOne' && (
                     <Tooltip title={roomName}>
-                        <Badge dot={true} color={isOnline ? '#52c41a' : 'red'} offset={[-5, 35]}>
+                        <Badge className='mr-3' dot={true} color={isOnline ? '#52c41a' : 'red'} offset={[-7, 29]}>
                             <Avatar src={chatRoomImage}></Avatar>
                         </Badge>
                     </Tooltip>
@@ -36,7 +36,9 @@ const Header = () => {
                 )}
                 <div>
                     <h4 className='m-0 text-base font-semibold'>{roomName}</h4>
-                    <p className='text-gray-600 m-0 text-sm'>Last Seen at 07:15PM</p>
+                    <p className='text-gray-600 m-0 text-sm' style={{ color: isOnline ? '#52c41a' : '#DC1411' }}>
+                        {isOnline ? 'Online now' : 'Offline'}
+                    </p>
                 </div>
             </div>
             <div className='flex items-center'>
@@ -47,7 +49,11 @@ const Header = () => {
                     </li>
                     <li className='mr-5'>
                         <Popover content='Contact Info' overlayStyle={{ borderRadius: '8px' }}>
-                            <Button icon={<InfoCircleOutlined />} className='rounded-full p-3' />
+                            <Button
+                                icon={<InfoCircleOutlined />}
+                                className='rounded-full p-3'
+                                onClick={toggleSidebar}
+                            />
                         </Popover>
                     </li>
                 </ul>
