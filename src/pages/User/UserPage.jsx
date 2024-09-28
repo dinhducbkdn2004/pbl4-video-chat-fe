@@ -18,7 +18,14 @@ const UserPage = () => {
     const navigate = useNavigate();
     const handleContact = async () => {
         const { data, isOk } = await RoomChatApi.getOneToOneChatRoom(id);
-        if (isOk) navigate(`/message/${data._id}`);
+        if (isOk)
+            navigate(`/message/${data._id}`, {
+                state: {
+                    name: user.name,
+                    chatRoomImage: user.avatar,
+                    typeRoom: 'OneToOne'
+                }
+            });
     };
     useEffect(() => {
         (async () => {
@@ -29,7 +36,7 @@ const UserPage = () => {
                 setUser(data.data);
             }
         })();
-    }, [currentUser, id]);
+    }, [currentUser, id, fetchData]);
 
     if (isLoading || !user) return <Loading />;
 

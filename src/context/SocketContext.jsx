@@ -17,7 +17,7 @@ export const SocketContextProvider = ({ children }) => {
         showProgress: true
     });
     useEffect(() => {
-        if (!accessToken) return;
+        if (!user) return;
 
         const socket = io(envClient.VITE_BASE_API_URL, {
             extraHeaders: {
@@ -70,8 +70,10 @@ export const SocketContextProvider = ({ children }) => {
     }, [accessToken, user]);
     useEffect(() => {
         (async () => {
-            const { data, isOk } = await notificationsApi.getAll();
-            if (isOk) setNotifications(data);
+            if (accessToken) {
+                const { data, isOk } = await notificationsApi.getAll();
+                if (isOk) setNotifications(data);
+            }
         })();
     }, [accessToken]);
 

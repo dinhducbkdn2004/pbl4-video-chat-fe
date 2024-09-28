@@ -12,7 +12,8 @@ const MessageComponent = ({ msg, members }) => {
             {sender._id !== currentUser._id && (
                 <Badge
                     className='mr-2 flex items-center'
-                    dot={members.find((member) => member._id === sender._id)?.isOnline}
+                    dot={members?.find((member) => member._id === sender._id)?.isOnline}
+
                     color='#52c41a'
                     size='small'
                     offset={[-5, 50]}
@@ -57,7 +58,7 @@ const MessageComponent = ({ msg, members }) => {
 
 MessageComponent.propTypes = {
     msg: PropTypes.object.isRequired,
-    members: PropTypes.arrayOf(PropTypes.object).isRequired
+    members: PropTypes.arrayOf(PropTypes.object)
 };
 
 export default MessageComponent;
