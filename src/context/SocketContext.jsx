@@ -12,7 +12,7 @@ export const SocketContextProvider = ({ children }) => {
     const [socket, setSocket] = useState(null);
     const [onlineUsers, setOnlineUsers] = useState([]);
     const [notifications, setNotifications] = useState([]);
-    const { accessToken } = useSelector(authSelector);
+    const { accessToken, user } = useSelector(authSelector);
     const [api, contextHolder] = notification.useNotification({
         showProgress: true
     });
@@ -38,13 +38,14 @@ export const SocketContextProvider = ({ children }) => {
                 setOnlineUsers(users.filter((onlineUser) => onlineUser.userId !== user?._id));
             });
 
-        socket.on('new online friend', (newOnlineUser) => {
-            setOnlineUsers((pre) => [newOnlineUser, ...pre]);
-        });
+            socket.on('new online friend', (newOnlineUser) => {
+                setOnlineUsers((pre) => [newOnlineUser, ...pre]);
+            });
 
-        socket.on('disconnect friend', (offlineUser) => {
-            setOnlineUsers((pre) => pre.filter((user) => user._id === offlineUser._id));
-        });
+            socket.on('disconnect friend', (offlineUser) => {
+                setOnlineUsers((pre) => pre.filter((user) => user._id === offlineUser._id));
+            });
+        }
 
         socket.on('new notification', (data) => {
             api.info({
