@@ -42,6 +42,7 @@ const RoomChatApi = {
             params: {
                 to: toId
             }
-        })
+        }),
+    getDetailChatRoom: (chatRoomId) => axiosClient.get(`chat-rooms/${chatRoomId}`)
 };
 export default RoomChatApi;

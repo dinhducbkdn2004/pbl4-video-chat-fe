@@ -12,12 +12,13 @@ export const SocketContextProvider = ({ children }) => {
     const [socket, setSocket] = useState(null);
     const [onlineUsers, setOnlineUsers] = useState([]);
     const [notifications, setNotifications] = useState([]);
-    const { accessToken, user } = useSelector(authSelector);
+    const { accessToken } = useSelector(authSelector);
     const [api, contextHolder] = notification.useNotification({
         showProgress: true
     });
+
     useEffect(() => {
-        if (!user) return;
+        if (!accessToken) return;
 
         const socket = io(envClient.VITE_BASE_API_URL, {
             extraHeaders: {
@@ -35,11 +36,13 @@ export const SocketContextProvider = ({ children }) => {
         socket.on('online friends', (users) => {
             setOnlineUsers(users);
         });
+
         socket.on('new online friend', (newOnlineUser) => {
-            setOnlineUsers([newOnlineUser, ...onlineUsers]);
+            setOnlineUsers((pre) => [newOnlineUser, ...pre]);
         });
+
         socket.on('disconnect friend', (offlineUser) => {
-            setOnlineUsers(onlineUsers.filter((user) => user._id === offlineUser._id));
+            setOnlineUsers((pre) => pre.filter((user) => user._id === offlineUser._id));
         });
 
         socket.on('new notification', (data) => {
@@ -55,7 +58,8 @@ export const SocketContextProvider = ({ children }) => {
             socket.off('new notification');
             socket.off('online-users');
         };
-    }, [accessToken, user]);
+    }, [accessToken, api]);
+
     useEffect(() => {
         (async () => {
             if (accessToken) {

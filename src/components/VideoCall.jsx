@@ -1,31 +1,67 @@
-import React, { useEffect, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
-import { useParams } from 'react-router-dom';
-import { Button } from 'antd';
-import Container from './Container';
+import { Button, message, Spin } from 'antd';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useParams, useSearchParams } from 'react-router-dom';
+import RoomChatApi from '../apis/RoomChatApi';
+import { CallContext } from '../context/CallContext';
+import useFetch from '../hooks/useFetch';
+import { authSelector } from '../redux/features/auth/authSelections';
+import { useSocket } from '../hooks/useSocket';
 
 const VideoCall = () => {
     const { chatRoomId } = useParams();
+    const [searchParams] = useSearchParams();
+    const typeCall = searchParams.get('type');
+    console.log(typeCall);
+    const { fetchData, isLoading } = useFetch({ showError: false, showSuccess: false });
     const currentStream = useRef(null);
+    const { leaveCall, myPeer, startCall } = useContext(CallContext);
+    const [particapants, setParticapants] = useState([]);
+    const [myStream, setMyStream] = useState(null);
+    const { user: currentUser } = useSelector(authSelector);
+
     useEffect(() => {
         (async () => {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-            currentStream.current.srcObject = stream;
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+
+                const { data, isOk } = await fetchData(() => RoomChatApi.getDetailChatRoom(chatRoomId));
+                if (isOk) {
+                    setMyStream(stream);
+                    setParticapants(data.participants);
+                }
+            } catch (error) {
+                console.log(error);
+                message.error('Bạn phải cấp quyền video và audio để bắt đầu ');
+            }
         })();
-    }, []);
+    }, [chatRoomId, fetchData]);
+
+    useEffect(() => {
+        if (particapants.length > 0 && myStream) {
+            currentStream.current.srcObject = myStream;
+        }
+    }, [currentUser?._id, particapants, myStream]);
+
+    useEffect(() => {
+        const members = particapants.filter((participant) => participant !== currentUser._id);
+        startCall(members, myStream);
+    }, [particapants, myStream, currentUser?._id, myPeer]);
+
+    if (isLoading) return <Spin spinning={true} />;
 
     return (
         <div className='flex h-lvh flex-col justify-between overflow-auto bg-black-default px-10 pt-10'>
-            <div className='flex flex-1 flex-wrap justify-center gap-4'>
-                <video className='h-auto w-1/3 rounded-xl' muted ref={currentStream} autoPlay playsInline />
-                <video className='h-auto w-1/3 rounded-xl' muted ref={currentStream} autoPlay playsInline />
+            <div className='flex flex-1 flex-wrap items-center justify-center gap-4'>
+                <div className='h-auto w-1/3 overflow-hidden rounded-2xl'>
+                    <video muted ref={currentStream} autoPlay playsInline />
+                </div>
             </div>
             <div className='flex items-center justify-center gap-4 p-10'>
-                <Button />
-                <Button />
-                <Button />
-                <Button />
-                <Button />
+                <Button>Mute</Button>
+                <Button>Stop Video</Button>
+                <Button>Share Screen</Button>
+                <Button onClick={leaveCall}>Leave Call</Button>
             </div>
         </div>
     );
