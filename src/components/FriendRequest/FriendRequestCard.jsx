@@ -9,7 +9,7 @@ const FriendRequestCard = ({ request }) => {
     const buttonRef = useRef(null);
 
     const handleButtonClick = (type) => {
-        userApi.addFriend(sender._id, type);
+        userApi.acceptFriendRequest(sender._id, type);
 
         if (buttonRef.current) {
             buttonRef.current.innerHTML =
