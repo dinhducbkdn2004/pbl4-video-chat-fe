@@ -20,18 +20,24 @@ export const CallContextProvider = ({ children }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [chatRoomData, setChatRoomData] = useState(null);
+    const myStreamRef = useRef(null);
+
     const showModal = () => {
         setIsModalOpen(true);
     };
     const cancelCall = () => {
         setIsModalOpen(false);
     };
-    const answerCall = useCallback(async (incomingCall, myStreamRef) => {
+    const answerCall = useCallback(async (incomingCall) => {
         try {
             // Lấy stream của người dùng (gồm cả video và audio)
             const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
 
-            myStreamRef.current.subObject = stream;
+            myStreamRef.current = stream;
+            if (!incomingCall) {
+                console.error('Incoming call object is null');
+                return;
+            }
             // Trả lời cuộc gọi với stream của mình
             incomingCall.answer(stream);
 
@@ -56,11 +62,27 @@ export const CallContextProvider = ({ children }) => {
             peer.on('open', () => {
                 setMyPeer(peer);
             });
+
+            peer.on('call', async (incomingCall) => {
+                if (!incomingCall) {
+                    console.error('No incoming call received');
+                    return;
+                }
+                console.log('Incoming call:', incomingCall);
+
+                if (!isCalling) {
+                    showModal();
+                    await answerCall(incomingCall);
+                }
+            });
+
             peer.on('error', (err) => {
                 console.error('Peer connection error:', err);
             });
+
+            return () => peer.destroy();
         })();
-    }, [currentUser]);
+    }, [currentUser, answerCall, isCalling]);
 
     useEffect(() => {
         socket?.on('new video call', ({ from, chatRoom }) => {
@@ -68,33 +90,36 @@ export const CallContextProvider = ({ children }) => {
                 socket?.emit("callee's calling someone", { calleData: currentUser, from });
                 return;
             }
-            console.log(from, chatRoom);
-            console.log(chatRoom);
 
             setChatRoomData(() => chatRoom);
             setIsModalOpen(() => true);
-            // myPeer?.on('call', async (incomingCall) => {
-            //     await answerCall(incomingCall); // Gọi hàm trả lời cuộc gọi
-            // });
         });
         return () => {
             socket?.off('new video call');
         };
-    }, [socket, currentUser, isCalling, myPeer, answerCall]);
+    }, [socket, currentUser, isCalling]);
 
     const startCall = useCallback(
         (userToCallSocketId, stream) => {
             const call = myPeer?.call(userToCallSocketId, stream);
+            console.log(call);
 
             call?.on('stream', (remoteStream) => {
+                console.log(remoteStream);
                 setCalleePeers((pre) => [remoteStream, ...pre]);
             });
         },
-        [currentUser, myPeer, socket]
+        [myPeer]
     );
 
     const leaveCall = () => {
         setIsCalling(false);
+
+        // Destroy peer connection to avoid conflicts with PeerJS server
+        myPeer?.destroy();
+
+        myStreamRef.current?.getTracks().forEach((track) => track.stop());
+        setCalleePeers([]);
     };
 
     const handleButtonStart = useCallback(() => {
@@ -115,10 +140,7 @@ export const CallContextProvider = ({ children }) => {
         >
             <Modal title='Cuộc gọi đến' open={isModalOpen} footer={null} onCancel={cancelCall}>
                 <Avatar src={chatRoomData?.chatRoomImage} />
-                <h2>
-                    {chatRoomData?.name}
-                    Đang gọi cho bạn
-                </h2>
+                <h2>{`${chatRoomData?.name}  Đang gọi cho bạn`}</h2>
                 <Button onClick={handleButtonStart}>bắt máy</Button>
                 <Button onClick={cancelCall}>hủy bỏ</Button>
             </Modal>

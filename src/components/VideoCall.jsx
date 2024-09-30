@@ -17,7 +17,7 @@ const VideoCall = () => {
 
     const currentStream = useRef(null);
 
-    const { leaveCall, myPeer, startCall, calleePeers } = useContext(CallContext);
+    const { leaveCall, myPeer, startCall, calleePeers, answerCall } = useContext(CallContext);
 
     const [particapants, setParticapants] = useState([]);
     const [myStream, setMyStream] = useState(null);
@@ -44,23 +44,24 @@ const VideoCall = () => {
         if (particapants.length > 0 && myStream) {
             currentStream.current.srcObject = myStream;
         }
-    }, [currentUser?._id, particapants, myStream]);
+    }, [particapants, myStream]);
 
     useEffect(() => {
         if (typeCall === 'calling') {
             particapants
                 .filter((participant) => participant._id !== currentUser._id)
                 .forEach((participant) => {
-                    console.log(participant);
-
                     startCall(participant._id, myStream);
-
                     socket?.emit('start new call', { to: participant, chatRoomId });
                 });
         }
-    }, [typeCall, particapants, currentUser?._id, startCall, socket, myStream, chatRoomId]);
+        if (typeCall === 'answer') {
+            answerCall(myPeer);
+        }
+    }, [typeCall, particapants, currentUser?._id, startCall, socket, myStream, chatRoomId, answerCall, myPeer]);
 
     if (isLoading) return <Spin spinning={true} />;
+    console.log(calleePeers);
 
     return (
         <div className='flex h-lvh flex-col justify-between overflow-auto bg-black-default px-10 pt-10'>
@@ -68,7 +69,7 @@ const VideoCall = () => {
                 <div className='h-auto w-1/3 overflow-hidden rounded-2xl'>
                     <video muted ref={currentStream} autoPlay playsInline />
                     {calleePeers.map((calleePeer, index) => (
-                        <video key={index} muted ref={calleePeer} autoPlay playsInline />
+                        <video key={index} muted ref={calleePeer.current} autoPlay playsInline />
                     ))}
                 </div>
             </div>

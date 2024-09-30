@@ -4,7 +4,6 @@ import { truncateString } from '../../helpers/utils';
 
 const OnlineUsers = () => {
     const { onlineUsers } = useSocket();
-    console.log('onlineUsers', onlineUsers);
 
     return (
         <div className='online-now'>

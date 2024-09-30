@@ -62,7 +62,7 @@ export const SocketContextProvider = ({ children }) => {
             socket.off('new online friend');
             socket.off('disconnect friend');
         };
-    }, [accessToken, api]);
+    }, [accessToken, api, user]);
 
     useEffect(() => {
         (async () => {
