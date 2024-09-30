@@ -10,19 +10,20 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import envClient from './env.js';
 import { SocketContextProvider } from './context/SocketContext.jsx';
 import React from 'react';
+import { CallContextProvider } from './context/CallContext.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-    <React.StrictMode>
-        <BrowserRouter>
-            <Provider store={store}>
-                <ConfigProvider>
-                    <GoogleOAuthProvider clientId={envClient.GOOGLE_OATH_CLIENT_ID}>
-                        <SocketContextProvider>
+    <BrowserRouter>
+        <Provider store={store}>
+            <ConfigProvider>
+                <GoogleOAuthProvider clientId={envClient.GOOGLE_OATH_CLIENT_ID}>
+                    <SocketContextProvider>
+                        <CallContextProvider>
                             <App />
-                        </SocketContextProvider>
-                    </GoogleOAuthProvider>
-                </ConfigProvider>
-            </Provider>
-        </BrowserRouter>
-    </React.StrictMode>
+                        </CallContextProvider>
+                    </SocketContextProvider>
+                </GoogleOAuthProvider>
+            </ConfigProvider>
+        </Provider>
+    </BrowserRouter>
 );

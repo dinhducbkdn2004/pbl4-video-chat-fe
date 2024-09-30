@@ -4,13 +4,12 @@ import { VideoCameraOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
 
 const CallModal = () => {
-    const {chatRoomId} = useParams()
+    const { chatRoomId } = useParams();
     const [isVideoCallModalVisible, setIsVoiceCallModalVisible] = useState(false);
     const toggleModalVisibility = (isVisible) => {
         setIsVoiceCallModalVisible(isVisible);
     };
     const handleOk = () => {
-        
         const baseUrl = window.location.origin; // Get the base URL of your app
         const videoCallUrl = `${baseUrl}/video-call/${chatRoomId}`; // Concatenate the video call route
         window.open(videoCallUrl, '_blank'); // Open the video call page in a new tab

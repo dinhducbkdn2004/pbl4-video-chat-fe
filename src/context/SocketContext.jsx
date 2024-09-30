@@ -12,12 +12,13 @@ export const SocketContextProvider = ({ children }) => {
     const [socket, setSocket] = useState(null);
     const [onlineUsers, setOnlineUsers] = useState([]);
     const [notifications, setNotifications] = useState([]);
-    const { accessToken, user } = useSelector(authSelector);
+    const { accessToken } = useSelector(authSelector);
     const [api, contextHolder] = notification.useNotification({
         showProgress: true
     });
+
     useEffect(() => {
-        if (!user) return;
+        if (!accessToken) return;
 
         const socket = io(envClient.VITE_BASE_API_URL, {
             extraHeaders: {
@@ -37,20 +38,13 @@ export const SocketContextProvider = ({ children }) => {
                 setOnlineUsers(users.filter((onlineUser) => onlineUser.userId !== user?._id));
             });
 
-            socket.on('new online friend', (newFriend) => {
-                setOnlineUsers((prevUsers) => {
-                    const isAlreadyOnline = prevUsers.some((user) => user._id === newFriend._id);
-                    if (!isAlreadyOnline) {
-                        return [...prevUsers, newFriend];
-                    }
-                    return prevUsers;
-                });
-            });
+        socket.on('new online friend', (newOnlineUser) => {
+            setOnlineUsers((pre) => [newOnlineUser, ...pre]);
+        });
 
-            socket.on('disconnect friend', (disconnectedFriend) => {
-                setOnlineUsers((prevUsers) => prevUsers.filter((user) => user._id !== disconnectedFriend._id));
-            });
-        }
+        socket.on('disconnect friend', (offlineUser) => {
+            setOnlineUsers((pre) => pre.filter((user) => user._id === offlineUser._id));
+        });
 
         socket.on('new notification', (data) => {
             api.info({
@@ -67,7 +61,8 @@ export const SocketContextProvider = ({ children }) => {
             socket.off('new online friend');
             socket.off('disconnect friend');
         };
-    }, [accessToken, user]);
+    }, [accessToken, api]);
+
     useEffect(() => {
         (async () => {
             if (accessToken) {
