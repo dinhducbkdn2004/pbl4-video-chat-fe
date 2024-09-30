@@ -38,6 +38,8 @@ export const CallContextProvider = ({ children }) => {
                 console.error('Incoming call object is null');
                 return;
             }
+            console.log(incomingCall);
+
             // Trả lời cuộc gọi với stream của mình
             incomingCall.answer(stream);
 
@@ -102,11 +104,13 @@ export const CallContextProvider = ({ children }) => {
     const startCall = useCallback(
         (userToCallSocketId, stream) => {
             const call = myPeer?.call(userToCallSocketId, stream);
-            console.log(call);
 
             call?.on('stream', (remoteStream) => {
-                console.log(remoteStream);
                 setCalleePeers((pre) => [remoteStream, ...pre]);
+            });
+
+            call?.on('error', (err) => {
+                console.error('Call error:', err);
             });
         },
         [myPeer]
@@ -115,14 +119,15 @@ export const CallContextProvider = ({ children }) => {
     const leaveCall = () => {
         setIsCalling(false);
 
-        // Destroy peer connection to avoid conflicts with PeerJS server
-        myPeer?.destroy();
-
+        // Clean up streams
         myStreamRef.current?.getTracks().forEach((track) => track.stop());
         setCalleePeers([]);
+
+        // Destroy the peer connection
+        myPeer?.destroy();
     };
 
-    const handleButtonStart = useCallback(() => {
+    const handleButtonStart = useCallback(async () => {
         const baseUrl = window.location.origin; // Get the base URL of your app
         const videoCallUrl = `${baseUrl}/video-call/${chatRoomData?._id}?type=answer`; // Concatenate the video call route
         window.open(videoCallUrl, '_blank'); // Open the video call page in a new tab
@@ -135,7 +140,8 @@ export const CallContextProvider = ({ children }) => {
                 myPeer,
                 leaveCall,
                 calleePeers,
-                startCall
+                startCall,
+                myStreamRef
             }}
         >
             <Modal title='Cuộc gọi đến' open={isModalOpen} footer={null} onCancel={cancelCall}>

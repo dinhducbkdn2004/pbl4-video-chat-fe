@@ -30,8 +30,8 @@ const VideoCall = () => {
 
                 const { data, isOk } = await fetchData(() => RoomChatApi.getDetailChatRoom(chatRoomId));
                 if (isOk) {
-                    setMyStream(stream);
-                    setParticapants(data.participants);
+                    setMyStream(() => stream);
+                    setParticapants(() => data.participants);
                 }
             } catch (error) {
                 console.log(error);
@@ -47,19 +47,22 @@ const VideoCall = () => {
     }, [particapants, myStream]);
 
     useEffect(() => {
-        if (typeCall === 'calling') {
-            particapants
-                .filter((participant) => participant._id !== currentUser._id)
-                .forEach((participant) => {
-                    startCall(participant._id, myStream);
-                    socket?.emit('start new call', { to: participant, chatRoomId });
-                });
-        }
-        if (typeCall === 'answer') {
-            answerCall(myPeer);
-        }
+        (async () => {
+            if (typeCall === 'calling') {
+                particapants
+                    .filter((participant) => participant._id !== currentUser._id)
+                    .forEach((participant) => {
+                        startCall(participant._id, myStream);
+                        socket?.emit('start new call', { to: participant, chatRoomId });
+                    });
+            }
+        })();
     }, [typeCall, particapants, currentUser?._id, startCall, socket, myStream, chatRoomId, answerCall, myPeer]);
-
+    useEffect(() => {
+        return () => {
+            myStream?.getTracks().forEach((track) => track.stop()); // Cleanup on unmount
+        };
+    }, [myStream]);
     if (isLoading) return <Spin spinning={true} />;
     console.log(calleePeers);
 
@@ -69,7 +72,15 @@ const VideoCall = () => {
                 <div className='h-auto w-1/3 overflow-hidden rounded-2xl'>
                     <video muted ref={currentStream} autoPlay playsInline />
                     {calleePeers.map((calleePeer, index) => (
-                        <video key={index} muted ref={calleePeer.current} autoPlay playsInline />
+                        <video
+                            key={index}
+                            muted
+                            ref={(video) => {
+                                if (video) video.srcObject = calleePeer;
+                            }}
+                            autoPlay
+                            playsInline
+                        />
                     ))}
                 </div>
             </div>
