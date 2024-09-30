@@ -33,9 +33,10 @@ export const SocketContextProvider = ({ children }) => {
             console.log('Socket connected: ');
         });
 
-        socket.on('online friends', (users) => {
-            setOnlineUsers(users);
-        });
+        if (user) {
+            socket.on('online friends', (users) => {
+                setOnlineUsers(users.filter((onlineUser) => onlineUser.userId !== user?._id));
+            });
 
         socket.on('new online friend', (newOnlineUser) => {
             setOnlineUsers((pre) => [newOnlineUser, ...pre]);
