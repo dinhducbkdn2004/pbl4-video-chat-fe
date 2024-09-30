@@ -17,11 +17,14 @@ export const CallContextProvider = ({ children }) => {
 
     const [calleePeers, setCalleePeers] = useState([]);
 
-    const [isModalOpen, setIsModalOpen] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const [chatRoomId, setChatRoomId] = useState(null);
+    const [chatRoomData, setChatRoomData] = useState(null);
     const showModal = () => {
         setIsModalOpen(true);
+    };
+    const cancelCall = () => {
+        setIsModalOpen(false);
     };
     const answerCall = useCallback(async (incomingCall, myStreamRef) => {
         try {
@@ -60,15 +63,19 @@ export const CallContextProvider = ({ children }) => {
     }, [currentUser]);
 
     useEffect(() => {
-        socket?.on('new video call', ({ from, to, chatRoomId }) => {
+        socket?.on('new video call', ({ from, chatRoom }) => {
             if (isCalling) {
                 socket?.emit("callee's calling someone", { calleData: currentUser, from });
                 return;
             }
-            setChatRoomId(chatRoomId)
-            myPeer?.on('call', async (incomingCall) => {
-                await answerCall(incomingCall); // Gọi hàm trả lời cuộc gọi
-            });
+            console.log(from, chatRoom);
+            console.log(chatRoom);
+
+            setChatRoomData(() => chatRoom);
+            setIsModalOpen(() => true);
+            // myPeer?.on('call', async (incomingCall) => {
+            //     await answerCall(incomingCall); // Gọi hàm trả lời cuộc gọi
+            // });
         });
         return () => {
             socket?.off('new video call');
@@ -79,11 +86,9 @@ export const CallContextProvider = ({ children }) => {
         (userToCallSocketId, stream) => {
             const call = myPeer?.call(userToCallSocketId, stream);
 
-            call.on('stream', (remoteStream) => {
+            call?.on('stream', (remoteStream) => {
                 setCalleePeers((pre) => [remoteStream, ...pre]);
             });
-
-            socket?.emit('start new call', { to: userToCallSocketId, from: currentUser?._id });
         },
         [currentUser, myPeer, socket]
     );
@@ -92,12 +97,11 @@ export const CallContextProvider = ({ children }) => {
         setIsCalling(false);
     };
 
-    const cancelCall = () => {};
     const handleButtonStart = useCallback(() => {
         const baseUrl = window.location.origin; // Get the base URL of your app
-        const videoCallUrl = `${baseUrl}/video-call/${chatRoomId}?type=answer`; // Concatenate the video call route
+        const videoCallUrl = `${baseUrl}/video-call/${chatRoomData?._id}?type=answer`; // Concatenate the video call route
         window.open(videoCallUrl, '_blank'); // Open the video call page in a new tab
-    }, [chatRoomId]);
+    }, [chatRoomData?._id]);
 
     return (
         <CallContext.Provider
@@ -109,9 +113,12 @@ export const CallContextProvider = ({ children }) => {
                 startCall
             }}
         >
-            <Modal title='Cuộc gọi đến' open={isModalOpen} footer={null}>
-                <Avatar />
-                <h2>Đang gọi cho bạn</h2>
+            <Modal title='Cuộc gọi đến' open={isModalOpen} footer={null} onCancel={cancelCall}>
+                <Avatar src={chatRoomData?.chatRoomImage} />
+                <h2>
+                    {chatRoomData?.name}
+                    Đang gọi cho bạn
+                </h2>
                 <Button onClick={handleButtonStart}>bắt máy</Button>
                 <Button onClick={cancelCall}>hủy bỏ</Button>
             </Modal>

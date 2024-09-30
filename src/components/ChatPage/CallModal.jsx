@@ -11,7 +11,7 @@ const CallModal = () => {
     };
     const handleOk = () => {
         const baseUrl = window.location.origin; // Get the base URL of your app
-        const videoCallUrl = `${baseUrl}/video-call/${chatRoomId}`; // Concatenate the video call route
+        const videoCallUrl = `${baseUrl}/video-call/${chatRoomId}?type=calling`; // Concatenate the video call route
         window.open(videoCallUrl, '_blank'); // Open the video call page in a new tab
         setIsVoiceCallModalVisible(false); // Close the modal
     };

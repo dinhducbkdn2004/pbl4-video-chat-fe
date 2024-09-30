@@ -5,7 +5,7 @@ const RoomChatApi = {
         const isGroupChat = users.length > 1;
         return axiosClient.post('/chat-rooms', { name, users, privacy, isGroupChat });
     },
-    searchChatroomByName: (name, getMy=true) => {
+    searchChatroomByName: (name, getMy = true) => {
         return axiosClient.get('/chat-rooms/search', {
             params: {
                 name,
@@ -37,12 +37,13 @@ const RoomChatApi = {
         return axiosClient.post('/messages', payload);
     },
 
-    getOneToOneChatRoom: (toId) => {
+    getOneToOneChatRoom: (toId) =>
         axiosClient.get('/chat-rooms/getOneToOne', {
             params: {
                 to: toId
             }
         }),
+
     getDetailChatRoom: (chatRoomId) => axiosClient.get(`chat-rooms/${chatRoomId}`)
 };
 export default RoomChatApi;

@@ -12,10 +12,13 @@ const VideoCall = () => {
     const { chatRoomId } = useParams();
     const [searchParams] = useSearchParams();
     const typeCall = searchParams.get('type');
-    console.log(typeCall);
+    const { socket } = useSocket();
     const { fetchData, isLoading } = useFetch({ showError: false, showSuccess: false });
+
     const currentStream = useRef(null);
-    const { leaveCall, myPeer, startCall } = useContext(CallContext);
+
+    const { leaveCall, myPeer, startCall, calleePeers } = useContext(CallContext);
+
     const [particapants, setParticapants] = useState([]);
     const [myStream, setMyStream] = useState(null);
     const { user: currentUser } = useSelector(authSelector);
@@ -44,9 +47,18 @@ const VideoCall = () => {
     }, [currentUser?._id, particapants, myStream]);
 
     useEffect(() => {
-        const members = particapants.filter((participant) => participant !== currentUser._id);
-        startCall(members, myStream);
-    }, [particapants, myStream, currentUser?._id, myPeer]);
+        if (typeCall === 'calling') {
+            particapants
+                .filter((participant) => participant._id !== currentUser._id)
+                .forEach((participant) => {
+                    console.log(participant);
+
+                    startCall(participant._id, myStream);
+
+                    socket?.emit('start new call', { to: participant, chatRoomId });
+                });
+        }
+    }, [typeCall, particapants, currentUser?._id, startCall, socket, myStream, chatRoomId]);
 
     if (isLoading) return <Spin spinning={true} />;
 
@@ -55,6 +67,9 @@ const VideoCall = () => {
             <div className='flex flex-1 flex-wrap items-center justify-center gap-4'>
                 <div className='h-auto w-1/3 overflow-hidden rounded-2xl'>
                     <video muted ref={currentStream} autoPlay playsInline />
+                    {calleePeers.map((calleePeer, index) => (
+                        <video key={index} muted ref={calleePeer} autoPlay playsInline />
+                    ))}
                 </div>
             </div>
             <div className='flex items-center justify-center gap-4 p-10'>

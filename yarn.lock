@@ -2825,17 +2825,6 @@ rc-tree-select@~5.23.0:
     rc-tree "~5.9.0"
     rc-util "^5.16.1"
 
-rc-tree@~5.8.1:
-  version "5.8.8"
-  resolved "https://registry.yarnpkg.com/rc-tree/-/rc-tree-5.8.8.tgz#650a13ec825a5a4feec6bbaf6a380465986ee0db"
-  integrity sha512-S+mCMWo91m5AJqjz3PdzKilGgbFm7fFJRFiTDOcoRbD7UfMOPnerXwMworiga0O2XIo383UoWuEfeHs1WOltag==
-  dependencies:
-    "@babel/runtime" "^7.10.1"
-    classnames "2.x"
-    rc-motion "^2.0.1"
-    rc-util "^5.16.1"
-    rc-virtual-list "^3.5.1"
-
 rc-tree@~5.9.0:
   version "5.9.0"
   resolved "https://registry.yarnpkg.com/rc-tree/-/rc-tree-5.9.0.tgz#1835b2bef36cfeb4ec15d62e0319fc503aa485f1"
