@@ -46,4 +46,5 @@ const RoomChatApi = {
 
     getDetailChatRoom: (chatRoomId) => axiosClient.get(`chat-rooms/${chatRoomId}`)
 };
+
 export default RoomChatApi;

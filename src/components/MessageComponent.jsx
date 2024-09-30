@@ -3,17 +3,18 @@ import { useSelector } from 'react-redux';
 import { Avatar, Badge } from 'antd';
 import { getLastName } from '../helpers/utils';
 import { authSelector } from '../redux/features/auth/authSelections';
+import { useSocket } from '../hooks/useSocket';
 
-const MessageComponent = ({ msg, members }) => {
+const MessageComponent = ({ msg }) => {
     const { user: currentUser } = useSelector(authSelector);
     const { sender, content, createdAt } = msg;
+    const { onlineUsers } = useSocket();
     return (
         <div className={`mb-4 flex ${sender._id === currentUser._id ? 'justify-end' : ''}`}>
             {sender._id !== currentUser._id && (
                 <Badge
                     className='mr-2 flex items-center'
-                    dot={members?.find((member) => member._id === sender._id)?.isOnline}
-
+                    dot={onlineUsers.find((onlineUser) => onlineUser._id === sender._id)}
                     color='#52c41a'
                     size='small'
                     offset={[-5, 50]}
@@ -22,7 +23,9 @@ const MessageComponent = ({ msg, members }) => {
                 </Badge>
             )}
             <div className={`flex flex-col ${sender._id === currentUser._id ? 'items-end' : 'items-start'}`}>
-                <div className='mb-1 text-xs' style={{fontSize: '12px'}}>{getLastName(sender.name)}</div>
+                <div className='mb-1 text-xs' style={{ fontSize: '12px' }}>
+                    {getLastName(sender.name)}
+                </div>
                 <div
                     className={`inline-block max-w-xs rounded-2xl px-4 py-2 text-sm ${
                         sender._id === currentUser._id
@@ -42,13 +45,7 @@ const MessageComponent = ({ msg, members }) => {
                 </div>
             </div>
             {sender._id === currentUser._id && (
-                <Badge
-                    className='ml-2 flex items-center'
-                    dot={members.find((member) => member._id === sender._id)?.isOnline}
-                    color='#52c41a'
-                    size='small'
-                    offset={[-5, 50]}
-                >
+                <Badge className='ml-2 flex items-center' dot color='#52c41a' size='small' offset={[-5, 50]}>
                     <Avatar src={sender.avatar} className='avatar' />
                 </Badge>
             )}
@@ -57,8 +54,7 @@ const MessageComponent = ({ msg, members }) => {
 };
 
 MessageComponent.propTypes = {
-    msg: PropTypes.object.isRequired,
-    members: PropTypes.arrayOf(PropTypes.object)
+    msg: PropTypes.object.isRequired
 };
 
 export default MessageComponent;
