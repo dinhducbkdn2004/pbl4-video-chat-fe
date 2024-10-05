@@ -1,87 +1,133 @@
-import { Button, message, Spin } from 'antd';
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { Button, Spin } from 'antd';
+import { useContext, useEffect, useRef, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
-import RoomChatApi from '../apis/RoomChatApi';
+
 import { CallContext } from '../context/CallContext';
-import useFetch from '../hooks/useFetch';
+
 import { authSelector } from '../redux/features/auth/authSelections';
 import { useSocket } from '../hooks/useSocket';
+import VideoGrid from './VideoGrid';
+import { Peer } from 'peerjs';
+import useFetch from './../hooks/useFetch';
+import RoomChatApi from './../apis/RoomChatApi';
 
 const VideoCall = () => {
+    const myStreamRef = useRef(null);
+    const [myPeer, setMyPeer] = useState(null);
+    const [calleePeers, setCalleePeers] = useState([]);
     const { chatRoomId } = useParams();
     const [searchParams] = useSearchParams();
     const typeCall = searchParams.get('type');
     const { socket } = useSocket();
+
     const { fetchData, isLoading } = useFetch({ showError: false, showSuccess: false });
-
-    const currentStream = useRef(null);
-
-    const { leaveCall, myPeer, startCall, calleePeers, answerCall } = useContext(CallContext);
-
-    const [particapants, setParticapants] = useState([]);
-    const [myStream, setMyStream] = useState(null);
     const { user: currentUser } = useSelector(authSelector);
 
-    useEffect(() => {
-        (async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    const startCall = useCallback(
+        async (calleePeerId) => {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            myStreamRef.current = stream;
+            const call = myPeer?.call(calleePeerId, stream);
 
-                const { data, isOk } = await fetchData(() => RoomChatApi.getDetailChatRoom(chatRoomId));
-                if (isOk) {
-                    setMyStream(() => stream);
-                    setParticapants(() => data.participants);
-                }
-            } catch (error) {
-                console.log(error);
-                message.error('Bạn phải cấp quyền video và audio để bắt đầu ');
+            call?.on('stream', (remoteStream) => {
+                setCalleePeers((pre) => [remoteStream, ...pre]);
+            });
+
+            call?.on('error', (err) => {
+                console.error('Call error:', err);
+            });
+        },
+        [myPeer]
+    );
+    const answerCall = useCallback(async (incomingCall) => {
+        try {
+            // Lấy stream của người dùng (gồm cả video và audio)
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+
+            myStreamRef.current = stream;
+            if (!incomingCall) {
+                console.error('Incoming call object is null');
+                return;
             }
-        })();
-    }, [chatRoomId, fetchData]);
+            console.log(incomingCall);
 
-    useEffect(() => {
-        if (particapants.length > 0 && myStream) {
-            currentStream.current.srcObject = myStream;
+            // Trả lời cuộc gọi với stream của mình
+            incomingCall.answer(stream);
+
+            // Lắng nghe sự kiện 'stream' từ người gọi đến
+            incomingCall.on('stream', (remoteStream) => {
+                // Lưu lại stream của người gọi để hiển thị
+                setCalleePeers((prevPeers) => [remoteStream, ...prevPeers]);
+            });
+
+            // Đánh dấu là đang trong cuộc gọi
+        } catch (error) {
+            console.error('Error answering the call:', error);
         }
-    }, [particapants, myStream]);
-
+    }, []);
     useEffect(() => {
         (async () => {
-            if (typeCall === 'calling') {
-                particapants
-                    .filter((participant) => participant._id !== currentUser._id)
-                    .forEach((participant) => {
-                        startCall(participant._id, myStream);
-                        socket?.emit('start new call', { to: participant, chatRoomId });
-                    });
+            const peer = new Peer();
+
+            peer.on('open', () => {
+                setMyPeer(peer);
+            });
+
+            peer.on('call', async (incomingCall) => {
+                console.log('Incoming call:', incomingCall);
+
+                await answerCall(incomingCall);
+            });
+
+            peer.on('error', (err) => {
+                console.error('Peer connection error:', err);
+            });
+
+            return () => peer.destroy();
+        })();
+    }, [currentUser, answerCall]);
+    useEffect(() => {
+        (async () => {
+            const { data, isOk } = await fetchData(() => RoomChatApi.getDetailChatRoom(chatRoomId));
+            if (isOk) {
+                if (typeCall === 'calling') {
+                    data.participants
+                        .filter((participant) => participant._id !== currentUser?._id)
+                        .forEach((participant) => {
+                            socket?.emit('start new call', { to: participant, chatRoomId });
+                        });
+                }
+                if (typeCall === 'answer') {
+                    socket?.emit('answer a call', { to: data, peerId: myPeer?._id });
+                }
             }
         })();
-    }, [typeCall, particapants, currentUser?._id, startCall, socket, myStream, chatRoomId, answerCall, myPeer]);
+    }, [chatRoomId, currentUser?._id, fetchData, myPeer?._id, socket, startCall, typeCall]);
     useEffect(() => {
-        return () => {
-            myStream?.getTracks().forEach((track) => track.stop()); // Cleanup on unmount
-        };
-    }, [myStream]);
+        socket?.on('callee accept call', ({ peerId }) => {
+            console.log(peerId);
+
+            startCall(peerId);
+        });
+        return () => socket?.off('callee accept call');
+    }, [socket, startCall]);
+
+    const leaveCall = () => {
+        // Clean up streams
+        myStreamRef.current?.getTracks().forEach((track) => track.stop());
+        setCalleePeers([]);
+
+        // Destroy the peer connection
+        myPeer?.destroy();
+    };
     if (isLoading) return <Spin spinning={true} />;
-    console.log(calleePeers);
 
     return (
         <div className='flex h-lvh flex-col justify-between overflow-auto bg-black-default px-10 pt-10'>
             <div className='flex flex-1 flex-wrap items-center justify-center gap-4'>
                 <div className='h-auto w-1/3 overflow-hidden rounded-2xl'>
-                    <video muted ref={currentStream} autoPlay playsInline />
-                    {calleePeers.map((calleePeer, index) => (
-                        <video
-                            key={index}
-                            muted
-                            ref={(video) => {
-                                if (video) video.srcObject = calleePeer;
-                            }}
-                            autoPlay
-                            playsInline
-                        />
-                    ))}
+                    <VideoGrid localStream={myStreamRef.current} calleePeers={calleePeers} />
                 </div>
             </div>
             <div className='flex items-center justify-center gap-4 p-10'>
