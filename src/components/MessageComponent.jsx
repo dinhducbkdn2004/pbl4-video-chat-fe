@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { Avatar, Badge } from 'antd';
+import { CheckCircleTwoTone } from '@ant-design/icons';
 import { getLastName } from '../helpers/utils';
 import { authSelector } from '../redux/features/auth/authSelections';
 import { useSocket } from '../hooks/useSocket';
@@ -23,7 +24,7 @@ const MessageComponent = ({ msg }) => {
                 </Badge>
             )}
             <div className={`flex flex-col ${sender._id === currentUser._id ? 'items-end' : 'items-start'}`}>
-                <div className='mb-1 text-xs' style={{ fontSize: '12px' }}>
+                <div className='mb-1 text-xs font-medium' style={{ fontSize: '12px' }}>
                     {getLastName(sender.name)}
                 </div>
                 <div
@@ -35,11 +36,11 @@ const MessageComponent = ({ msg }) => {
                 >
                     {content}
                 </div>
-                <div className='text-gray-500 mt-1 flex items-center text-xs' style={{ fontSize: '11px' }}>
-                    <span>{new Date(createdAt).toLocaleTimeString()}</span>
+                <div className='text-gray-500 mt-1 flex items-center text-xs' style={{ fontSize: '10px' }}>
+                    <span>{new Date(createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                     {sender._id === currentUser._id && (
                         <>
-                            <span className='ml-1'>✔️</span>
+                            <CheckCircleTwoTone className='ml-1' />
                         </>
                     )}
                 </div>

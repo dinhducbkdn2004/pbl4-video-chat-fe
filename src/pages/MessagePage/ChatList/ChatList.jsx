@@ -1,5 +1,4 @@
 import { UsergroupAddOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
 import { debounce } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -25,6 +24,7 @@ const ChatList = () => {
     const [isAddRoomModalVisible, setIsAddRoomModalVisible] = useState(false);
     const [searchResults, setSearchResults] = useState([]);
     const [recentChats, setRecentChats] = useState([]);
+    const [isFirstLoad, setIsFirstLoad] = useState(true);
 
     const handleSearchChange = (e) => {
         setSearchValue(e.target.value);
@@ -52,7 +52,10 @@ const ChatList = () => {
 
     const fetchAndSetChatrooms = async () => {
         const data = await fetchData(() => RoomChatApi.getAllChatrooms(true));
-        if (data.isOk) setRecentChats(data.data);
+        if (data.isOk) {
+            setRecentChats(data.data);
+            if (isFirstLoad) setIsFirstLoad(false);
+        }
     };
 
     useEffect(() => {
@@ -84,8 +87,7 @@ const ChatList = () => {
                     handleChatClick={handleChatClick}
                 />
                 <OnlineUsers />
-                {/* {isLoading ? <Spin /> : <RecentChats recentChats={recentChats} handleChatClick={handleChatClick} />} */}
-                <RecentChats recentChats={recentChats} handleChatClick={handleChatClick} />
+                <RecentChats recentChats={recentChats} handleChatClick={handleChatClick} isFirstLoad={isFirstLoad} />
                 <AddRoomModal open={isAddRoomModalVisible} onCreate={handleAddRoom} onCancel={handleCancel} />
             </div>
         </>

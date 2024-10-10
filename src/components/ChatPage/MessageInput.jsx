@@ -1,27 +1,39 @@
 import { useState } from 'react';
-import { Button, Input, Popover } from 'antd';
+import { Button, Input, Popover, Upload } from 'antd';
 import { PaperClipOutlined, SmileOutlined, SendOutlined } from '@ant-design/icons';
 import EmojiPicker from 'emoji-picker-react';
 import useFetch from '../../hooks/useFetch';
 import RoomChatApi from '../../apis/RoomChatApi';
+import uploadApi from '../../apis/uploadApi';
 import { useParams } from 'react-router-dom';
 
 const MessageInput = () => {
     const [isEmojiPickerVisible, setIsEmojiPickerVisible] = useState(false);
     const [message, setMessage] = useState('');
+    const [file, setFile] = useState(null);
     const { chatRoomId: currentChatRoomId } = useParams();
     const { fetchData } = useFetch({ showError: false, showSuccess: false });
 
-    // Hàm gửi tin nhắn
     const handleSendMessage = async () => {
-        if (!message.trim()) return; // Kiểm tra xem tin nhắn có nội dung hay không
-        await fetchData(() => RoomChatApi.createMessage(message, currentChatRoomId, 'Text', null));
-        setMessage(''); // Xoá tin nhắn sau khi gửi
+        if (!message.trim() && !file) return;
+
+        let fileUrl = null;
+        if (file) {
+            const uploadResponse = await uploadApi.upload(file, 'chat_files');
+            fileUrl = uploadResponse.data.url;
+        }
+
+        await fetchData(() => RoomChatApi.createMessage(message, currentChatRoomId, 'Text', fileUrl));
+        setMessage('');
+        setFile(null);
     };
 
-    // Hàm chọn emoji
-    const handleEmojiClick = (emojiObject) => {
-        setMessage((prevMessage) => prevMessage + emojiObject.emoji); // Thêm emoji vào tin nhắn
+    const handleEmojiClick = (emojiObject, event) => {
+        setMessage((prevMessage) => prevMessage + emojiObject.emoji);
+    };
+
+    const handleFileChange = ({ file }) => {
+        setFile(file.originFileObj);
     };
 
     return (
@@ -30,12 +42,14 @@ const MessageInput = () => {
             style={{ backgroundColor: '#f5f5f5', boxShadow: '0 -4px 10px rgba(0, 0, 0, 0.05)' }}
         >
             <Popover content='Attach'>
-                <Button icon={<PaperClipOutlined />} className='mr-2 rounded-full p-2' />
+                <Upload beforeUpload={() => false} onChange={handleFileChange}>
+                    <Button icon={<PaperClipOutlined />} className='mr-2 rounded-full p-2' />
+                </Upload>
             </Popover>
 
             <Popover content='Emoji'>
                 <Popover
-                    content={<EmojiPicker onEmojiClick={(event, emojiObject) => handleEmojiClick(emojiObject)} />}
+                    content={<EmojiPicker onEmojiClick={handleEmojiClick} />}
                     trigger='click'
                     open={isEmojiPickerVisible}
                     onOpenChange={(visible) => setIsEmojiPickerVisible(visible)}
@@ -47,7 +61,7 @@ const MessageInput = () => {
             <Input
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()} // Gửi tin nhắn khi nhấn Enter
+                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                 placeholder='Type your message here...'
                 className='rounded-5 mr-2 flex-1 p-2'
             />
