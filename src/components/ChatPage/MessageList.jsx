@@ -18,6 +18,7 @@ const MessageList = ({ messages, messagesEndRef, handleSetMessages }) => {
     useEffect(() => {
         socket?.on('new message', (incomingMessage) => {
             if (incomingMessage.chatRoom === currentChatRoomId) handleSetMessages(incomingMessage);
+            console.log('new message', incomingMessage);
         });
 
         return () => {

@@ -34,15 +34,15 @@ export const SocketContextProvider = ({ children }) => {
         });
 
         socket.on('online friends', (users) => {
-            setOnlineUsers(users);
+            setOnlineUsers(users.filter((user) => user._id !== socket.id));
         });
 
         socket.on('new online friend', (newOnlineUser) => {
-            setOnlineUsers((pre) => [newOnlineUser, ...pre]);
+            setOnlineUsers(users => [...users, newOnlineUser]);
         });
 
         socket.on('disconnect friend', (offlineUser) => {
-            setOnlineUsers((pre) => pre.filter((user) => user._id === offlineUser._id));
+            setOnlineUsers(users => users.filter((user) => user._id !== offlineUser._id));
         });
 
         socket.on('new notification', (data) => {
