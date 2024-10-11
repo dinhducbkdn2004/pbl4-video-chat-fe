@@ -1,15 +1,91 @@
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
-import { Avatar, Badge } from 'antd';
-import { CheckCircleTwoTone } from '@ant-design/icons';
+import { Avatar, Badge, Button, Image, Spin } from 'antd';
+import { CheckCircleTwoTone, PaperClipOutlined } from '@ant-design/icons';
 import { getLastName } from '../helpers/utils';
 import { authSelector } from '../redux/features/auth/authSelections';
 import { useSocket } from '../hooks/useSocket';
+import { useEffect, useState } from 'react';
+
+import useFetch from '../hooks/useFetch';
+import messageApi from '../apis/messageApi';
 
 const MessageComponent = ({ msg }) => {
     const { user: currentUser } = useSelector(authSelector);
-    const { sender, content, createdAt } = msg;
+    const { sender, createdAt } = msg;
     const { onlineUsers } = useSocket();
+    const { isLoading, fetchData } = useFetch({ showError: false, showSuccess: false });
+    const [seoData, setSeoData] = useState(null);
+    const checkMessageType = (message) => {
+        switch (message.type) {
+            case 'Text':
+                return message.content;
+
+            case 'Picture':
+                return (
+                    <Image src={message.fileUrl} alt='Picture' style={{ maxWidth: '200px', borderRadius: '10px' }} />
+                );
+
+            case 'Video':
+                return (
+                    <video controls style={{ maxWidth: '300px', borderRadius: '10px' }}>
+                        <source src={message.fileUrl} type='video/mp4' />
+                        Your browser does not support the video tag.
+                    </video>
+                );
+
+            case 'Document':
+                return (
+                    <div>
+                        <p>{message.fileName || 'Download Document'}</p>
+                        <Button
+                            type='primary'
+                            href={message.fileUrl}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            icon={<PaperClipOutlined />}
+                        >
+                            Download
+                        </Button>
+                    </div>
+                );
+
+            case 'Link':
+                return isLoading ? (
+                    <Spin />
+                ) : (
+                    <div>
+                        <a href={message.content} target='_blank'>
+                            {message?.content}
+                        </a>
+                        <h2>{seoData?.title}</h2>
+
+                        {seoData?.image && (
+                            <img
+                                src={seoData?.image}
+                                alt='SEO preview'
+                                style={{ maxWidth: '100px', marginBottom: '10px' }}
+                            />
+                        )}
+
+                        <p>{seoData?.description}</p>
+                    </div>
+                );
+
+            default:
+                return null;
+        }
+    };
+    useEffect(() => {
+        (async () => {
+            if (msg.type === 'Link') {
+                const { data } = await fetchData(() => messageApi.fetchSEOData(msg.content));
+
+                setSeoData(data);
+            }
+        })();
+    }, [msg, fetchData]);
+
     return (
         <div className={`mb-4 flex ${sender._id === currentUser._id ? 'justify-end' : ''}`}>
             {sender._id !== currentUser._id && (
@@ -34,7 +110,7 @@ const MessageComponent = ({ msg }) => {
                             : 'text-black mr-auto bg-green-defaut'
                     }`}
                 >
-                    {content}
+                    {checkMessageType(msg)}
                 </div>
                 <div className='text-gray-500 mt-1 flex items-center text-xs' style={{ fontSize: '10px' }}>
                     <span>{new Date(createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>

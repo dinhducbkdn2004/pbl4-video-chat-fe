@@ -16,7 +16,7 @@ import { useLocation } from 'react-router-dom';
 const ChatInfoSidebar = ({ open, onClose }) => {
     const location = useLocation();
     const { name: roomName, participants: members, typeRoom, chatRoomImage } = location.state;
-    console.log(members);
+
     const items = [
         {
             key: '1',
@@ -143,7 +143,7 @@ const ChatInfoSidebar = ({ open, onClose }) => {
             closable={!isBackButtonVisible}
         >
             {isFileView ? (
-                <div className='flex justify-around items-center'>
+                <div className='flex items-center justify-around'>
                     <Menu
                         mode='horizontal'
                         defaultSelectedKeys={['3-1']}

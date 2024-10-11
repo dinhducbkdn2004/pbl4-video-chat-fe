@@ -15,15 +15,13 @@ const uploadApi = {
         formData.append('timestamp', res.data.timestamp);
         formData.append('signature', res.data.signature);
         formData.append('folder', res.data.folder); // Optional: folder where to store the image
-
+        const uploadEndpoint = file.type.startsWith('video/')
+            ? `https://api.cloudinary.com/v1_1/${res.data.cloudName}/video/upload`
+            : `https://api.cloudinary.com/v1_1/${res.data.cloudName}/image/upload`;
         // Step 2: Upload the image directly to Cloudinary
-        const { status, data } = await axios.post(
-            `https://api.cloudinary.com/v1_1/${res.data.cloudName}/image/upload`,
-            formData,
-            {
-                withCredentials: false
-            }
-        );
+        const { status, data } = await axios.post(uploadEndpoint, formData, {
+            withCredentials: false
+        });
         return {
             status,
             data
