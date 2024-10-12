@@ -1,8 +1,10 @@
-import { TbPhoneCall, TbWorldSearch } from 'react-icons/tb';
+import { TbPhoneCall } from 'react-icons/tb';
+import { TbUserSearch } from 'react-icons/tb';
+
 import { Avatar, Badge, Dropdown, Layout, Menu } from 'antd';
 import { RiLogoutCircleRLine } from 'react-icons/ri';
 import { BiMessageSquareDots } from 'react-icons/bi';
-import { IoSettingsOutline } from 'react-icons/io5';
+import { IoNotificationsOutline } from 'react-icons/io5';
 import { LuContact2 } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 import { handleLogout } from '../../components/Logout';
@@ -53,12 +55,12 @@ const Sidebar = () => {
         },
         {
             key: 'search/users',
-            icon: <TbWorldSearch size={20} />,
+            icon: <TbUserSearch size={20} />,
             className: 'custom-menu-item'
         },
         {
             key: 'notification',
-            icon: <IoSettingsOutline size={20} />,
+            icon: <IoNotificationsOutline size={20} />,
             className: 'custom-menu-item'
         }
     ];

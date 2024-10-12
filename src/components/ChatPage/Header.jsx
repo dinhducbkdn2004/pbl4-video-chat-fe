@@ -26,7 +26,12 @@ const Header = ({ toggleSidebar }) => {
                             className='mr-3'
                             dot={true}
                             color={
-                                onlineUsers.find((onlineUser) => onlineUser._id === (members.find((member) => member._id !== currentUser._id))._id) ? '#52c41a' : 'red'
+                                onlineUsers.find(
+                                    (onlineUser) =>
+                                        onlineUser._id === members.find((member) => member._id !== currentUser._id)._id
+                                )
+                                    ? '#52c41a'
+                                    : '#B6B6B6'
                             }
                             offset={[-7, 35]}
                         >
@@ -50,7 +55,7 @@ const Header = ({ toggleSidebar }) => {
                                                 onlineUser._id === member._id || member._id === currentUser._id
                                         )
                                             ? '#52c41a'
-                                            : 'red'
+                                            : '#B6B6B6'
                                     }
                                     offset={[-5, 35]}
                                 >
@@ -65,7 +70,7 @@ const Header = ({ toggleSidebar }) => {
                     <p
                         className='text-gray-600 m-0 text-sm'
                         style={{
-                            color: isRoomOnline ? '#52c41a' : '#DC1411'
+                            color: isRoomOnline ? '#52c41a' : '#B6B6B6'
                         }}
                     >
                         {isRoomOnline ? 'Online now' : 'Offline'}
