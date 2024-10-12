@@ -11,20 +11,26 @@ import {
     UserAddOutlined,
     ArrowLeftOutlined
 } from '@ant-design/icons';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
+import ChangeDetails from '../components/ChatRoomDetail/ChangeDetails';
 
 const ChatInfoSidebar = ({ open, onClose }) => {
     const location = useLocation();
-    const { name: roomName, participants: members, typeRoom, chatRoomImage } = location.state;
-    console.log(members);
+    const { chatRoomId: currentChatRoomId } = useParams();
+    const { name: roomName, participants: members, typeRoom } = location.state;
+    const [isChangeDetailsVisible, setIsChangeDetailsVisible] = useState(false);
+    const [changeDetailsType, setChangeDetailsType] = useState('');
+
     const items = [
         {
             key: '1',
             icon: <MailOutlined />,
             label: 'Tuỳ chỉnh đoạn chat',
             children: [
-                { key: '1-1', label: 'Đổi tên đoạn chat' },
-                { key: '1-2', label: 'Thay đổi ảnh' }
+                { key: '1-1', label: 'Đổi tên đoạn chat', onClick: () => handleChangeDetails('name') },
+                ...(typeRoom === 'Group'
+                    ? [{ key: '1-2', label: 'Thay đổi ảnh', onClick: () => handleChangeDetails('image') }]
+                    : [])
             ]
         },
         {
@@ -124,6 +130,15 @@ const ChatInfoSidebar = ({ open, onClose }) => {
         setIsBackButtonVisible(false);
     };
 
+    const handleChangeDetails = (type) => {
+        setChangeDetailsType(type);
+        setIsChangeDetailsVisible(true);
+    };
+
+    const handleCloseChangeDetails = () => {
+        setIsChangeDetailsVisible(false);
+    };
+
     return (
         <Drawer
             title={
@@ -143,7 +158,7 @@ const ChatInfoSidebar = ({ open, onClose }) => {
             closable={!isBackButtonVisible}
         >
             {isFileView ? (
-                <div className='flex justify-around items-center'>
+                <div className='flex items-center justify-around'>
                     <Menu
                         mode='horizontal'
                         defaultSelectedKeys={['3-1']}
@@ -178,6 +193,13 @@ const ChatInfoSidebar = ({ open, onClose }) => {
                         items={items}
                     />
                 </div>
+            )}
+            {isChangeDetailsVisible && (
+                <ChangeDetails
+                    type={changeDetailsType}
+                    chatRoomId={currentChatRoomId}
+                    onClose={handleCloseChangeDetails}
+                />
             )}
         </Drawer>
     );

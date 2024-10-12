@@ -31,7 +31,7 @@ const MessageComponent = ({ msg }) => {
                     className={`inline-block max-w-xs rounded-2xl px-4 py-2 text-sm ${
                         sender._id === currentUser._id
                             ? 'ml-auto bg-blue-500 text-white-default'
-                            : 'text-black mr-auto bg-green-defaut'
+                            : 'text-black mr-auto bg-white-dark'
                     }`}
                 >
                     {content}
