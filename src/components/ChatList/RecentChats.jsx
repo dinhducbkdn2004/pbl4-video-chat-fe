@@ -30,7 +30,7 @@ const RecentChats = ({ recentChats, handleChatClick, isFirstLoad }) => {
                                                     onlineUsers.find((onlineUser) => onlineUser._id === participant._id)
                                                 )
                                                     ? '#52c41a'
-                                                    : '#ff4d4f'
+                                                    : '#B6B6B6'
                                             }
                                             offset={[-7, 36]}
                                         >
@@ -72,7 +72,7 @@ const RecentChats = ({ recentChats, handleChatClick, isFirstLoad }) => {
                                                 }}
                                             >
                                                 {truncateString(
-                                                    item.lastMessage?.content || 'No message available',
+                                                    item.lastMessage?.content || 'No message yet',
                                                     17
                                                 )}
                                             </span>

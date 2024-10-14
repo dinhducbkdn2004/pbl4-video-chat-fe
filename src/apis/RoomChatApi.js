@@ -44,7 +44,9 @@ const RoomChatApi = {
             }
         }),
 
-    getDetailChatRoom: (chatRoomId) => axiosClient.get(`chat-rooms/${chatRoomId}`)
+    getDetailChatRoom: (chatRoomId) => axiosClient.get(`chat-rooms/${chatRoomId}`),
+
+    changeDetailChatRoom: (data) => axiosClient.patch(`/chat-rooms/change-details/`, data),
 };
 
 export default RoomChatApi;

@@ -18,7 +18,6 @@ const MessageList = ({ messages, messagesEndRef, handleSetMessages }) => {
     useEffect(() => {
         socket?.on('new message', (incomingMessage) => {
             if (incomingMessage.chatRoom === currentChatRoomId) handleSetMessages(incomingMessage);
-            console.log('new message', incomingMessage);
         });
 
         return () => {
@@ -31,6 +30,7 @@ const MessageList = ({ messages, messagesEndRef, handleSetMessages }) => {
             const { data, isOk } = await fetchData(() => RoomChatApi.getChatRoomById(currentChatRoomId, 1, 20));
 
             if (isOk) handleSetMessages(sortMessagesByTime(data));
+            console.log(data);
         })();
     }, [currentChatRoomId, handleSetMessages, fetchData]);
 
