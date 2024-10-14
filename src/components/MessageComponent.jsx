@@ -16,85 +16,113 @@ const MessageComponent = ({ msg }) => {
     const { onlineUsers } = useSocket();
     const { isLoading, fetchData } = useFetch({ showError: false, showSuccess: false });
     const [seoData, setSeoData] = useState(null);
+
     const checkMessageType = (message) => {
         switch (message.type) {
             case 'Text':
-                return message.content;
+                return { content: message.content, hasBackground: true };
 
             case 'Picture':
-                return (
-                    <Image src={message.fileUrl} alt='Picture' style={{ maxWidth: '200px', borderRadius: '10px' }} />
-                );
+                return {
+                    content: <Image src={message.fileUrl} alt='Picture' style={{ maxWidth: '200px', borderRadius: '10px' }} />,
+                    hasBackground: false
+                };
 
             case 'Video':
-                return (
-                    <video controls style={{ maxWidth: '300px', borderRadius: '10px' }}>
-                        <source src={message.fileUrl} type='video/mp4' />
-                        Your browser does not support the video tag.
-                    </video>
-                );
+                return {
+                    content: (
+                        <video controls style={{ maxWidth: '300px', borderRadius: '10px' }}>
+                            <source src={message.fileUrl} type='video/mp4' />
+                            Your browser does not support the video tag.
+                        </video>
+                    ),
+                    hasBackground: false
+                };
 
             case 'Document':
-                return (
-                    <div>
-                        <p>{message.fileName || 'Download Document'}</p>
-                        <Button
-                            type='primary'
-                            href={message.fileUrl}
-                            target='_blank'
-                            rel='noopener noreferrer'
-                            icon={<PaperClipOutlined />}
-                        >
-                            Download
-                        </Button>
-                    </div>
-                );
+                return {
+                    content: (
+                        <div>
+                            <p>{message.fileName || 'Download Document'}</p>
+                            <Button
+                                type='primary'
+                                href={message.fileUrl}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                icon={<PaperClipOutlined />}
+                            >
+                                Download
+                            </Button>
+                        </div>
+                    ),
+                    hasBackground: true
+                };
 
             case 'Link':
-                return isLoading ? (
-                    <Spin />
-                ) : (
-                    <div>
-                        <a href={message.content} target='_blank'>
-                            {message?.content}
-                        </a>
-                        <h2>{seoData?.title}</h2>
+                return {
+                    content: isLoading ? (
+                        <Spin />
+                    ) : (
+                        <div>
+                            <a href={message.content} target='_blank'>
+                                {message?.content}
+                            </a>
+                            <h2>{seoData?.title}</h2>
 
-                        {seoData?.image && (
-                            <img
-                                src={seoData?.image}
-                                alt='SEO preview'
-                                style={{ maxWidth: '100px', marginBottom: '10px' }}
-                            />
-                        )}
+                            {seoData?.image && (
+                                <img
+                                    src={seoData?.image}
+                                    alt='SEO preview'
+                                    style={{ maxWidth: '100px', marginBottom: '10px' }}
+                                />
+                            )}
 
-                        <p>{seoData?.description}</p>
-                    </div>
-                );
+                            <p>{seoData?.description}</p>
+                        </div>
+                    ),
+                    hasBackground: true
+                };
 
             default:
-                return null;
+                return { content: null, hasBackground: true };
         }
     };
+
+    const getOffsetByType = (type) => {
+        switch (type) {
+            case 'Text':
+                return [-5, 50];
+            case 'Picture':
+                return [-5, 147];
+            case 'Video':
+                return [-5, 198];
+            case 'Document':
+                return [-5, 100];
+            default:
+                return [-5, 231];
+        }
+    };
+
     useEffect(() => {
         (async () => {
             if (msg.type === 'Link') {
                 const { data } = await fetchData(() => messageApi.fetchSEOData(msg.content));
-
                 setSeoData(data);
             }
         })();
     }, [msg, fetchData]);
 
+    const { content, hasBackground } = checkMessageType(msg);
+
     return (
         <div className={`mb-4 flex ${sender._id === currentUser._id ? 'justify-end' : ''}`}>
             {sender._id !== currentUser._id && (
                 <Badge
-                    className='mr-2 flex items-center'
+                    className='mr-2 mb-6 flex items-end'
                     dot={onlineUsers.find((onlineUser) => onlineUser._id === sender._id)}
                     color='#52c41a'
                     size='small'
-                    offset={[-5, 50]}
+                    offset={getOffsetByType(msg.type)}
                 >
                     <Avatar src={sender.avatar} className='avatar' />
                 </Badge>
@@ -105,12 +133,14 @@ const MessageComponent = ({ msg }) => {
                 </div>
                 <div
                     className={`inline-block max-w-xs rounded-2xl px-4 py-2 text-sm ${
-                        sender._id === currentUser._id
-                            ? 'ml-auto bg-blue-500 text-white-default'
-                            : 'text-black mr-auto bg-white-dark'
+                        hasBackground
+                            ? sender._id === currentUser._id
+                                ? 'ml-auto bg-blue-500 text-white-default'
+                                : 'text-black mr-auto bg-white-dark'
+                            : ''
                     }`}
                 >
-                    {checkMessageType(msg)}
+                    {content}
                 </div>
                 <div className='text-gray-500 mt-1 flex items-center text-xs' style={{ fontSize: '10px' }}>
                     <span>{new Date(createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
@@ -122,7 +152,7 @@ const MessageComponent = ({ msg }) => {
                 </div>
             </div>
             {sender._id === currentUser._id && (
-                <Badge className='ml-2 flex items-center' dot color='#52c41a' size='small' offset={[-5, 50]}>
+                <Badge className='ml-1 mb-6 flex items-end' dot color='#52c41a' size='small' offset={getOffsetByType(msg.type)}>
                     <Avatar src={sender.avatar} className='avatar' />
                 </Badge>
             )}

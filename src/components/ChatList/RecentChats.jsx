@@ -72,7 +72,7 @@ const RecentChats = ({ recentChats, handleChatClick, isFirstLoad }) => {
                                                 }}
                                             >
                                                 {truncateString(
-                                                    item.lastMessage?.content || 'No message available',
+                                                    item.lastMessage?.content || 'No message yet',
                                                     17
                                                 )}
                                             </span>

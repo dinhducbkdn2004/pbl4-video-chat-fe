@@ -5,12 +5,15 @@ import { NotificationOutlined, BellOutlined, UserAddOutlined, FilterOutlined } f
 import { useSocket } from '../../hooks/useSocket';
 import Container from '../../components/Container';
 import assets from '../../assets/index.js';
+import notificationApi from '../../apis/notificationApi';
+import useFetch from '../../hooks/useFetch.js';
 
 const { Content } = Layout;
 const { Text } = Typography;
 const { Option } = Select;
 
 const NotificationPage = () => {
+    const { fetchData } = useFetch({ showError: false, showSuccess: false });
     const { notifications, markAllAsRead } = useSocket();
     const [currentPage, setCurrentPage] = useState(1);
     const [filter, setFilter] = useState('ALL');
@@ -44,6 +47,10 @@ const NotificationPage = () => {
         }
     };
 
+    const handleNotificationClick = async (notificationId) => {
+        await fetchData(() => notificationApi.seenNotification(notificationId));
+    };
+
     return (
         <Layout>
             <Content
@@ -68,7 +75,7 @@ const NotificationPage = () => {
                     </Text>
                     <Row gutter={[16, 16]} style={{ marginBottom: '17px' }}>
                         <Col span={18}>
-                            <Row align="middle">
+                            <Row align='middle'>
                                 <FilterOutlined style={{ marginRight: '8px' }} />
                                 <Text style={{ marginRight: '8px' }}>Sort by:</Text>
                                 <Select
@@ -85,7 +92,7 @@ const NotificationPage = () => {
                             </Row>
                         </Col>
                         <Col span={6}>
-                            <Button  type='primary' onClick={markAllAsRead} style={{ width: '100%'}}>
+                            <Button type='primary' onClick={markAllAsRead} style={{ width: '100%' }}>
                                 Mark All as Read
                             </Button>
                         </Col>
@@ -107,6 +114,7 @@ const NotificationPage = () => {
                                     alignItems: 'center',
                                     borderLeft: `4px solid ${notification.isRead ? '#52c41a' : '#ff4d4f'}`
                                 }}
+                                onClick={() => handleNotificationClick(notification._id)}
                             >
                                 <Space style={{ marginRight: '16px' }}>{getIcon(notification.type)}</Space>
                                 <List.Item.Meta
