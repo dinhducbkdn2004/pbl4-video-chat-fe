@@ -47,6 +47,17 @@ const RoomChatApi = {
     getDetailChatRoom: (chatRoomId) => axiosClient.get(`chat-rooms/${chatRoomId}`),
 
     changeDetailChatRoom: (data) => axiosClient.patch(`/chat-rooms/change-details/`, data),
+
+    getFileMediaLinks: (chatRoomId, type, page = 1, limit = 10) =>
+        axiosClient.get('/messages/getMediaDocumentLink', {
+            params: {
+                chatRoomId,
+                type,
+                page,
+                limit
+            }
+        }),
+        
 };
 
 export default RoomChatApi;

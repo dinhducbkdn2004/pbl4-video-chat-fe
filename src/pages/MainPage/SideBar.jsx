@@ -4,7 +4,7 @@ import { TbUserSearch } from 'react-icons/tb';
 import { Avatar, Badge, Dropdown, Layout, Menu } from 'antd';
 import { RiLogoutCircleRLine } from 'react-icons/ri';
 import { BiMessageSquareDots } from 'react-icons/bi';
-import { IoNotificationsOutline } from 'react-icons/io5';
+import { IoNotificationsOutline, IoSettingsOutline } from 'react-icons/io5';
 import { LuContact2 } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 import { handleLogout } from '../../components/Logout';
@@ -61,6 +61,11 @@ const Sidebar = () => {
         {
             key: 'notification',
             icon: <IoNotificationsOutline size={20} />,
+            className: 'custom-menu-item'
+        },
+        {
+            key: 'setting',
+            icon: <IoSettingsOutline size={20} />,
             className: 'custom-menu-item'
         }
     ];

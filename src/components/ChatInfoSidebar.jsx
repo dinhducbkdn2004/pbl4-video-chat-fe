@@ -13,6 +13,7 @@ import {
 } from '@ant-design/icons';
 import { useLocation, useParams } from 'react-router-dom';
 import ChangeDetails from '../components/ChatRoomDetail/ChangeDetails';
+import FileMediaLinks from '../components/ChatRoomDetail/FileMediaLinks';
 
 const ChatInfoSidebar = ({ open, onClose }) => {
     const location = useLocation();
@@ -158,16 +159,12 @@ const ChatInfoSidebar = ({ open, onClose }) => {
             closable={!isBackButtonVisible}
         >
             {isFileView ? (
-                <div className='flex items-center justify-around'>
-                    <Menu
-                        mode='horizontal'
-                        defaultSelectedKeys={['3-1']}
-                        openKeys={stateOpenKeys}
-                        onOpenChange={onOpenChange}
-                        style={{ width: '100%' }}
-                        items={items.find((item) => item.key === '3').children}
-                    />
-                </div>
+                <FileMediaLinks
+                    stateOpenKeys={stateOpenKeys}
+                    onOpenChange={onOpenChange}
+                    items={items}
+                    chatRoomId={currentChatRoomId}
+                />
             ) : (
                 <div className='flex flex-col items-center'>
                     <Avatar.Group size='large' max={{ count: 2 }}>
