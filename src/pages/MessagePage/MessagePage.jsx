@@ -13,12 +13,13 @@ const MessagePage = () => {
                     <ChatList />
                 </Sider>
                 <Content
-                    style={{
-                        backgroundImage: `url(${assets.chatpage_2})`,
-                        backgroundSize: 'cover',
-                        backgroundRepeat: 'no-repeat',
-                        backgroundPosition: 'center'
-                    }}
+                className="bg-white-default"
+                // style={{
+                //     backgroundImage: `url(${assets.chatpage_2})`,
+                //     backgroundSize: 'cover',
+                //     backgroundRepeat: 'no-repeat',
+                //     backgroundPosition: 'center'
+                // }}
                 >
                     <Outlet />
                 </Content>

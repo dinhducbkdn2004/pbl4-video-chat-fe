@@ -30,7 +30,6 @@ const MessageList = ({ messages, messagesEndRef, handleSetMessages }) => {
             const { data, isOk } = await fetchData(() => RoomChatApi.getChatRoomById(currentChatRoomId, 1, 20));
 
             if (isOk) handleSetMessages(sortMessagesByTime(data));
-            console.log(data);
         })();
     }, [currentChatRoomId, handleSetMessages, fetchData]);
 

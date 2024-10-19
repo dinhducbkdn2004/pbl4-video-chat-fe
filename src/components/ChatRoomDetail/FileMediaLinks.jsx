@@ -1,10 +1,25 @@
 import { useState, useEffect } from 'react';
-import { Menu, List, Typography } from 'antd';
+import { Menu, List, Typography, Row, Col, Image, Card, Avatar } from 'antd';
+import { FileImageOutlined, FileTextOutlined, LinkOutlined } from '@ant-design/icons';
 import RoomChatApi from '../../apis/RoomChatApi';
 import useFetch from '../../hooks/useFetch';
 
 const FileMediaLinks = ({ stateOpenKeys, onOpenChange, items, chatRoomId }) => {
-    const fileMediaItems = items.find((item) => item.key === '3').children;
+    const fileMediaItems = items
+        .find((item) => item.key === '3')
+        .children.map((item) => {
+            switch (item.key) {
+                case '3-1':
+                    return { ...item, icon: <FileImageOutlined className='mr-1' /> };
+                case '3-2':
+                    return { ...item, icon: <FileTextOutlined className='mr-1' /> };
+                case '3-3':
+                    return { ...item, icon: <LinkOutlined className='mr-1' /> };
+                default:
+                    return item;
+            }
+        });
+
     const { fetchData } = useFetch({ showSuccess: false, showError: false });
     const [content, setContent] = useState([]);
     const [selectedType, setSelectedType] = useState('Media');
@@ -17,8 +32,6 @@ const FileMediaLinks = ({ stateOpenKeys, onOpenChange, items, chatRoomId }) => {
         const response = await fetchData(() => RoomChatApi.getFileMediaLinks(chatRoomId, type));
         const data = response.data || [];
         setContent(Array.isArray(data) ? data : []);
-        console.log('data', data);
-        console.log('content', content);
     };
 
     const handleMenuClick = (e) => {
@@ -50,19 +63,33 @@ const FileMediaLinks = ({ stateOpenKeys, onOpenChange, items, chatRoomId }) => {
                     </video>
                 );
             case 'Picture':
-                return <img src={item.fileUrl} alt='media' style={{ width: '100%' }} />;
-
+                return <Image src={item.fileUrl} alt='media' style={{ width: '100%' }} />;
             case 'Document':
                 return (
-                    <a href={item && item.fileUrl} target='_blank' rel='noreferrer'>
-                        {item.name}
-                    </a>
+                    <div>
+                        <a href={item && item.fileUrl} target='_blank' rel='noreferrer'>
+                            {item.name}
+                        </a>
+                    </div>
                 );
             case 'Link':
                 return (
-                    <a href={item && item.content} target='_blank' rel='noreferrer'>
-                        {item.content}
-                    </a>
+                    <Card hoverable className='h-30 w-full'>
+                        <Card.Meta
+                            avatar={<Avatar src={`https://www.google.com/s2/favicons?domain=${item.content}`} />}
+                            title={
+                                <a
+                                    href={item && item.content}
+                                    target='_blank'
+                                    rel='noreferrer'
+                                    className='inline-block max-w-[calc(100%-10px)] overflow-hidden text-ellipsis whitespace-nowrap'
+                                >
+                                    {item.content}
+                                </a>
+                            }
+                            description={new Date(item.createdAt).toLocaleString()}
+                        />
+                    </Card>
                 );
             default:
                 return <Typography.Text>{item.name}</Typography.Text>;
@@ -81,11 +108,20 @@ const FileMediaLinks = ({ stateOpenKeys, onOpenChange, items, chatRoomId }) => {
                 onClick={handleMenuClick}
             />
             <div className='mt-4 w-full'>
-                <List
-                    bordered
-                    dataSource={content}
-                    renderItem={(item) => <List.Item>{renderMediaItem(item)}</List.Item>}
-                />
+                {selectedType === 'Media' ? (
+                    <Row gutter={[16, 16]}>
+                        {content.map((item, index) => (
+                            <Col key={index} xs={24} sm={12} md={8} lg={8}>
+                                {renderMediaItem(item)}
+                            </Col>
+                        ))}
+                    </Row>
+                ) : (
+                    <List
+                        dataSource={content}
+                        renderItem={(item) => <List.Item key={item.id}>{renderMediaItem(item)}</List.Item>}
+                    />
+                )}
             </div>
         </div>
     );

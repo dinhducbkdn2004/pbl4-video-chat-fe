@@ -10,7 +10,7 @@ const SearchBar = ({ searchValue, handleSearchChange, searchResults, handleChatC
                 <SearchOutlined className='search-icon' />
                 <Input
                     className='search-input'
-                    placeholder='Search'
+                    placeholder='Search chats...'
                     value={searchValue}
                     onChange={handleSearchChange}
                     autoFocus
@@ -32,7 +32,6 @@ const SearchBar = ({ searchValue, handleSearchChange, searchResults, handleChatC
                                             <span className='title'>{item.name}</span>
                                         </div>
                                     }
-                                    description={<span className='message'>{item.message}</span>}
                                 />
                             </List.Item>
                         )}
