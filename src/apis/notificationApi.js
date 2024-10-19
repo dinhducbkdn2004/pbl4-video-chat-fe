@@ -6,7 +6,7 @@ const notificationsApi = {
     },
 
     seenNotification: async (notificationId) => {
-        return axiosClient.patch('/notifications/seen-notification');
+        return axiosClient.patch('/notifications/seen-notification', { notificationId });
     },
 };
 

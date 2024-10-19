@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { Avatar, Badge, Button, Image, Spin } from 'antd';
 import { CheckCircleTwoTone, PaperClipOutlined } from '@ant-design/icons';
-import { getLastName } from '../helpers/utils';
+import { getLastName, truncateString } from '../helpers/utils';
 import { authSelector } from '../redux/features/auth/authSelections';
 import { useSocket } from '../hooks/useSocket';
 import { useEffect, useState } from 'react';
@@ -24,7 +24,13 @@ const MessageComponent = ({ msg }) => {
 
             case 'Picture':
                 return {
-                    content: <Image src={message.fileUrl} alt='Picture' style={{ maxWidth: '200px', borderRadius: '10px' }} />,
+                    content: (
+                        <Image
+                            src={message.fileUrl}
+                            alt='Picture'
+                            style={{ maxWidth: '200px', borderRadius: '10px' }}
+                        />
+                    ),
                     hasBackground: false
                 };
 
@@ -65,7 +71,7 @@ const MessageComponent = ({ msg }) => {
                     ) : (
                         <div>
                             <a href={message.content} target='_blank'>
-                                {message?.content}
+                                {truncateString(message.content, 40)}
                             </a>
                             <h2>{seoData?.title}</h2>
 
@@ -88,21 +94,6 @@ const MessageComponent = ({ msg }) => {
         }
     };
 
-    const getOffsetByType = (type) => {
-        switch (type) {
-            case 'Text':
-                return [-5, 50];
-            case 'Picture':
-                return [-5, 147];
-            case 'Video':
-                return [-5, 198];
-            case 'Document':
-                return [-5, 100];
-            default:
-                return [-5, 231];
-        }
-    };
-
     useEffect(() => {
         (async () => {
             if (msg.type === 'Link') {
@@ -117,15 +108,16 @@ const MessageComponent = ({ msg }) => {
     return (
         <div className={`mb-4 flex ${sender._id === currentUser._id ? 'justify-end' : ''}`}>
             {sender._id !== currentUser._id && (
-                <Badge
-                    className='mr-2 mb-6 flex items-end'
-                    dot={onlineUsers.find((onlineUser) => onlineUser._id === sender._id)}
-                    color='#52c41a'
-                    size='small'
-                    offset={getOffsetByType(msg.type)}
-                >
-                    <Avatar src={sender.avatar} className='avatar' />
-                </Badge>
+                <div className='mb-6 mr-2 flex items-end'>
+                    <Badge
+                        dot
+                        offset={[-5, 28]}
+                        color={onlineUsers.find((onlineUser) => onlineUser._id === sender._id) ? '#52c41a' : '#d9d9d9'}
+                        size='small'
+                    >
+                        <Avatar src={sender.avatar} className='avatar' />
+                    </Badge>
+                </div>
             )}
             <div className={`flex flex-col ${sender._id === currentUser._id ? 'items-end' : 'items-start'}`}>
                 <div className='mb-1 text-xs font-medium' style={{ fontSize: '12px' }}>
@@ -152,9 +144,11 @@ const MessageComponent = ({ msg }) => {
                 </div>
             </div>
             {sender._id === currentUser._id && (
-                <Badge className='ml-1 mb-6 flex items-end' dot color='#52c41a' size='small' offset={getOffsetByType(msg.type)}>
-                    <Avatar src={sender.avatar} className='avatar' />
-                </Badge>
+                <div className='mb-6 ml-1 flex items-end'>
+                    <Badge dot offset={[-5, 28]} color={'#52c41a'} size='small'>
+                        <Avatar src={sender.avatar} className='avatar' />
+                    </Badge>
+                </div>
             )}
         </div>
     );

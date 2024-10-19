@@ -73,7 +73,7 @@ const Sidebar = () => {
     return (
         <Sider
             width={72}
-            className='flex h-full flex-col items-center justify-between border-r border-purple-100 bg-white-default py-4'
+            className='flex h-full flex-col items-center justify-between border-r border-slate-200 bg-white-default py-4'
         >
             <div className='mb-5 flex items-center justify-center'>
                 <img

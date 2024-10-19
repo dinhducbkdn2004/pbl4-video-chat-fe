@@ -22,6 +22,8 @@ const ChatInfoSidebar = ({ open, onClose }) => {
     const [isChangeDetailsVisible, setIsChangeDetailsVisible] = useState(false);
     const [changeDetailsType, setChangeDetailsType] = useState('');
 
+    console.log('location', location.state);
+
     const items = [
         {
             key: '1',

@@ -3,9 +3,13 @@ import { BiMessageSquareDots } from 'react-icons/bi';
 import { getLastName, truncateString } from '../../helpers/utils';
 import { useSocket } from '../../hooks/useSocket';
 import SkeletonChatItem from '../../components/SkeletonCustom/SkeletonChatItem';
+import moment from 'moment';
 
 const RecentChats = ({ recentChats, handleChatClick, isFirstLoad }) => {
     const { onlineUsers } = useSocket();
+
+    const filteredChats = recentChats.filter((chat) => chat.lastMessage);
+
     return (
         <div className='body-chat'>
             <Divider orientation='left' className='divider'>
@@ -14,7 +18,7 @@ const RecentChats = ({ recentChats, handleChatClick, isFirstLoad }) => {
             </Divider>
             <List
                 itemLayout='horizontal'
-                dataSource={isFirstLoad ? Array(5).fill({}) : recentChats}
+                dataSource={isFirstLoad ? Array(5).fill({}) : filteredChats}
                 renderItem={(item, index) =>
                     isFirstLoad ? (
                         <SkeletonChatItem key={index} />
@@ -60,31 +64,27 @@ const RecentChats = ({ recentChats, handleChatClick, isFirstLoad }) => {
                                 description={
                                     <div className='description flex items-center justify-between'>
                                         <div>
-                                            <span className='text-gray-200 mr-1 font-bold'>
-                                                {item.lastMessage?.sender.name
-                                                    ? getLastName(item.lastMessage.sender.name) + ':'
-                                                    : ''}
-                                            </span>
+                                            {item.lastMessage?.sender.name && (
+                                                <span className='text-gray-200 mr-1 font-bold'>
+                                                    {getLastName(item.lastMessage.sender.name) + ':'}
+                                                </span>
+                                            )}
+                                            {item.lastMessage?.content && (
+                                                <span className={`text-gray ${!item.isRead ? 'font-sans' : ''}`}>
+                                                    {truncateString(item.lastMessage.content, 17)}
+                                                </span>
+                                            )}
+                                        </div>
+                                        {item.lastMessage?.createdAt && (
                                             <span
-                                                className='text-gray-600'
+                                                className='text-gray-500'
                                                 style={{
-                                                    fontSize: '14px'
+                                                    fontSize: '11px'
                                                 }}
                                             >
-                                                {truncateString(
-                                                    item.lastMessage?.content || 'No message yet',
-                                                    17
-                                                )}
+                                                {moment(item.lastMessage.createdAt).fromNow()}
                                             </span>
-                                        </div>
-                                        <span
-                                            className='text-gray-500'
-                                            style={{
-                                                fontSize: '11px'
-                                            }}
-                                        >
-                                            {new Date(item.lastMessage?.createdAt).toLocaleTimeString()}
-                                        </span>
+                                        )}
                                     </div>
                                 }
                             />

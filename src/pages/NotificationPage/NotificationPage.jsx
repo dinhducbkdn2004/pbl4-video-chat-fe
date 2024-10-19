@@ -48,9 +48,11 @@ const NotificationPage = () => {
     };
 
     const handleNotificationClick = async (notificationId) => {
-        await fetchData(() => notificationApi.seenNotification(notificationId));
-    };
-
+        const notification = notifications.find((notification) => notification._id === notificationId);
+        if (!notification.isRead) {
+            await fetchData(notificationApi.seenNotification(notificationId));
+        }
+    }
     return (
         <Layout>
             <Content
