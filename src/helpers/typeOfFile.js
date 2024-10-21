@@ -8,9 +8,5 @@ export default function typeOfFile(file) {
         return 'Video';
     }
 
-    if (name.endsWith('.zip') || name.endsWith('.rar') || type.startsWith('application/')) {
-        return 'Document';
-    }
-
-    return 'Link';
+    return 'Document';
 }
