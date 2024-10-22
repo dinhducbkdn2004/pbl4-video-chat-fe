@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import { SearchOutlined } from '@ant-design/icons';
 import { Input, List, Avatar } from 'antd';
@@ -6,8 +5,8 @@ import { Input, List, Avatar } from 'antd';
 const SearchBar = ({ searchValue, handleSearchChange, searchResults, handleChatClick }) => {
     return (
         <>
-            <div className='search-bar'>
-                <SearchOutlined className='search-icon' />
+            <div className='search-bar bg-white-default'>
+                <SearchOutlined className='search-icon text-blue' />
                 <Input
                     className='search-input'
                     placeholder='Search chats...'

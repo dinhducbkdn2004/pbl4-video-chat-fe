@@ -77,9 +77,9 @@ const Sidebar = () => {
         >
             <div className='mb-5 flex items-center justify-center'>
                 <img
-                    src={assets.logo_sidebar1}
+                    src={assets.Designer}
                     alt='Logo'
-                    className='h-9 w-9 cursor-pointer'
+                    className='h-12 w-12 cursor-pointer rounded-full border border-slate-200'
                     onClick={() => navigate('/message')}
                 />
             </div>

@@ -6,8 +6,8 @@ const OnlineUsers = () => {
     const { onlineUsers } = useSocket();
 
     return (
-        <div className='online-now'>
-            <h4>Online Now</h4>
+        <div className='online-now bg-white-default'>
+            <h4 className='text-gray'>Online Now</h4>
             <div className='avatars gap-x-5'>
                 {onlineUsers.length === 0
                     ? 'No one online now'

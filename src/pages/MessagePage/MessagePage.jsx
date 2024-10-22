@@ -1,6 +1,5 @@
 import { Layout } from 'antd';
 import { Outlet } from 'react-router-dom';
-import assets from '../../assets';
 import ChatList from './ChatList/ChatList';
 
 const { Content, Sider } = Layout;
@@ -9,18 +8,10 @@ const MessagePage = () => {
     return (
         <>
             <Layout style={{ height: '100vh' }}>
-                <Sider width={350}>
+                <Sider width={385}>
                     <ChatList />
                 </Sider>
-                <Content
-                className="bg-white-default"
-                // style={{
-                //     backgroundImage: `url(${assets.chatpage_2})`,
-                //     backgroundSize: 'cover',
-                //     backgroundRepeat: 'no-repeat',
-                //     backgroundPosition: 'center'
-                // }}
-                >
+                <Content className='bg-white-default'>
                     <Outlet />
                 </Content>
             </Layout>

@@ -4,7 +4,6 @@ import { Button, List, Typography, Badge, Pagination, Layout, Select, Space, Row
 import { NotificationOutlined, BellOutlined, UserAddOutlined, FilterOutlined } from '@ant-design/icons';
 import { useSocket } from '../../hooks/useSocket';
 import Container from '../../components/Container';
-import assets from '../../assets/index.js';
 import notificationApi from '../../apis/notificationApi';
 import useFetch from '../../hooks/useFetch.js';
 
@@ -59,10 +58,6 @@ const NotificationPage = () => {
                 style={{
                     height: '100vh',
                     overflowY: 'auto',
-                    backgroundImage: `url(${assets.chatpage_1})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat'
                 }}
             >
                 <Container>

@@ -20,7 +20,8 @@ export default {
                     default: '#FFFFFF',
                     dark: '#CDCECF'
                 },
-                gray: '#72767D'
+                gray: '#72778D',
+                blue: '#0066FF',
             }
         }
     },

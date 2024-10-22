@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Avatar, Button, Drawer, Tooltip, Menu } from 'antd';
 import {
     BellOutlined,
@@ -18,11 +18,9 @@ import FileMediaLinks from '../components/ChatRoomDetail/FileMediaLinks';
 const ChatInfoSidebar = ({ open, onClose }) => {
     const location = useLocation();
     const { chatRoomId: currentChatRoomId } = useParams();
-    const { name: roomName, participants: members, typeRoom } = location.state;
+    const { name: roomName, participants: members, typeRoom, chatRoomImage } = location.state;
     const [isChangeDetailsVisible, setIsChangeDetailsVisible] = useState(false);
     const [changeDetailsType, setChangeDetailsType] = useState('');
-
-    console.log('location', location.state);
 
     const items = [
         {
@@ -169,13 +167,7 @@ const ChatInfoSidebar = ({ open, onClose }) => {
                 />
             ) : (
                 <div className='flex flex-col items-center'>
-                    <Avatar.Group size='large' max={{ count: 2 }}>
-                        {members?.map((member, index) => (
-                            <Tooltip key={index} title={member.name}>
-                                <Avatar src={member.avatar} />
-                            </Tooltip>
-                        ))}
-                    </Avatar.Group>
+                    <Avatar src={chatRoomImage} size={60} className='mt-3' />
                     <h3 className='mt-3'>{roomName}</h3>
                     <div className='mt-2 flex'>
                         <Button icon={<BellOutlined />} className='mb-2 mr-2'>

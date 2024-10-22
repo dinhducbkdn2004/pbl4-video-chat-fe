@@ -19,6 +19,7 @@ import NotificationPage from './pages/NotificationPage/NotificationPage';
 import FriendListPage from './pages/ContactPage/FriendListPage/FriendListPage';
 import FriendRequestPage from './pages/ContactPage/FriendRequestPage/FriendRequestPage';
 import VideoCall from './components/VideoCall';
+import SettingPage from './pages/SettingPage/SettingPage';
 
 function App() {
     return (
@@ -45,6 +46,7 @@ function App() {
                     </Route>
                     <Route path='/user/:id' element={<UserPage />} />
                     <Route path='/notification' element={<NotificationPage />} />
+                    <Route path='/setting' element={<SettingPage/>} />
                 </Route>
                 <Route path='/video-call/:chatRoomId' element={<VideoCall />} />
             </Route>

@@ -75,11 +75,11 @@ const ChatList = () => {
     return (
         <>
             {contextHolder}
-            <div className='chat-list'>
-                <div className='header'>
-                    <div className='title'>All Chats</div>
+            <div className='chat-list bg-white-default'>
+                <div className='header bg-white-default'>
+                    <div className='title text-blue'>All Chats</div>
                     <div className='icons'>
-                        <UsergroupAddOutlined className='icon' onClick={showAddRoomModal} />
+                        <UsergroupAddOutlined className='icon text-gray' onClick={showAddRoomModal} />
                     </div>
                 </div>
                 <SearchBar

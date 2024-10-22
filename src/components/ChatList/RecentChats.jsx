@@ -39,11 +39,10 @@ const RecentChats = ({ recentChats, handleChatClick, isFirstLoad }) => {
                                             offset={[-7, 36]}
                                         >
                                             <Avatar
-                                                size='large'
                                                 src={item.chatRoomImage}
-                                                className='avatar'
-                                                shape='circle'
-                                            />
+                                                className='flex items-center justify-center object-cover'
+                                                size={43}
+                                            ></Avatar>
                                         </Badge>
                                     ) : (
                                         <Tooltip title='Group Chat'>

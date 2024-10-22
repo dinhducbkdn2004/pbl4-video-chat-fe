@@ -1,5 +1,4 @@
 .chat-list {
-    background-color: #fff;
     height: 100vh;
     overflow-y: scroll;
     width: 100%;
@@ -30,12 +29,10 @@
     min-height: 73px;
     position: sticky;
     top: 0;
-    background-color: #fff;
     z-index: 10;
 }
 
 .chat-list .header .title {
-    color: #6a0dad;
     text-align: center;
     font-size: 22px;
     font-weight: 750;
@@ -44,7 +41,6 @@
 .chat-list .header .icons {
     display: flex;
     gap: 16px;
-    color: #424242;
 }
 
 .chat-list .header .icons .icon {
@@ -61,8 +57,6 @@
     border-radius: 35px;
     border: 1px solid #e5e7eb;
     font-size: 15px;
-    background-color: #FFFFFF;
-    color: #0a0a0a;
     font-weight: 500;
     display: flex;
     align-items: center;
@@ -75,7 +69,6 @@
 .chat-list .search-bar .search-icon {
     font-size: 20px;
     font-weight: 500;
-    color: #6a0dad;
     margin-right: 10px;
 }
 
@@ -130,21 +123,12 @@
 .chat-list .search-results .list-item .meta .title {
     font-size: 16px;
     font-weight: 600; /* Tăng độ đậm cho tiêu đề */
-    color: #333;
-}
-
-.chat-list .search-results .list-item .meta .subtitle {
-    font-size: 14px;
-    font-weight: 400;
-    color: #777;
-    margin-top: 2px; /* Thêm khoảng cách nhỏ giữa tiêu đề và phụ đề */
 }
 
 .chat-list .online-now {
     padding: 24px 24px 0;
     position: sticky;
     top: 120px;
-    background-color: #fff;
     z-index: 8;
 }
 
@@ -152,7 +136,6 @@
 .chat-list .online-now h4 {
     font-size: 16px;
     font-weight: 500;
-    color: #424242;
     margin-bottom: 15px;
 }
 
@@ -190,7 +173,6 @@
 }
 
 .chat-list .divider {
-    color: #424242;
     font-size: 16px;
     font-weight: 500;
     margin-top: 0;
@@ -224,30 +206,6 @@
 .chat-list .body-chat .list-item .meta .title {
     font-size: 15px;
     font-weight: 500;
-    color: #424242;
-}
-
-.chat-list .body-chat .list-item .meta .time {
-    font-size: 12px;
-    color: #424242;
-}
-
-.chat-list .body-chat .list-item .meta .description {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.chat-list .body-chat .list-item .unread {
-    background-color: #f5222d;
-    color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
 }
 
 .chat-list .body-chat .list-item:hover {
