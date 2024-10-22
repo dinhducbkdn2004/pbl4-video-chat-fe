@@ -12,10 +12,8 @@ import { useSocket } from '../../../hooks/useSocket';
 import './ChatList.css';
 
 const debouncedSearch = debounce(async (value, setSearchResults) => {
-    console.log('searching for:', value);
     const data = await RoomChatApi.searchChatroomByName(value, true);
     if (data.isOk) setSearchResults(data.data);
-    console.log('search results:', data.data);
 }, 350);
 
 const ChatList = () => {

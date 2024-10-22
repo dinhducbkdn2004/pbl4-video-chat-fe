@@ -108,7 +108,7 @@ const MessageComponent = ({ msg }) => {
     return (
         <div className={`mb-4 flex ${sender._id === currentUser._id ? 'justify-end' : ''}`}>
             {sender._id !== currentUser._id && (
-                <div className='mb-6 mr-2 flex items-end'>
+                <div className='mb-5 mr-2 flex items-end'>
                     <Badge
                         dot
                         offset={[-5, 28]}
@@ -144,7 +144,7 @@ const MessageComponent = ({ msg }) => {
                 </div>
             </div>
             {sender._id === currentUser._id && (
-                <div className='mb-6 ml-1 flex items-end'>
+                <div className='mb-5 ml-1 flex items-end'>
                     <Badge dot offset={[-5, 28]} color={'#52c41a'} size='small'>
                         <Avatar src={sender.avatar} className='avatar' />
                     </Badge>

@@ -1,5 +1,4 @@
-import { Outlet } from 'react-router-dom';
-
+import { Outlet, Navigate } from 'react-router-dom';
 import SideBar from './SideBar';
 
 const MainPage = () => {

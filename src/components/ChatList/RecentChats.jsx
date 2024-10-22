@@ -12,7 +12,7 @@ const RecentChats = ({ recentChats, handleChatClick, isFirstLoad }) => {
 
     return (
         <div className='body-chat'>
-            <Divider orientation='left' className='divider'>
+            <Divider orientation='left' className='divider bg-white-default' style={{ zIndex: 10 }}>
                 <BiMessageSquareDots className='icon' />
                 Recent Chat
             </Divider>

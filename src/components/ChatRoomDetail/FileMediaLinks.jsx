@@ -68,7 +68,7 @@ const FileMediaLinks = ({ stateOpenKeys, onOpenChange, items, chatRoomId }) => {
                 return (
                     <div>
                         <a href={item && item.fileUrl} target='_blank' rel='noreferrer'>
-                            {item.name}
+                            {item.fileUrl}
                         </a>
                     </div>
                 );

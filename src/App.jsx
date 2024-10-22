@@ -33,20 +33,21 @@ function App() {
             {/* Protected route for authenticated users */}
             <Route element={<ProtectedRoute />}>
                 <Route path='/' element={<MainPage />}>
-                    <Route path='/message' element={<MessagePage />}>
-                        <Route path='/message/:chatRoomId' element={<ChatPage />} />
+                    <Route index element={<Navigate to='/message' replace />} /> {/* Redirect to /message */}
+                    <Route path='message' element={<MessagePage />}>
+                        <Route path=':chatRoomId' element={<ChatPage />} />
                     </Route>
-                    <Route path='/contact' element={<ContactPage />}>
-                        <Route path='/contact/friend-list' element={<FriendListPage />} />
-                        <Route path='/contact/friend-request' element={<FriendRequestPage />} />
+                    <Route path='contact' element={<ContactPage />}>
+                        <Route path='friend-list' element={<FriendListPage />} />
+                        <Route path='friend-request' element={<FriendRequestPage />} />
                     </Route>
-                    <Route path='/search' element={<SearchPage />}>
-                        <Route path='/search/users' element={<SearchUsers />} />
-                        <Route path='/search/groups' element={<SearchGroup />} />
+                    <Route path='search' element={<SearchPage />}>
+                        <Route path='users' element={<SearchUsers />} />
+                        <Route path='groups' element={<SearchGroup />} />
                     </Route>
-                    <Route path='/user/:id' element={<UserPage />} />
-                    <Route path='/notification' element={<NotificationPage />} />
-                    <Route path='/setting' element={<SettingPage/>} />
+                    <Route path='user/:id' element={<UserPage />} />
+                    <Route path='notification' element={<NotificationPage />} />
+                    <Route path='setting' element={<SettingPage />} />
                 </Route>
                 <Route path='/video-call/:chatRoomId' element={<VideoCall />} />
             </Route>
