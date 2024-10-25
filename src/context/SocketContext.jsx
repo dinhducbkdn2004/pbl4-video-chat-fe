@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
 import { authSelector } from '../redux/features/auth/authSelections';
 import PropTypes from 'prop-types';
@@ -16,6 +16,7 @@ export const SocketContextProvider = ({ children }) => {
     const [api, contextHolder] = notification.useNotification({
         showProgress: true
     });
+    const audioRef = useRef(null);
 
     useEffect(() => {
         if (!accessToken) return;
@@ -50,7 +51,9 @@ export const SocketContextProvider = ({ children }) => {
                 message: 'Bạn có 1 thông báo mới!',
                 description: data.message
             });
-
+            if (audioRef.current) {
+                audioRef.current.play();  // Phát âm thanh khi có thông báo mới
+            }
             setNotifications((pre) => [data, ...pre]);
         });
         return () => {
@@ -73,6 +76,7 @@ export const SocketContextProvider = ({ children }) => {
 
     return (
         <SocketContext.Provider value={{ socket, onlineUsers, notifications }}>
+            <audio ref={audioRef} src="/sounds/notification.mp3" />
             {contextHolder}
             {children}
         </SocketContext.Provider>

@@ -1,0 +1,17 @@
+services:
+  frontend:
+    build:
+      context: .
+      args:
+        VITE_BASE_API_URL_DEV: ${VITE_BASE_API_URL_DEV}
+        VITE_BASE_API_URL_PRO: ${VITE_BASE_API_URL_PRO}
+        VITE_DEVELOPMENT: ${VITE_DEVELOPMENT}
+    container_name: pbl4-frontend
+    ports:
+      - "8081:80" 
+    environment:
+      - VITE_BASE_API_URL_DEV=${VITE_BASE_API_URL_DEV}
+      - VITE_BASE_API_URL_PRO=${VITE_BASE_API_URL_PRO}
+      - VITE_DEVELOPMENT=${VITE_DEVELOPMENT}
+      - VITE_GOOGLE_OATH_CLIENT_ID=${VITE_GOOGLE_OATH_CLIENT_ID}
+      - VITE_GOOGLE_OATH_CLIENT_SECRET=${VITE_GOOGLE_OATH_CLIENT_SECRET}
