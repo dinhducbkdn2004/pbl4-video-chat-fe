@@ -3,20 +3,25 @@ import axiosClient from '../configs/axiosClient';
 import typeOfFile from '../helpers/typeOfFile';
 
 const uploadApi = {
-    getPresignedUrl: async function (folder) {
+    getPresignedUrl: async function (folder, fileName) {
         return axiosClient.post('/upload/get-presigned-url', {
-            folder
+            folder,
+            fileName // Thêm fileName vào request
         });
     },
     upload: async function (file, folder) {
-        console.log(file.type);
-        const res = await this.getPresignedUrl(folder);
+        const res = await this.getPresignedUrl(folder, file.name); // Truyền file.name vào getPresignedUrl
+        console.log(res.data);
         const formData = new FormData();
-        formData.append('file', file); // The image file to upload
+
+        formData.append('file', file); // File cần upload
         formData.append('api_key', res.data.apiKey);
         formData.append('timestamp', res.data.timestamp);
         formData.append('signature', res.data.signature);
-        formData.append('folder', res.data.folder); // Optional: folder where to store the image
+        formData.append('folder', res.data.folder); // Thư mục lưu trữ
+        formData.append('public_id', res.data.public_id
+        ); // Đặt tên gốc làm public_id
+
         let uploadEndpoint;
         switch (typeOfFile(file)) {
             case 'Picture':
@@ -29,10 +34,10 @@ const uploadApi = {
                 uploadEndpoint = `https://api.cloudinary.com/v1_1/${res.data.cloudName}/raw/upload`;
                 break;
             default:
-                break;
+                throw new Error('Unsupported file type');
         }
 
-        // Step 2: Upload the image directly to Cloudinary
+        // Upload trực tiếp lên Cloudinary
         const { status, data } = await axios.post(uploadEndpoint, formData, {
             withCredentials: false
         });

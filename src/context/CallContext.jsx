@@ -24,7 +24,7 @@ export const CallContextProvider = ({ children }) => {
         audioRef.current && audioRef.current.pause();
         audioRef.current.currentTime = 0;
         setIsModalOpen(false);
-        setIsCalling(false)
+        setIsCalling(false);
     }, [socket, chatRoomData?._id]);
 
     useEffect(() => {
@@ -37,14 +37,8 @@ export const CallContextProvider = ({ children }) => {
             setIsCalling(true);
             setChatRoomData(chatRoom);
             showModal();
-            const playAudio = async () => {
-                try {
-                    await audioRef.current.play();
-                } catch (error) {
-                    console.log("Không thể phát âm thanh tự động, cần sự tương tác từ người dùng.");
-                }
-            };
-            playAudio();
+
+            audioRef.current.play();
         });
 
         return () => {

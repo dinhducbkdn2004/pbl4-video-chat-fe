@@ -25,9 +25,9 @@ const MessageInput = () => {
             for (const file of fileList) {
                 const uploadResponse = await uploadApi.upload(file.originFileObj, 'chat_files');
                 const fileUrl = uploadResponse.data.url;
-                console.log(fileUrl);
+                
 
-                await fetchData(() => RoomChatApi.createMessage('', currentChatRoomId, typeOfFile(file), fileUrl));
+                await fetchData(() => RoomChatApi.createMessage(file.originFileObj.name, currentChatRoomId, typeOfFile(file), fileUrl));
             }
         }
 
