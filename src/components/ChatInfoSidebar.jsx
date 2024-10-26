@@ -12,7 +12,6 @@ import {
     ArrowLeftOutlined
 } from '@ant-design/icons';
 import { useLocation, useParams } from 'react-router-dom';
-import useFetch from '../hooks/useFetch';
 import ChangeDetails from '../components/ChatRoomDetail/ChangeDetails';
 import FileMediaLinks from '../components/ChatRoomDetail/FileMediaLinks';
 
@@ -21,7 +20,6 @@ const ChatInfoSidebar = ({ open, onClose }) => {
     const { chatRoomId: currentChatRoomId } = useParams();
     const { name: roomName, participants: members, typeRoom, chatRoomImage, admins, moderators } = location.state;
 
-    const { fetchData, isLoading } = useFetch({ showSuccess: false, showError: false });
     const [isChangeDetailsVisible, setIsChangeDetailsVisible] = useState(false);
     const [changeDetailsType, setChangeDetailsType] = useState('');
     const [stateOpenKeys, setStateOpenKeys] = useState(['1']);

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Input, Popover, Upload } from 'antd';
+import { Button, Input, Popover, Upload, Spin } from 'antd';
 import { PaperClipOutlined, SmileOutlined, SendOutlined } from '@ant-design/icons';
 import EmojiPicker from 'emoji-picker-react';
 import useFetch from '../../hooks/useFetch';
@@ -12,6 +12,7 @@ const MessageInput = () => {
     const [isEmojiPickerVisible, setIsEmojiPickerVisible] = useState(false);
     const [message, setMessage] = useState('');
     const [fileList, setFileList] = useState([]); // File list for displaying the attached files
+    const [isUploading, setIsUploading] = useState(false); // State to track uploading status
     const { chatRoomId: currentChatRoomId } = useParams();
     const { fetchData } = useFetch({ showError: false, showSuccess: false });
 
@@ -22,13 +23,13 @@ const MessageInput = () => {
             );
 
         if (fileList.length > 0) {
+            setIsUploading(true); // Start uploading
             for (const file of fileList) {
                 const uploadResponse = await uploadApi.upload(file.originFileObj, 'chat_files');
                 const fileUrl = uploadResponse.data.url;
-                
-
                 await fetchData(() => RoomChatApi.createMessage(file.originFileObj.name, currentChatRoomId, typeOfFile(file), fileUrl));
             }
+            setIsUploading(false); // End uploading
         }
 
         setMessage('');
@@ -67,7 +68,7 @@ const MessageInput = () => {
                         listType='picture'
                         fileList={fileList}
                         onChange={handleFileChange}
-                        showUploadList={false} // Do not show file list here since it's rendered above
+                        showUploadList={false}
                         beforeUpload={() => false}
                         multiple
                     >
@@ -105,8 +106,8 @@ const MessageInput = () => {
                     className='rounded-5 mr-2 flex-1 p-2'
                 />
 
-                <Button className='h-[34px]' type='primary' icon={<SendOutlined />} onClick={handleSendMessage}>
-                    Send
+                <Button className='h-[34px]' type='primary' icon={<SendOutlined />} onClick={handleSendMessage} disabled={isUploading}>
+                    {isUploading ? <Spin /> : 'Send'}
                 </Button>
             </div>
         </div>
