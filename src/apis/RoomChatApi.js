@@ -13,7 +13,7 @@ const RoomChatApi = {
             }
         });
     },
-    getAllChatrooms: (getMy = true, page = 1, limit = 10) => {
+    getAllChatrooms: (getMy = true, page = 1, limit = 19) => {
         return axiosClient.get('/chat-rooms/search', {
             params: {
                 getMy,
@@ -60,6 +60,34 @@ const RoomChatApi = {
             }
         }),
 
+    addMember: (chatRoomId, newMemberId) =>
+        axiosClient.post(`/chat-rooms/add-member/`, {
+            chatRoomId,
+            newMemberId
+        }),
+
+    removeMember: (chatRoomId, memberId) =>
+        axiosClient.delete(`/chat-rooms/remove-member/`, {
+            data: {
+                chatRoomId,
+                memberId
+            }
+        }),
+
+    leaveGroup: (chatRoomId) => axiosClient.delete(`/chat-rooms/leave-group/`, 
+        {
+            data: {
+                chatRoomId
+            }
+        }
+        ),
+
+    changeRole: (chatRoomId, userId, role) =>
+        axiosClient.patch(`/chat-rooms/change-role/`, {
+            chatRoomId,
+            userId,
+            role
+        }),
     
         
 };

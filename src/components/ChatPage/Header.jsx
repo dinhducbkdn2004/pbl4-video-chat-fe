@@ -39,38 +39,7 @@ const Header = ({ toggleSidebar }) => {
                         </Badge>
                     </Tooltip>
                 )}
-                {typeRoom === 'Group' && (
-                    // <Avatar.Group
-                    //     className='m-3'
-                    //     size='small'
-                    //     max={{ count: 2, style: { color: '#f56a00', backgroundColor: '#fde3cf' } }}
-                    // >
-                    //     {members?.map((member, index) => (
-                    //         <Tooltip key={index} title={member.name}>
-                    //             <Badge
-                    //                 dot
-                    //                 color={
-                    //                     onlineUsers.some(
-                    //                         (onlineUser) =>
-                    //                             onlineUser._id === member._id || member._id === currentUser._id
-                    //                     )
-                    //                         ? '#52c41a'
-                    //                         : '#B6B6B6'
-                    //                 }
-                    //                 offset={[-5, 35]}
-                    //             >
-                    //                 <Avatar size='large' src={member.avatar}></Avatar>
-                    //             </Badge>
-                    //         </Tooltip>
-                    //     ))}
-                    // </Avatar.Group>
-
-                    <Avatar
-                        src={chatRoomImage}
-                        className='mr-3 object-cover'
-                        size={43}
-                    ></Avatar>
-                )}
+                {typeRoom === 'Group' && <Avatar src={chatRoomImage} className='mr-3 object-cover' size={43}></Avatar>}
                 <div>
                     <h4 className='m-0 text-base font-semibold'>{roomName}</h4>
                     <p

@@ -1,5 +1,6 @@
 import { List, Avatar, Divider, Badge, Tooltip } from 'antd';
 import { BiMessageSquareDots } from 'react-icons/bi';
+import { AiOutlineFile, AiOutlineVideoCamera, AiOutlinePicture } from 'react-icons/ai';
 import { getLastName, truncateString } from '../../helpers/utils';
 import { useSocket } from '../../hooks/useSocket';
 import SkeletonChatItem from '../../components/SkeletonCustom/SkeletonChatItem';
@@ -62,15 +63,35 @@ const RecentChats = ({ recentChats, handleChatClick, isFirstLoad }) => {
                                 }
                                 description={
                                     <div className='description flex items-center justify-between'>
-                                        <div>
+                                        <div className='flex items-center'>
                                             {item.lastMessage?.sender.name && (
                                                 <span className='text-gray-200 mr-1 font-bold'>
                                                     {getLastName(item.lastMessage.sender.name) + ':'}
                                                 </span>
                                             )}
-                                            {item.lastMessage?.content && (
-                                                <span className={`text-gray ${!item.isRead ? 'font-sans' : ''}`}>
-                                                    {truncateString(item.lastMessage.content, 17)}
+                                            {item.lastMessage && (
+                                                <span className={`text-gray ${!item.isRead ? 'font-sans' : ''} flex items-center`}>
+                                                    {item.lastMessage.type === 'Document' && (
+                                                        <>
+                                                            <AiOutlineFile className='mr-1' style={{ color: '#1890ff' }} />
+                                                            Đã gửi một file
+                                                        </>
+                                                    )}
+                                                    {item.lastMessage.type === 'Video' && (
+                                                        <>
+                                                            <AiOutlineVideoCamera className='mr-1' style={{ color: '#f5222d' }} />
+                                                            Đã gửi một video
+                                                        </>
+                                                    )}
+                                                    {item.lastMessage.type === 'Picture' && (
+                                                        <>
+                                                            <AiOutlinePicture className='mr-1' style={{ color: '#52c41a' }} />
+                                                            Đã gửi một ảnh
+                                                        </>
+                                                    )}
+                                                    {!['Document', 'Video', 'Picture'].includes(
+                                                        item.lastMessage.type
+                                                    ) && truncateString(item.lastMessage.content, 17)}
                                                 </span>
                                             )}
                                         </div>

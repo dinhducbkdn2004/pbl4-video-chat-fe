@@ -19,7 +19,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                 <GoogleOAuthProvider clientId={envClient.GOOGLE_OATH_CLIENT_ID}>
                     <SocketContextProvider>
                         <CallContextProvider>
-                            <App />
+                                <App />
                         </CallContextProvider>
                     </SocketContextProvider>
                 </GoogleOAuthProvider>
