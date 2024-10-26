@@ -10,7 +10,7 @@ export const CallContext = createContext();
 export const CallContextProvider = ({ children }) => {
     const { socket } = useSocket();
     const { user: currentUser } = useSelector(authSelector);
-    const [isCalling, setIsCalling] = useState(false);
+
     const [chatRoomData, setChatRoomData] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const audioRef = useRef(null);
@@ -20,21 +20,17 @@ export const CallContextProvider = ({ children }) => {
     };
 
     const cancelCall = useCallback(() => {
-        socket?.emit('callee cancel call', { chatRoom: chatRoomData?._id });
+        socket?.emit('callee:cancel_call', {
+            chatRoomId: chatRoomData?._id,
+            message: `${currentUser.name} không chấp nhận cuộc gọi`
+        });
         audioRef.current && audioRef.current.pause();
         audioRef.current.currentTime = 0;
         setIsModalOpen(false);
-        setIsCalling(false);
     }, [socket, chatRoomData?._id]);
 
     useEffect(() => {
-        socket?.on('new video call', ({ from, chatRoom }) => {
-            if (isCalling) {
-                socket?.emit("callee's calling someone", { calleData: currentUser, from });
-                return;
-            }
-
-            setIsCalling(true);
+        socket?.on('server:send_new_call', ({ from, chatRoom }) => {
             setChatRoomData(chatRoom);
             showModal();
 
@@ -44,13 +40,15 @@ export const CallContextProvider = ({ children }) => {
         return () => {
             socket?.off('new video call');
         };
-    }, [socket, currentUser, isCalling]);
+    }, [socket, currentUser]);
 
     const handleButtonStart = useCallback(() => {
         const baseUrl = window.location.origin;
         const videoCallUrl = `${baseUrl}/video-call/${chatRoomData?._id}?type=answer`;
         audioRef.current && audioRef.current.pause();
         audioRef.current.currentTime = 0;
+        setIsModalOpen(false);
+
         window.open(videoCallUrl, '_blank');
     }, [chatRoomData?._id]);
 
