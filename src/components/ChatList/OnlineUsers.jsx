@@ -1,10 +1,30 @@
 import { Avatar, Badge, Space } from 'antd';
 import { useSocket } from './../../hooks/useSocket';
 import { truncateString } from '../../helpers/utils';
+import useFetch from '../../hooks/useFetch';
 import PropTypes from 'prop-types';
+import RoomChatApi from '../../apis/RoomChatApi';
+import { useEffect, useState } from 'react';
 
 const OnlineUsers = () => {
     const { onlineUsers } = useSocket();
+    const { fetchData } = useFetch({ showSuccess: false, showError: false });
+    const [oneToOneRooms, setOneToOneRooms] = useState([]);
+
+    useEffect(() => {
+        const fetchChatRooms = async () => {
+            const response = await fetchData(() => RoomChatApi.getAllChatrooms(true));
+            const oneToOneRooms = response.data.filter(
+                (room) =>
+                    room.typeRoom === 'OneToOne' &&
+                    room.participants.some((participant) => onlineUsers.some((user) => user._id === participant._id)) &&
+                    room.participants.length === 2
+            );
+            setOneToOneRooms(oneToOneRooms);
+        };
+
+        fetchChatRooms();
+    }, [onlineUsers]);
 
     return (
         <div className='online-now bg-white-default'>

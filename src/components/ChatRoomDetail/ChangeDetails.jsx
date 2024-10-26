@@ -3,6 +3,7 @@ import { Modal, Input, Upload, Button } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import RoomChatApi from '../../apis/RoomChatApi';
 import useFetch from '../../hooks/useFetch';
+import uploadApi from '../../apis/uploadApi';
 
 const ChangeDetails = ({ type, chatRoomId, onClose }) => {
     const { fetchData } = useFetch({ showSuccess: true, showError: true });
@@ -12,7 +13,10 @@ const ChangeDetails = ({ type, chatRoomId, onClose }) => {
     const handleOk = async () => {
         const data = { chatRoomId };
         if (name) data.newName = name;
-        if (file) data.newImage = file;
+        if (file) {
+            const uploadResponse = await uploadApi.upload(file, 'chat-room-images');
+            data.newImage = uploadResponse.data.secure_url;
+        }
         await fetchData(() => RoomChatApi.changeDetailChatRoom(data));
         onClose();
     };

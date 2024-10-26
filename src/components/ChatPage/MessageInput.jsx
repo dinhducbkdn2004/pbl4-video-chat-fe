@@ -77,7 +77,18 @@ const MessageInput = () => {
 
                 <Popover content='Emoji'>
                     <Popover
-                        content={<EmojiPicker onEmojiClick={handleEmojiClick} />}
+                        content={
+                            <EmojiPicker
+                                width={280}
+                                height={280}
+                                disableAutoFocus={true}
+                                skinTonesDisabled
+                                searchDisabled
+                                previewConfig={{ showPreview: false }}
+                                emojiStyle='google'
+                                onEmojiClick={handleEmojiClick}
+                            />
+                        }
                         trigger='click'
                         open={isEmojiPickerVisible}
                         onOpenChange={(visible) => setIsEmojiPickerVisible(visible)}
