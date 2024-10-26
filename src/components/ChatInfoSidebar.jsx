@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Avatar, Button, Drawer, Tooltip, Menu } from 'antd';
+import { useState } from 'react';
+import { Avatar, Button, Drawer, Menu } from 'antd';
 import {
     BellOutlined,
     InboxOutlined,
@@ -18,9 +18,36 @@ import FileMediaLinks from '../components/ChatRoomDetail/FileMediaLinks';
 const ChatInfoSidebar = ({ open, onClose }) => {
     const location = useLocation();
     const { chatRoomId: currentChatRoomId } = useParams();
-    const { name: roomName, participants: members, typeRoom, chatRoomImage } = location.state;
+    const { name: roomName, participants: members, typeRoom, chatRoomImage, admins, moderators } = location.state;
+
     const [isChangeDetailsVisible, setIsChangeDetailsVisible] = useState(false);
     const [changeDetailsType, setChangeDetailsType] = useState('');
+    const [stateOpenKeys, setStateOpenKeys] = useState(['1']);
+    const [drawerTitle, setDrawerTitle] = useState('Chat Room Detail');
+    const [isFileView, setIsFileView] = useState(false);
+    const [isBackButtonVisible, setIsBackButtonVisible] = useState(false);
+
+    const getRole = (memberId) => {
+        if (admins.some((admin) => admin._id === memberId)) return 'Admin';
+        if (moderators.some((moderator) => moderator._id === memberId)) return 'Moderator';
+        return 'Member';
+    };
+
+    const createMemberItems = (role) =>
+        members
+            .filter((member) => getRole(member._id) === role)
+            .map((member, index) => ({
+                key: `${role}-${index + 1}`,
+                label: (
+                    <div className='flex items-center justify-between'>
+                        <div className='flex items-center'>
+                            <Avatar src={member.avatar} size='small' className='mr-2' />
+                            {member.name}
+                        </div>
+                        <Button type='text' icon={<EllipsisOutlined />} />
+                    </div>
+                )
+            }));
 
     const items = [
         {
@@ -34,23 +61,20 @@ const ChatInfoSidebar = ({ open, onClose }) => {
                     : [])
             ]
         },
-        {
-            key: '2',
-            icon: <AppstoreOutlined />,
-            label: 'Thành viên trong đoạn chat',
-            children: members?.map((member, index) => ({
-                key: `2-${index + 1}`,
-                label: (
-                    <div className='flex items-center justify-between'>
-                        <div className='flex items-center'>
-                            <Avatar src={member.avatar} size='small' className='mr-2' />
-                            {member.name}
-                        </div>
-                        <Button type='text' icon={<EllipsisOutlined />} />
-                    </div>
-                )
-            }))
-        },
+        ...(typeRoom === 'Group'
+            ? [
+                  {
+                      key: '2',
+                      icon: <AppstoreOutlined />,
+                      label: 'Thành viên trong đoạn chat',
+                      children: [
+                          { key: '2-1', label: 'Admin', children: createMemberItems('Admin') },
+                          { key: '2-2', label: 'Moderator', children: createMemberItems('Moderator') },
+                          { key: '2-3', label: 'Member', children: createMemberItems('Member') }
+                      ]
+                  }
+              ]
+            : []),
         {
             key: '3',
             icon: <InboxOutlined />,
@@ -63,16 +87,8 @@ const ChatInfoSidebar = ({ open, onClose }) => {
         },
         ...(typeRoom === 'Group'
             ? [
-                  {
-                      key: '4',
-                      icon: <LogoutOutlined className='mr-2' />,
-                      label: 'Rời nhóm'
-                  },
-                  {
-                      key: '5',
-                      icon: <UserAddOutlined className='mr-2' />,
-                      label: 'Yêu cầu vào nhóm'
-                  }
+                  { key: '4', icon: <LogoutOutlined className='mr-2' />, label: 'Rời nhóm' },
+                  { key: '5', icon: <UserAddOutlined className='mr-2' />, label: 'Yêu cầu vào nhóm' }
               ]
             : [])
     ];
@@ -81,12 +97,8 @@ const ChatInfoSidebar = ({ open, onClose }) => {
         const key = {};
         const func = (items, level = 1) => {
             items.forEach((item) => {
-                if (item.key) {
-                    key[item.key] = level;
-                }
-                if (item.children) {
-                    func(item.children, level + 1);
-                }
+                if (item.key) key[item.key] = level;
+                if (item.children) func(item.children, level + 1);
             });
         };
         func(items);
@@ -94,13 +106,9 @@ const ChatInfoSidebar = ({ open, onClose }) => {
     };
 
     const levelKeys = getLevelKeys(items);
-    const [stateOpenKeys, setStateOpenKeys] = useState(['1']);
-    const [drawerTitle, setDrawerTitle] = useState('Chat Room Detail');
-    const [isFileView, setIsFileView] = useState(false);
-    const [isBackButtonVisible, setIsBackButtonVisible] = useState(false);
 
     const onOpenChange = (openKeys) => {
-        const currentOpenKey = openKeys.find((key) => stateOpenKeys.indexOf(key) === -1);
+        const currentOpenKey = openKeys.find((key) => !stateOpenKeys.includes(key));
         if (currentOpenKey !== undefined) {
             const repeatIndex = openKeys
                 .filter((key) => key !== currentOpenKey)

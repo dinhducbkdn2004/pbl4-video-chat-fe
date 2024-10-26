@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import notificationsApi from '../apis/notificationApi';
 import { notification } from 'antd';
 import envClient from '../env';
+import useNotificationTitle from '../hooks/useNotificationTitle';
 export const SocketContext = createContext();
 
 export const SocketContextProvider = ({ children }) => {
@@ -56,6 +57,7 @@ export const SocketContextProvider = ({ children }) => {
             }
             setNotifications((pre) => [data, ...pre]);
         });
+
         return () => {
             socket.off('connect');
             socket.off('new notification');
@@ -73,6 +75,8 @@ export const SocketContextProvider = ({ children }) => {
             }
         })();
     }, [accessToken]);
+
+    useNotificationTitle(notifications);
 
     return (
         <SocketContext.Provider value={{ socket, onlineUsers, notifications }}>

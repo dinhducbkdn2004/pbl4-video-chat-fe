@@ -66,28 +66,46 @@ const FileMediaLinks = ({ stateOpenKeys, onOpenChange, items, chatRoomId }) => {
                 return <Image src={item.fileUrl} alt='media' style={{ width: '100%' }} />;
             case 'Document':
                 return (
-                    <div>
-                        <a href={item && item.fileUrl} target='_blank' rel='noreferrer'>
-                            {item.fileUrl}
-                        </a>
-                    </div>
-                );
-            case 'Link':
-                return (
-                    <Card hoverable className='h-30 w-full'>
+                    <Card hoverable className='h-25 w-full'>
                         <Card.Meta
-                            avatar={<Avatar src={`https://www.google.com/s2/favicons?domain=${item.content}`} />}
+                            avatar={
+                                <div className='flex items-center justify-center rounded-lg border border-white-dark bg-white-dark p-3'>
+                                    <FileTextOutlined />
+                                </div>
+                            }
                             title={
-                                <a
-                                    href={item && item.content}
-                                    target='_blank'
-                                    rel='noreferrer'
-                                    className='inline-block max-w-[calc(100%-10px)] overflow-hidden text-ellipsis whitespace-nowrap'
-                                >
+                                <a href={item && item.fileUrl} target='_blank' rel='noreferrer'>
                                     {item.content}
                                 </a>
                             }
-                            description={new Date(item.createdAt).toLocaleString()}
+                            description={
+                                <>
+                                    <div className='text-sm'>{new Date(item.createdAt).toLocaleString()}</div>
+                                </>
+                            }
+                        />
+                    </Card>
+                );
+            case 'Link':
+                return (
+                    <Card hoverable className='h-25 w-full'>
+                        <Card.Meta
+                            avatar={
+                                <Avatar
+                                    className='flex items-center justify-center'
+                                    src={`https://www.google.com/s2/favicons?domain=${item.content}`}
+                                />
+                            }
+                            title={
+                                <a href={item && item.content} target='_blank' rel='noreferrer'>
+                                    {item.content}
+                                </a>
+                            }
+                            description={
+                                <>
+                                    <div className='text-sm'>{new Date(item.createdAt).toLocaleString()}</div>
+                                </>
+                            }
                         />
                     </Card>
                 );
@@ -95,7 +113,6 @@ const FileMediaLinks = ({ stateOpenKeys, onOpenChange, items, chatRoomId }) => {
                 return <Typography.Text>{item.name}</Typography.Text>;
         }
     };
-
     return (
         <div className='flex flex-col items-center justify-around'>
             <Menu

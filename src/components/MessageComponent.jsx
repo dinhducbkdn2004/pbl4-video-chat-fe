@@ -48,16 +48,13 @@ const MessageComponent = ({ msg }) => {
             case 'Document':
                 return {
                     content: (
-                        <div>
-                            <p>{message.fileName || 'Download Document'}</p>
-                            <Button
-                                type='primary'
-                                href={message.fileUrl}
-                                target='_blank'
-                                rel='noopener noreferrer'
-                                icon={<PaperClipOutlined />}
-                            >
-                                Download
+                        <div className='document-message'>
+                            <div className='file-details mb-1 flex'>
+                                <p>{message.content || 'Document File'}</p>
+                            </div>
+                            <Button type='primary' href={message.fileUrl} target='_blank' rel='noopener noreferrer'>
+                                <PaperClipOutlined style={{ fontSize: '20px', color: '#ffffff' }} />
+                                Download ({(message.fileSize / 1024).toFixed(1)} KB)
                             </Button>
                         </div>
                     ),
@@ -69,21 +66,15 @@ const MessageComponent = ({ msg }) => {
                     content: isLoading ? (
                         <Spin />
                     ) : (
-                        <div>
-                            <a href={message.content} target='_blank'>
+                        <div className='link-preview'>
+                            <a href={message.content} target='_blank' className='link-title'>
                                 {truncateString(message.content, 40)}
                             </a>
-                            <h2>{seoData?.title}</h2>
-
-                            {seoData?.image && (
-                                <img
-                                    src={seoData?.image}
-                                    alt='SEO preview'
-                                    style={{ maxWidth: '100px', marginBottom: '10px' }}
-                                />
-                            )}
-
-                            <p>{seoData?.description}</p>
+                            {seoData?.image && <img src={seoData?.image} alt='SEO preview' className='link-image' />}
+                            <div className='link-details'>
+                                <h3 className='link-heading'>{seoData?.title}</h3>
+                                <p className='link-description'>{seoData?.description}</p>
+                            </div>
                         </div>
                     ),
                     hasBackground: true
@@ -136,11 +127,11 @@ const MessageComponent = ({ msg }) => {
                 </div>
                 <div className='text-gray-500 mt-1 flex items-center text-xs' style={{ fontSize: '10px' }}>
                     <span>{new Date(createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                    {sender._id === currentUser._id && (
+                    {/* {sender._id === currentUser._id && (
                         <>
                             <CheckCircleTwoTone className='ml-1' />
                         </>
-                    )}
+                    )} */}
                 </div>
             </div>
             {sender._id === currentUser._id && (
