@@ -217,8 +217,9 @@
 .chat-list .body-chat {
     padding: 24px 24px 10px;
     width: 100%;
-    overflow-y: auto;
+    overflow-y: auto; /* Ensure vertical scrolling is enabled */
     flex: 1; /* Allow the chat list to take up remaining space */
+    height: 0; /* Ensure it takes up remaining space */
 }
 
 .chat-list .body-chat::-webkit-scrollbar {
@@ -287,4 +288,38 @@
 
 :where(.css-dev-only-do-not-override-11lehqq).ant-divider .ant-divider-inner-text {
     padding-inline: 0;
+}
+
+/* Existing styles... */
+
+@media (max-width: 768px) {
+    
+    .chat-list {
+        width: 100%;
+
+    }
+
+    .chat-list .header {      
+        align-items: flex-start;
+    }
+
+    .chat-list .header .title {
+        font-size: 18px;
+    }
+
+    .chat-list .header .icons {
+        margin-top: 10px;
+    }
+
+    .chat-list .search-bar {
+        padding: 10px;
+    }
+
+    .chat-list .online-now {
+        padding: 20px 5px 5px 20px;
+    }
+
+    .chat-list .body-chat {
+        padding: 20px;
+    }
 }

@@ -17,3 +17,10 @@
 .custom-spinner .ant-spin-dot i {
     animation-duration: 0.5s;
 }
+
+@media (max-width: 768px) {
+    .h-screen {
+        height: auto;
+    }
+    
+}

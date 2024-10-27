@@ -20,7 +20,7 @@ const debouncedSearch = debounce(async (value, setSearchResults) => {
 
 const ChatList = () => {
     const navigate = useNavigate();
-    const {user} = useSelector(authSelector);
+    const { user } = useSelector(authSelector);
     const { fetchData, contextHolder } = useFetch({ showSuccess: false, showError: false });
     const { socket } = useSocket();
     const [searchValue, setSearchValue] = useState('');
@@ -28,7 +28,7 @@ const ChatList = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [recentChats, setRecentChats] = useState([]);
     const [isFirstLoad, setIsFirstLoad] = useState(true);
-    const audioRef =useRef(null);
+    const audioRef = useRef(null);
     const handleSearchChange = (e) => {
         setSearchValue(e.target.value);
         debouncedSearch(e.target.value, setSearchResults);
@@ -68,15 +68,15 @@ const ChatList = () => {
     useEffect(() => {
         socket?.on('updated chatroom', (updatedChatRoom) => {
             console.log(updatedChatRoom);
-            if(user._id !== updatedChatRoom.lastMessage.sender._id){
+            if (user._id !== updatedChatRoom.lastMessage.sender._id) {
                 audioRef?.current?.play();
                 console.log(123123123);
             }
 
             setRecentChats((pre) => {
                 const oleList = pre.filter((chatRoom) => chatRoom._id !== updatedChatRoom._id);
-                return [updatedChatRoom, ...oleList]
-            })
+                return [updatedChatRoom, ...oleList];
+            });
         });
 
         return () => {
@@ -87,7 +87,7 @@ const ChatList = () => {
     return (
         <>
             {contextHolder}
-            <audio src={"/sounds/tin-nhan.mp3"} ref={audioRef}/>
+            <audio src={"/sounds/tin-nhan.mp3"} ref={audioRef} />
             <div className='chat-list bg-white-default'>
                 <div className='header bg-white-default'>
                     <div className='title text-blue'>All Chats</div>
