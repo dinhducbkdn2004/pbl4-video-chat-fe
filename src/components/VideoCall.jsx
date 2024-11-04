@@ -1,40 +1,86 @@
-import { Button, message as MessageComponent, Spin } from 'antd';
+import { Button, message as MessageComponent } from 'antd';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
 
 import { Peer } from 'peerjs';
 import { useSocket } from '../hooks/useSocket';
-import { authSelector } from '../redux/features/auth/authSelections';
-import useFetch from './../hooks/useFetch';
 import VideoGrid from './VideoGrid';
 
 const VideoCall = () => {
     const myStreamRef = useRef(null);
+    const screenStreamRef = useRef(null);
+    const currentPeer = useRef(null);
+
+    const [isScreenSharing, setIsScreenSharing] = useState(false);
     const [myPeer, setMyPeer] = useState(null);
     const [calleePeers, setCalleePeers] = useState([]);
+    const [isMuted, setIsMuted] = useState(false);
+    const [isVideoStopped, setIsVideoStopped] = useState(false);
+
     const { chatRoomId: currentChatRoomId } = useParams();
     const [searchParams] = useSearchParams();
     const typeCall = searchParams.get('type');
     const { socket } = useSocket();
-    const { user } = useSelector(authSelector);
-    const { fetchData, isLoading } = useFetch({ showError: false, showSuccess: false });
-    const { user: currentUser } = useSelector(authSelector);
+
     const [callStatus, setCallStatus] = useState(() => (typeCall === 'answer' ? 'accept' : 'calling'));
 
     const startCall = useCallback(
         async (calleePeerId) => {
             const call = myPeer?.call(calleePeerId, myStreamRef.current);
             call?.on('stream', (remoteStream) => {
-                setCalleePeers((pre) => [remoteStream, ...pre]);
+                setCalleePeers((prevPeers) => {
+                    const streamExists = prevPeers.some((stream) => stream.id === remoteStream.id);
+                    if (streamExists) {
+                        return prevPeers; // If it exists, return the array as-is
+                    }
+                    // Otherwise, add the new remoteStream
+                    return [remoteStream, ...prevPeers];
+                });
             });
 
             call?.on('error', (err) => {
                 console.error('Call error:', err);
             });
+            currentPeer.current = call;
         },
         [myPeer]
     );
+
+    const toggleScreenShare = async () => {
+        if (!isScreenSharing) {
+            try {
+                const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                screenStreamRef.current = screenStream;
+                setIsScreenSharing(true);
+                console.log(myStreamRef.current);
+                // Replace video track with screen track
+                const videoTrack = screenStream.getVideoTracks()[0];
+                const sender = myStreamRef.current.getVideoTracks()[0];
+                sender.stop();
+                myStreamRef.current.removeTrack(sender);
+                myStreamRef.current.addTrack(videoTrack);
+                currentPeer.current.peerConnection
+                    .getSenders()
+                    .find((s) => s.track.kind == videoTrack.kind)
+                    .replaceTrack(videoTrack);
+            } catch (error) {
+                console.error('Error sharing screen:', error);
+            }
+        } else {
+            // Stop screen sharing
+            const videoTrack = myStreamRef.current.getVideoTracks()[0];
+            const screenTrack = screenStreamRef.current.getVideoTracks()[0];
+            screenTrack.stop();
+            myStreamRef.current.removeTrack(screenTrack);
+            myStreamRef.current.addTrack(videoTrack);
+            currentPeer.current.peerConnection
+                .getSenders()
+                .find((s) => s.track.kind == videoTrack.kind)
+                .replaceTrack(videoTrack);
+
+            setIsScreenSharing(false);
+        }
+    };
 
     const answerCall = useCallback(async (incomingCall) => {
         try {
@@ -43,7 +89,14 @@ const VideoCall = () => {
 
             // Lắng nghe sự kiện 'stream' từ người gọi đến
             incomingCall.on('stream', (remoteStream) => {
-                setCalleePeers((prevPeers) => [remoteStream, ...prevPeers]);
+                setCalleePeers((prevPeers) => {
+                    const streamExists = prevPeers.some((stream) => stream.id === remoteStream.id);
+                    if (streamExists) {
+                        return prevPeers; // If it exists, return the array as-is
+                    }
+                    // Otherwise, add the new remoteStream
+                    return [remoteStream, ...prevPeers];
+                });
             });
         } catch (error) {
             console.error('Error answering the call:', error);
@@ -52,12 +105,27 @@ const VideoCall = () => {
 
     const leaveCall = useCallback(() => {
         myStreamRef.current?.getTracks().forEach((track) => track.stop());
-        setCalleePeers([]);
         socket.emit('user:leave_call');
         window.close();
         // Destroy the peer connection
         myPeer?.destroy();
     }, [myPeer, socket]);
+
+    const toggleMute = useCallback(() => {
+        const stream = myStreamRef.current;
+        if (stream) {
+            stream.getAudioTracks().forEach((track) => (track.enabled = !track.enabled));
+            setIsMuted(!isMuted);
+        }
+    }, [isMuted]);
+
+    const toggleVideo = useCallback(() => {
+        const stream = myStreamRef.current;
+        if (stream) {
+            stream.getVideoTracks().forEach((track) => (track.enabled = !track.enabled));
+            setIsVideoStopped(!isVideoStopped);
+        }
+    }, [isVideoStopped]);
 
     useEffect(() => {
         (async () => {
@@ -120,7 +188,7 @@ const VideoCall = () => {
         });
         return () => socket?.off('server:send_callee_response');
     }, [socket, startCall, currentChatRoomId]);
-    
+
     useEffect(() => {
         const handleBeforeUnload = (event) => {
             leaveCall();
@@ -136,24 +204,19 @@ const VideoCall = () => {
         return () => window.removeEventListener('beforeunload', handleBeforeUnload);
     }, [leaveCall]);
 
-    if (isLoading) return <Spin spinning={true} />;
-
     return (
         <>
             {callStatus === 'calling' && <audio src='/sounds/calling-state.mp3' loop autoPlay />}
             {callStatus === 'end-calling' && <audio src='/sounds/end-calling-state.mp3' autoPlay />}
 
             <div className='flex h-lvh flex-col justify-between overflow-auto bg-black-default px-10 pt-10'>
-                <div className='flex flex-1 flex-wrap items-center justify-center gap-4'>
-                    <div className='h-auto w-1/3 overflow-hidden rounded-2xl'>
-                        <VideoGrid localStream={myStreamRef.current} calleePeers={calleePeers} />
-                    </div>
-                </div>
+                <VideoGrid localStream={myStreamRef.current} calleePeers={calleePeers} />
+
                 {callStatus !== 'end-calling' && (
                     <div className='flex items-center justify-center gap-4 p-10'>
-                        <Button>Mute</Button>
-                        <Button>Stop Video</Button>
-                        <Button>Share Screen</Button>
+                        <Button onClick={toggleMute}>{isMuted ? 'Unmute' : 'Mute'}</Button>
+                        <Button onClick={toggleVideo}>{isVideoStopped ? 'Start Video' : 'Stop Video'}</Button>
+                        <Button onClick={toggleScreenShare}>{isScreenSharing ? 'Stop Sharing' : 'Share Screen'}</Button>
                         <Button onClick={leaveCall}>Leave Call</Button>
                     </div>
                 )}

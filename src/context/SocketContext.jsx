@@ -7,6 +7,7 @@ import notificationsApi from '../apis/notificationApi';
 import { notification } from 'antd';
 import envClient from '../env';
 import useNotificationTitle from '../hooks/useNotificationTitle';
+import { useCallback } from 'react';
 export const SocketContext = createContext();
 
 export const SocketContextProvider = ({ children }) => {
@@ -18,16 +19,20 @@ export const SocketContextProvider = ({ children }) => {
         showProgress: true
     });
     const audioRef = useRef(null);
+    const connectSocket = useCallback(
+        () =>
+            io(envClient.VITE_BASE_API_URL, {
+                extraHeaders: {
+                    authorization: accessToken
+                }
+            }),
+        [accessToken]
+    );
 
     useEffect(() => {
         if (!accessToken) return;
 
-        const socket = io(envClient.VITE_BASE_API_URL, {
-            extraHeaders: {
-                authorization: accessToken
-            }
-        });
-
+        const socket = connectSocket();
         setSocket(socket);
 
         // Listen for connection
@@ -40,7 +45,9 @@ export const SocketContextProvider = ({ children }) => {
         });
 
         socket.on('new online friend', (newOnlineUser) => {
-            setOnlineUsers((users) => [...users, newOnlineUser]);
+            setOnlineUsers((users) =>
+                users.some((user) => user._id === newOnlineUser._id) ? users : [...users, newOnlineUser]
+            );
         });
 
         socket.on('disconnect friend', (offlineUser) => {
@@ -53,7 +60,7 @@ export const SocketContextProvider = ({ children }) => {
                 description: data.message
             });
             if (audioRef.current) {
-                audioRef.current.play();  // Phát âm thanh khi có thông báo mới
+                audioRef.current.play(); // Phát âm thanh khi có thông báo mới
             }
             setNotifications((pre) => [data, ...pre]);
         });
@@ -65,7 +72,7 @@ export const SocketContextProvider = ({ children }) => {
             socket.off('new online friend');
             socket.off('disconnect friend');
         };
-    }, [accessToken, api]);
+    }, [accessToken, api, connectSocket]);
 
     useEffect(() => {
         (async () => {
@@ -80,7 +87,7 @@ export const SocketContextProvider = ({ children }) => {
 
     return (
         <SocketContext.Provider value={{ socket, onlineUsers, notifications }}>
-            <audio ref={audioRef} src="/sounds/notification.mp3" />
+            <audio ref={audioRef} src='/sounds/notification.mp3' />
             {contextHolder}
             {children}
         </SocketContext.Provider>

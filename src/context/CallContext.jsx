@@ -27,20 +27,7 @@ export const CallContextProvider = ({ children }) => {
         audioRef.current && audioRef.current.pause();
         audioRef.current.currentTime = 0;
         setIsModalOpen(false);
-    }, [socket, chatRoomData?._id]);
-
-    useEffect(() => {
-        socket?.on('server:send_new_call', ({ from, chatRoom }) => {
-            setChatRoomData(chatRoom);
-            showModal();
-
-            audioRef.current.play();
-        });
-
-        return () => {
-            socket?.off('new video call');
-        };
-    }, [socket, currentUser]);
+    }, [socket, chatRoomData?._id, currentUser?.name]);
 
     const handleButtonStart = useCallback(() => {
         const baseUrl = window.location.origin;
@@ -51,6 +38,20 @@ export const CallContextProvider = ({ children }) => {
 
         window.open(videoCallUrl, '_blank');
     }, [chatRoomData?._id]);
+
+    useEffect(() => {
+        socket?.on('server:send_new_call', ({ from, chatRoom }) => {
+            console.log('new video call', from, chatRoom);
+            setChatRoomData(chatRoom);
+            showModal();
+
+            audioRef.current.play();
+        });
+
+        return () => {
+            socket?.off('new video call');
+        };
+    }, [socket, currentUser]);
 
     return (
         <CallContext.Provider value={{ chatRoomData }}>
