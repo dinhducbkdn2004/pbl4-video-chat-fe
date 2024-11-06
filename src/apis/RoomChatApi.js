@@ -13,7 +13,7 @@ const RoomChatApi = {
             }
         });
     },
-    getAllChatrooms: (getMy = true, page = 1, limit = 19) => {
+    getAllChatrooms: (getMy = true, page = 1, limit = 10) => {
         return axiosClient.get('/chat-rooms/search', {
             params: {
                 getMy,

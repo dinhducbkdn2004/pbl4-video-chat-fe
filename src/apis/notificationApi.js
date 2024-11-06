@@ -1,8 +1,13 @@
 import axiosClient from '../configs/axiosClient';
 
 const notificationsApi = {
-    getAll: async () => {
-        return axiosClient.get('/notifications');
+    getAll: async (page = 1, limit = 10) => {
+        return axiosClient.get('/notifications', {
+            params: {
+                page,
+                limit,
+            },
+        });
     },
 
     seenNotification: async (notificationId) => {

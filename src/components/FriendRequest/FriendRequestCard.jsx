@@ -1,11 +1,12 @@
 import { Avatar, Button, Card } from 'antd';
 import dayjs from 'dayjs';
-
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useRef } from 'react';
 import userApi from '../../apis/userApi';
 const FriendRequestCard = ({ request }) => {
     const { _id, sender, caption, createdAt } = request;
+    const navigate = useNavigate();
     const buttonRef = useRef(null);
 
     const handleButtonClick = (type) => {
@@ -20,7 +21,14 @@ const FriendRequestCard = ({ request }) => {
     };
 
     return (
-        <Card key={_id} bordered={false}>
+        <Card
+            className='cursor-pointer transition-transform duration-300 ease-in-out hover:shadow-md'
+            onClick={() => {
+                navigate(`/user/${_id}`);
+            }}
+            key={_id}
+            bordered={false}
+        >
             <div className='flex items-center gap-x-4'>
                 <Avatar src={sender.avatar} szie={100} />
                 <div>

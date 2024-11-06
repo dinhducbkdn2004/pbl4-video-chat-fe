@@ -28,7 +28,11 @@ const ChatList = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [recentChats, setRecentChats] = useState([]);
     const [isFirstLoad, setIsFirstLoad] = useState(true);
+    const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
     const audioRef = useRef(null);
+
     const handleSearchChange = (e) => {
         setSearchValue(e.target.value);
         debouncedSearch(e.target.value, setSearchResults);
@@ -54,20 +58,22 @@ const ChatList = () => {
     };
 
     const fetchAndSetChatrooms = async () => {
-        const data = await fetchData(() => RoomChatApi.getAllChatrooms(true));
+        setLoading(true);
+        const data = await fetchData(() => RoomChatApi.getAllChatrooms(true, page));
         if (data.isOk) {
-            setRecentChats(data.data);
+            setRecentChats((prevChats) => [...prevChats, ...data.data]);
+            setHasMore(data.data.length > 0);
             if (isFirstLoad) setIsFirstLoad(false);
         }
+        setLoading(false);
     };
 
     useEffect(() => {
         fetchAndSetChatrooms();
-    }, []);
+    }, [page]);
 
     useEffect(() => {
         socket?.on('updated chatroom', (updatedChatRoom) => {
-            console.log(updatedChatRoom);
             if (user._id !== updatedChatRoom.lastMessage.sender._id) {
                 audioRef?.current?.play();
                 console.log(123123123);
@@ -83,6 +89,12 @@ const ChatList = () => {
             socket?.off('updated chatroom', fetchAndSetChatrooms);
         };
     }, [socket]);
+
+    const loadMoreChats = () => {
+        if (hasMore && !loading) {
+            setPage((prevPage) => prevPage + 1);
+        }
+    };
 
     return (
         <>
@@ -102,7 +114,13 @@ const ChatList = () => {
                     handleChatClick={handleChatClick}
                 />
                 <OnlineUsers />
-                <RecentChats recentChats={recentChats} handleChatClick={handleChatClick} isFirstLoad={isFirstLoad} />
+                <RecentChats
+                    recentChats={recentChats}
+                    handleChatClick={handleChatClick}
+                    isFirstLoad={isFirstLoad}
+                    loadMoreChats={loadMoreChats}
+                    loading={loading}
+                />
                 <AddRoomModal open={isAddRoomModalVisible} onCreate={handleAddRoom} onCancel={handleCancel} />
             </div>
         </>

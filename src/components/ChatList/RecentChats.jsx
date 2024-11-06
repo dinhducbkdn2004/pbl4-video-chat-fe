@@ -1,4 +1,4 @@
-import { List, Avatar, Divider, Badge, Tooltip } from 'antd';
+import { List, Avatar, Divider, Badge, Tooltip, Button, Spin } from 'antd';
 import { BiMessageSquareDots } from 'react-icons/bi';
 import { AiOutlineFile, AiOutlineVideoCamera, AiOutlinePicture } from 'react-icons/ai';
 import { getLastName, truncateString } from '../../helpers/utils';
@@ -6,7 +6,7 @@ import { useSocket } from '../../hooks/useSocket';
 import SkeletonChatItem from '../../components/SkeletonCustom/SkeletonChatItem';
 import moment from 'moment';
 
-const RecentChats = ({ recentChats, handleChatClick, isFirstLoad }) => {
+const RecentChats = ({ recentChats, handleChatClick, isFirstLoad, loadMoreChats, loading }) => {
     const { onlineUsers } = useSocket();
 
     const filteredChats = recentChats.filter((chat) => chat.lastMessage);
@@ -112,6 +112,16 @@ const RecentChats = ({ recentChats, handleChatClick, isFirstLoad }) => {
                     )
                 }
             />
+            {loading && (
+                <div style={{ textAlign: 'center', marginTop: 12 }}>
+                    <Spin />
+                </div>
+            )}
+            {recentChats.length > 0 && !loading && (
+                <div style={{ textAlign: 'center', marginTop: 12 }}>
+                    <Button onClick={loadMoreChats}>Load More</Button>
+                </div>
+            )}
         </div>
     );
 };

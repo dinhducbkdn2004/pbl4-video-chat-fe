@@ -15,7 +15,6 @@ import SearchUsers from './components/Search/SearchUsers';
 import SearchGroup from './components/Search/SearchGroup';
 
 import ChatPage from './pages/MessagePage/ChatPage/ChatPage';
-import NotificationPage from './pages/NotificationPage/NotificationPage';
 import FriendListPage from './pages/ContactPage/FriendListPage/FriendListPage';
 import FriendRequestPage from './pages/ContactPage/FriendRequestPage/FriendRequestPage';
 import VideoCall from './components/VideoCall';
@@ -46,7 +45,6 @@ function App() {
                         <Route path='groups' element={<SearchGroup />} />
                     </Route>
                     <Route path='user/:id' element={<UserPage />} />
-                    <Route path='notification' element={<NotificationPage />} />
                     <Route path='setting' element={<SettingPage />} />
                 </Route>
                 <Route path='/video-call/:chatRoomId' element={<VideoCall />} />

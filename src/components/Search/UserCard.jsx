@@ -1,7 +1,5 @@
 import { Avatar, Button, Card } from 'antd';
-
 import { useNavigate } from 'react-router-dom';
-
 import PropTypes from 'prop-types';
 
 const UserCard = ({ data }) => {
@@ -13,20 +11,17 @@ const UserCard = ({ data }) => {
             onClick={() => {
                 navigate(`/user/${_id}`);
             }}
+            className='cursor-pointer transition-transform duration-300 ease-in-out hover:shadow-md'
         >
-            <div className='flex items-center gap-[10px] rounded-2xl bg-white-default'>
-                {' '}
+            <div className='bg-white flex items-center gap-2.5 rounded-2xl'>
                 <Avatar src={avatar} size={40} />
-                <div
-                    style={{
-                        flex: 1
-                    }}
-                >
-                    <h1 className='text-[17px] text-[#050505]'>{name}</h1>
-                    <h2 className='text-[15px] text-[#050505]'>{email}</h2>
+                <div className='flex-1'>
+                    <h1 className='text-black text-lg'>{name}</h1>
+                    <h2 className='text-black text-base'>{email}</h2>
                 </div>
                 <Button
-                    onClick={() => {
+                    onClick={(e) => {
+                        e.stopPropagation();
                         if (!isFriend) {
                             return;
                         }
@@ -38,6 +33,7 @@ const UserCard = ({ data }) => {
         </Card>
     );
 };
+
 UserCard.propTypes = {
     data: PropTypes.object.isRequired
 };
