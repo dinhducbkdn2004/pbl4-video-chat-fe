@@ -18,10 +18,10 @@ export default {
 
                 white: {
                     default: '#FFFFFF',
-                    dark: '#CDCECF'
+                    dark: '#F0F0F0'
                 },
                 gray: '#72778D',
-                blue: '#0066FF',
+                blue: '#0066FF'
             }
         }
     },

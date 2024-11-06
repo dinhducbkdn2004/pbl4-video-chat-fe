@@ -1,25 +1,21 @@
 import { useState } from 'react';
-import { Avatar, Button, Drawer, Menu } from 'antd';
-import {
-    BellOutlined,
-    InboxOutlined,
-    SearchOutlined,
-    AppstoreOutlined,
-    MailOutlined,
-    EllipsisOutlined,
-    LogoutOutlined,
-    UserAddOutlined,
-    ArrowLeftOutlined
-} from '@ant-design/icons';
+import { Drawer } from 'antd';
 import { useLocation, useParams } from 'react-router-dom';
 import ChangeDetails from '../components/ChatRoomDetail/ChangeDetails';
 import FileMediaLinks from '../components/ChatRoomDetail/FileMediaLinks';
+import RoomChatApi from '../apis/RoomChatApi';
+import useFetch from '../hooks/useFetch';
+import DrawerTitle from '../components/ChatRoomDetail/DrawerTitle'
+import ChatRoomDetails from '../components/ChatRoomDetail/ChatRoomDetails';
+import MemberItem from '../components/ChatRoomDetail/MemberItem';
+import { InboxOutlined, MailOutlined, AppstoreOutlined, LogoutOutlined, UserAddOutlined } from '@ant-design/icons';
 
 const ChatInfoSidebar = ({ open, onClose }) => {
     const location = useLocation();
     const { chatRoomId: currentChatRoomId } = useParams();
     const { name: roomName, participants: members, typeRoom, chatRoomImage, admins, moderators } = location.state;
 
+    const { fetchData } = useFetch({ showSuccess: false, showError: false });
     const [isChangeDetailsVisible, setIsChangeDetailsVisible] = useState(false);
     const [changeDetailsType, setChangeDetailsType] = useState('');
     const [stateOpenKeys, setStateOpenKeys] = useState(['1']);
@@ -33,20 +29,16 @@ const ChatInfoSidebar = ({ open, onClose }) => {
         return 'Member';
     };
 
+    const handleRemoveMember = async (memberId) => {
+        await fetchData(() => RoomChatApi.removeMember(currentChatRoomId, memberId));
+    };
+
     const createMemberItems = (role) =>
         members
             .filter((member) => getRole(member._id) === role)
             .map((member, index) => ({
                 key: `${role}-${index + 1}`,
-                label: (
-                    <div className='flex items-center justify-between'>
-                        <div className='flex items-center'>
-                            <Avatar src={member.avatar} size='small' className='mr-2' />
-                            {member.name}
-                        </div>
-                        <Button type='text' icon={<EllipsisOutlined />} />
-                    </div>
-                )
+                label: <MemberItem member={member} handleRemoveMember={handleRemoveMember} />
             }));
 
     const items = [
@@ -150,16 +142,7 @@ const ChatInfoSidebar = ({ open, onClose }) => {
 
     return (
         <Drawer
-            title={
-                isBackButtonVisible ? (
-                    <div className='flex items-center'>
-                        <ArrowLeftOutlined onClick={handleBack} className='mr-2' />
-                        {drawerTitle}
-                    </div>
-                ) : (
-                    drawerTitle
-                )
-            }
+            title={<DrawerTitle isBackButtonVisible={isBackButtonVisible} drawerTitle={drawerTitle} handleBack={handleBack} />}
             placement='right'
             onClose={onClose}
             open={open}
@@ -174,24 +157,13 @@ const ChatInfoSidebar = ({ open, onClose }) => {
                     chatRoomId={currentChatRoomId}
                 />
             ) : (
-                <div className='flex flex-col items-center'>
-                    <Avatar src={chatRoomImage} size={60} className='mt-3' />
-                    <h3 className='mt-3'>{roomName}</h3>
-                    <div className='mt-2 flex'>
-                        <Button icon={<BellOutlined />} className='mb-2 mr-2'>
-                            Tắt thông báo
-                        </Button>
-                        <Button icon={<SearchOutlined />}>Tìm kiếm</Button>
-                    </div>
-                    <Menu
-                        mode='inline'
-                        defaultSelectedKeys={['1-1']}
-                        openKeys={stateOpenKeys}
-                        onOpenChange={onOpenChange}
-                        style={{ width: '100%' }}
-                        items={items}
-                    />
-                </div>
+                <ChatRoomDetails
+                    chatRoomImage={chatRoomImage}
+                    roomName={roomName}
+                    stateOpenKeys={stateOpenKeys}
+                    onOpenChange={onOpenChange}
+                    items={items}
+                />
             )}
             {isChangeDetailsVisible && (
                 <ChangeDetails

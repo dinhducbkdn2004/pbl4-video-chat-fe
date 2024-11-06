@@ -296,15 +296,15 @@
     
     .chat-list {
         width: 100%;
-
     }
 
     .chat-list .header {      
-        align-items: flex-start;
+        align-items: center;
+        justify-self: center;
     }
 
     .chat-list .header .title {
-        font-size: 18px;
+        font-size: 24px;
     }
 
     .chat-list .header .icons {

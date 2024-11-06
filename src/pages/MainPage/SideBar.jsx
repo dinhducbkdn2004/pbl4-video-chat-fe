@@ -1,6 +1,6 @@
+import { useState } from 'react';
 import { TbPhoneCall } from 'react-icons/tb';
 import { TbUserSearch } from 'react-icons/tb';
-
 import { Avatar, Badge, Dropdown, Layout, Menu } from 'antd';
 import { RiLogoutCircleRLine } from 'react-icons/ri';
 import { BiMessageSquareDots } from 'react-icons/bi';
@@ -12,10 +12,12 @@ import { authSelector } from '../../redux/features/auth/authSelections';
 import { useSelector } from 'react-redux';
 import assets from '../../assets/index';
 import './SideBar.css';
+import NotificationSidebar from '../../components/Notification/NotificationSidebar';
 
 const { Sider } = Layout;
 
 const Sidebar = () => {
+    const [isNotificationSidebarVisible, setNotificationSidebarVisible] = useState(false);
     const logout = handleLogout();
     const navigate = useNavigate();
     const { user } = useSelector(authSelector);
@@ -61,7 +63,8 @@ const Sidebar = () => {
         {
             key: 'notification',
             icon: <IoNotificationsOutline size={20} />,
-            className: 'custom-menu-item'
+            className: 'custom-menu-item',
+            onClick: () => setNotificationSidebarVisible(true)
         },
         {
             key: 'setting',
@@ -70,37 +73,44 @@ const Sidebar = () => {
         }
     ];
 
+    const handleMenuClick = (e) => {
+        if (e.key !== 'notification') {
+            navigate(e.key);
+        }
+    };
+
     return (
-        <Sider
-            width={72}
-            className='flex h-full flex-col items-center justify-between border-r border-slate-200 bg-white-default py-4'
-        >
-            <div className='mb-5 flex items-center justify-center'>
-                <img
-                    src={assets.Designer}
-                    alt='Logo'
-                    className='h-12 w-12 cursor-pointer rounded-full border border-slate-200'
-                    onClick={() => navigate('/message')}
+        <>
+            <Sider
+                width={72}
+                className='flex h-full flex-col items-center justify-between border-r border-slate-200 bg-white-default py-4'
+            >
+                <div className='mb-5 flex items-center justify-center'>
+                    <img
+                        src={assets.Designer}
+                        alt='Logo'
+                        className='h-12 w-12 cursor-pointer rounded-full border border-slate-200'
+                        onClick={() => navigate('/message')}
+                    />
+                </div>
+                <Menu
+                    mode='vertical'
+                    className='flex flex-grow flex-col items-center justify-start bg-white-default'
+                    onClick={handleMenuClick}
+                    items={sidebarItems}
                 />
-            </div>
-            <Menu
-                mode='vertical'
-                className='flex flex-grow flex-col items-center justify-start bg-white-default'
-                onClick={(e) => {
-                    navigate(e.key);
-                }}
-                items={sidebarItems}
-            />
-            <div className='mt-auto flex flex-col items-center'>
-                <Dropdown menu={{ items: menuItems }} trigger={['click']}>
-                    <div className='mt-4 flex cursor-pointer flex-col items-center'>
-                        <Badge count={1} status='success'>
-                            <Avatar size={46} src={user?.avatar} />
-                        </Badge>
-                    </div>
-                </Dropdown>
-            </div>
-        </Sider>
+                <div className='mt-auto flex flex-col items-center'>
+                    <Dropdown menu={{ items: menuItems }} trigger={['click']}>
+                        <div className='mt-4 flex cursor-pointer flex-col items-center'>
+                            <Badge count={1} status='success'>
+                                <Avatar size={46} src={user?.avatar} />
+                            </Badge>
+                        </div>
+                    </Dropdown>
+                </div>
+            </Sider>
+            {isNotificationSidebarVisible && <NotificationSidebar onClose={() => setNotificationSidebarVisible(false)} />}
+        </>
     );
 };
 

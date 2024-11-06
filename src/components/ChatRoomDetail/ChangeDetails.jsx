@@ -23,7 +23,7 @@ const ChangeDetails = ({ type, chatRoomId, onClose }) => {
 
     return (
         <>
-            <Modal title={`Change ${type}`} visible={true} onOk={handleOk} onCancel={onClose}>
+            <Modal title={`Change ${type}`} open={true} onOk={handleOk} onCancel={onClose}>
                 {type === 'name' || type === 'both' ? (
                     <Input
                         placeholder='Enter new chat room name'
