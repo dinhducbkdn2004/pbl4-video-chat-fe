@@ -1,17 +1,15 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Avatar, Badge, Button, Popover, Tooltip } from 'antd';
-import { useLocation } from 'react-router-dom';
 import CallModal from './CallModal';
 import { useSocket } from '../../hooks/useSocket';
 import { useSelector } from 'react-redux';
 import { authSelector } from '../../redux/features/auth/authSelections';
 
-const Header = ({ toggleSidebar }) => {
-    const location = useLocation();
+const Header = ({ chatInfo, toggleSidebar }) => {
     const { onlineUsers } = useSocket();
     const { user: currentUser } = useSelector(authSelector);
 
-    const { name: roomName, participants: members, typeRoom, chatRoomImage } = location.state;
+    const { name: roomName, participants: members, typeRoom, chatRoomImage } = chatInfo || {};
 
     const isRoomOnline =
         members?.length >= 2 &&

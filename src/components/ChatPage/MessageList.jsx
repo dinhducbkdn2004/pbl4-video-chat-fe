@@ -1,20 +1,37 @@
 import { Spin } from 'antd';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import RoomChatApi from '../../apis/RoomChatApi';
 import { sortMessagesByTime } from '../../helpers/utils';
 import useFetch from '../../hooks/useFetch';
 import { useSocket } from '../../hooks/useSocket';
 import MessageComponent from '../MessageComponent';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
-const MessageList = ({ messages, messagesEndRef, handleSetMessages }) => {
-    const location = useLocation();
-
-    const { participants: members } = location.state;
+const MessageList = () => {
     const { socket } = useSocket();
     const { chatRoomId: currentChatRoomId } = useParams();
     const { fetchData, isLoading } = useFetch({ showSuccess: false, showError: false });
+    const [messages, setMessages] = useState([]);
+
+    const messagesEndRef = useRef(null);
+    const handleSetMessages = useCallback((newMessage) => {
+        if (Array.isArray(newMessage)) {
+            setMessages(newMessage);
+            return;
+        }
+
+        setMessages((prev) => [...prev, newMessage]);
+    }, []);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
     useEffect(() => {
         socket?.on('new message', (incomingMessage) => {
             if (incomingMessage.chatRoom === currentChatRoomId) handleSetMessages(incomingMessage);
@@ -43,17 +60,11 @@ const MessageList = ({ messages, messagesEndRef, handleSetMessages }) => {
     return (
         <div className='bg-white custom-scroll flex-1 overflow-y-auto p-5'>
             {messages.map((msg) => (
-                <MessageComponent msg={msg} key={msg._id} members={members} />
+                <MessageComponent msg={msg} key={msg._id} />
             ))}
             <div ref={messagesEndRef} />
         </div>
     );
 };
-MessageList.propTypes = {
-    messages: PropTypes.arrayOf(PropTypes.object).isRequired,
-    messagesEndRef: PropTypes.shape({
-        current: PropTypes.instanceOf(Element)
-    }).isRequired,
-    handleSetMessages: PropTypes.func.isRequired
-};
+MessageList.propTypes = {};
 export default MessageList;

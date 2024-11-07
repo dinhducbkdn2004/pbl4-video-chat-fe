@@ -3,29 +3,33 @@ import Header from '../../../components/ChatPage/Header';
 import MessageInput from '../../../components/ChatPage/MessageInput';
 import MessageList from '../../../components/ChatPage/MessageList';
 import ChatInfoSidebar from '../../../components/ChatInfoSidebar';
+import { useParams, useLocation } from 'react-router-dom';
+import RoomChatApi from '../../../apis/RoomChatApi';
+import useFetch from '../../../hooks/useFetch';
 import './ChatPage.css';
 
 const ChatPage = () => {
-    const [messages, setMessages] = useState([]);
     const [isSidebarVisible, setIsSidebarVisible] = useState(false);
-
-    const messagesEndRef = useRef(null);
-    const handleSetMessages = useCallback((newMessage) => {
-        if (Array.isArray(newMessage)) {
-            setMessages(newMessage);
-            return;
-        }
-
-        setMessages((prev) => [...prev, newMessage]);
-    }, []);
-
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    };
+    const [chatInfo, setChatInfo] = useState(null);
+    const { chatRoomId } = useParams();
+    const { fetchData } = useFetch({ showError: false, showSuccess: false });
+    const location = useLocation();
 
     useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
+        if (location.state) {
+            setChatInfo(location.state);
+        } else {
+            getAllChatRoom();
+        }
+    }, [chatRoomId, location.state]);
+
+    const getAllChatRoom = async () => {
+        const { data, isOk } = await fetchData(() => RoomChatApi.getAllChatrooms());
+        if (isOk) {
+            const chatRoom = data.find((room) => room._id === chatRoomId);
+            if (chatRoom) setChatInfo(chatRoom);
+        }
+    };
 
     const toggleSidebar = () => {
         setIsSidebarVisible((prev) => !prev);
@@ -33,10 +37,10 @@ const ChatPage = () => {
 
     return (
         <div className='flex h-screen flex-col'>
-            <Header toggleSidebar={toggleSidebar} />
-            <MessageList handleSetMessages={handleSetMessages} messages={messages} messagesEndRef={messagesEndRef} />
+            <Header chatInfo={chatInfo} toggleSidebar={toggleSidebar} />
+            <MessageList />
             <MessageInput />
-            <ChatInfoSidebar open={isSidebarVisible} onClose={toggleSidebar} />
+            <ChatInfoSidebar chatInfo={chatInfo} open={isSidebarVisible} onClose={toggleSidebar} />
         </div>
     );
 };

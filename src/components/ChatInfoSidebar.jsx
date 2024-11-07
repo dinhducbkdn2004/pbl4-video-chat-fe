@@ -1,19 +1,18 @@
 import { useState } from 'react';
 import { Drawer } from 'antd';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import ChangeDetails from '../components/ChatRoomDetail/ChangeDetails';
 import FileMediaLinks from '../components/ChatRoomDetail/FileMediaLinks';
 import RoomChatApi from '../apis/RoomChatApi';
 import useFetch from '../hooks/useFetch';
-import DrawerTitle from '../components/ChatRoomDetail/DrawerTitle'
+import DrawerTitle from '../components/ChatRoomDetail/DrawerTitle';
 import ChatRoomDetails from '../components/ChatRoomDetail/ChatRoomDetails';
 import MemberItem from '../components/ChatRoomDetail/MemberItem';
 import { InboxOutlined, MailOutlined, AppstoreOutlined, LogoutOutlined, UserAddOutlined } from '@ant-design/icons';
 
-const ChatInfoSidebar = ({ open, onClose }) => {
-    const location = useLocation();
+const ChatInfoSidebar = ({ chatInfo, open, onClose }) => {
     const { chatRoomId: currentChatRoomId } = useParams();
-    const { name: roomName, participants: members, typeRoom, chatRoomImage, admins, moderators } = location.state;
+    const { name: roomName, participants: members, typeRoom, chatRoomImage, admins, moderators } = chatInfo || {};
 
     const { fetchData } = useFetch({ showSuccess: false, showError: false });
     const [isChangeDetailsVisible, setIsChangeDetailsVisible] = useState(false);

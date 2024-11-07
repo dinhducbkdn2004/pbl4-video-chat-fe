@@ -52,6 +52,7 @@ const ChatList = () => {
     };
 
     const handleChatClick = (chatRoomData) => {
+        console.log(chatRoomData);
         navigate(`/message/${chatRoomData._id}`, {
             state: chatRoomData
         });
@@ -76,7 +77,6 @@ const ChatList = () => {
         socket?.on('updated chatroom', (updatedChatRoom) => {
             if (user._id !== updatedChatRoom.lastMessage.sender._id) {
                 audioRef?.current?.play();
-                console.log(123123123);
             }
 
             setRecentChats((pre) => {
@@ -99,7 +99,7 @@ const ChatList = () => {
     return (
         <>
             {contextHolder}
-            <audio src={"/sounds/tin-nhan.mp3"} ref={audioRef} />
+            <audio src={'/sounds/tin-nhan.mp3'} ref={audioRef} />
             <div className='chat-list bg-white-default'>
                 <div className='header bg-white-default'>
                     <div className='title text-blue'>All Chats</div>

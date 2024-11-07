@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { Avatar, Badge, Button, Image, Spin } from 'antd';
-import { CheckCircleTwoTone, PaperClipOutlined } from '@ant-design/icons';
+import { PaperClipOutlined } from '@ant-design/icons';
 import { getLastName, truncateString } from '../helpers/utils';
 import { authSelector } from '../redux/features/auth/authSelections';
 import { useSocket } from '../hooks/useSocket';
