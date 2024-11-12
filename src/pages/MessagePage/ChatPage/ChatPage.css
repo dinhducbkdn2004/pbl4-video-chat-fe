@@ -1,7 +1,3 @@
-.css-dev-only-do-not-override-11lehqq.ant-btn.ant-btn-icon-only {
-    width: 40px !important;
-    height: 40px !important;
-}
 .custom-scroll {
     overflow-y: scroll;
     scroll-behavior: smooth;
@@ -22,5 +18,4 @@
     .h-screen {
         height: auto;
     }
-    
 }

@@ -12,7 +12,6 @@ const MessageInput = () => {
     const [isEmojiPickerVisible, setIsEmojiPickerVisible] = useState(false);
     const [message, setMessage] = useState('');
     const [fileList, setFileList] = useState([]); // File list for displaying the attached files
-    const [isUploading, setIsUploading] = useState(false); // State to track uploading status
     const { chatRoomId: currentChatRoomId } = useParams();
     const { fetchData } = useFetch({ showError: false, showSuccess: false });
 
@@ -23,13 +22,11 @@ const MessageInput = () => {
             );
 
         if (fileList.length > 0) {
-            setIsUploading(true); // Start uploading
             for (const file of fileList) {
                 const uploadResponse = await uploadApi.upload(file.originFileObj, 'chat_files');
                 const fileUrl = uploadResponse.data.url;
                 await fetchData(() => RoomChatApi.createMessage(file.originFileObj.name, currentChatRoomId, typeOfFile(file), fileUrl));
             }
-            setIsUploading(false); // End uploading
         }
 
         setMessage('');
@@ -49,14 +46,13 @@ const MessageInput = () => {
             className='flex flex-col p-4'
             style={{ backgroundColor: '#f5f5f5', boxShadow: '0 -4px 10px rgba(0, 0, 0, 0.05)' }}
         >
-            {/* Displaying attached files above the input */}
             {fileList.length > 0 && (
                 <div className='mb-2'>
                     <Upload
-                        listType='picture' // Shows the file list above input field
+                        listType='picture' 
                         fileList={fileList}
                         onChange={handleFileChange}
-                        beforeUpload={() => false} // Prevent automatic file upload
+                        beforeUpload={() => false}
                     />
                 </div>
             )}
@@ -106,8 +102,8 @@ const MessageInput = () => {
                     className='rounded-5 mr-2 flex-1 p-2'
                 />
 
-                <Button className='h-[34px]' type='primary' icon={<SendOutlined />} onClick={handleSendMessage} disabled={isUploading}>
-                    {isUploading ? <Spin /> : 'Send'}
+                <Button className='h-[34px]' type='primary' icon={<SendOutlined />} onClick={handleSendMessage}>
+                    Send
                 </Button>
             </div>
         </div>

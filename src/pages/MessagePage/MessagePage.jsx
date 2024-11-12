@@ -9,7 +9,7 @@ const MessagePage = () => {
     return (
         <>
             <Layout style={{ height: '100vh' }}>
-                <Sider width={385} breakpoint="md" collapsedWidth="0">
+                <Sider width={385} breakpoint='md' collapsedWidth='0'>
                     <ChatList />
                 </Sider>
                 <Content className='bg-white-default'>

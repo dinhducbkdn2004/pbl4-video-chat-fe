@@ -52,7 +52,6 @@ const ChatList = () => {
     };
 
     const handleChatClick = (chatRoomData) => {
-        console.log(chatRoomData);
         navigate(`/message/${chatRoomData._id}`, {
             state: chatRoomData
         });
@@ -113,7 +112,7 @@ const ChatList = () => {
                     searchResults={searchResults}
                     handleChatClick={handleChatClick}
                 />
-                <OnlineUsers />
+                <OnlineUsers recentChats={recentChats} handleChatClick={handleChatClick}/>
                 <RecentChats
                     recentChats={recentChats}
                     handleChatClick={handleChatClick}

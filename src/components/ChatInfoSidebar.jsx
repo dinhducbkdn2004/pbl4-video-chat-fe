@@ -14,7 +14,7 @@ const ChatInfoSidebar = ({ chatInfo, open, onClose }) => {
     const { chatRoomId: currentChatRoomId } = useParams();
     const { name: roomName, participants: members, typeRoom, chatRoomImage, admins, moderators } = chatInfo || {};
 
-    const { fetchData } = useFetch({ showSuccess: false, showError: false });
+    const { isLoading, fetchData, contextHolder } = useFetch({ showSuccess: true, showError: true });
     const [isChangeDetailsVisible, setIsChangeDetailsVisible] = useState(false);
     const [changeDetailsType, setChangeDetailsType] = useState('');
     const [stateOpenKeys, setStateOpenKeys] = useState(['1']);
@@ -140,6 +140,8 @@ const ChatInfoSidebar = ({ chatInfo, open, onClose }) => {
     };
 
     return (
+        <>
+        {contextHolder}
         <Drawer
             title={<DrawerTitle isBackButtonVisible={isBackButtonVisible} drawerTitle={drawerTitle} handleBack={handleBack} />}
             placement='right'
@@ -172,6 +174,7 @@ const ChatInfoSidebar = ({ chatInfo, open, onClose }) => {
                 />
             )}
         </Drawer>
+        </>
     );
 };
 

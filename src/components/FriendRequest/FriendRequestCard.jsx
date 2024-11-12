@@ -4,13 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useRef } from 'react';
 import userApi from '../../apis/userApi';
+import _ from 'lodash';
+
 const FriendRequestCard = ({ request }) => {
     const { _id, sender, caption, createdAt } = request;
     const navigate = useNavigate();
     const buttonRef = useRef(null);
 
     const handleButtonClick = (type) => {
-        userApi.acceptFriendRequest(sender._id, type);
+        userApi.acceptFriendRequest(_id, type);
 
         if (buttonRef.current) {
             buttonRef.current.innerHTML =
@@ -24,7 +26,7 @@ const FriendRequestCard = ({ request }) => {
         <Card
             className='cursor-pointer transition-transform duration-300 ease-in-out hover:shadow-md'
             onClick={() => {
-                navigate(`/user/${_id}`);
+                navigate(`/user/${sender._id}`);
             }}
             key={_id}
             bordered={false}

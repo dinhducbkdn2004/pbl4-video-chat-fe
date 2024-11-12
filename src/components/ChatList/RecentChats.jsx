@@ -1,15 +1,34 @@
-import { List, Avatar, Divider, Badge, Tooltip, Button, Spin } from 'antd';
+import { List, Avatar, Divider, Badge, Tooltip, Spin } from 'antd';
 import { BiMessageSquareDots } from 'react-icons/bi';
 import { AiOutlineFile, AiOutlineVideoCamera, AiOutlinePicture } from 'react-icons/ai';
 import { getLastName, truncateString } from '../../helpers/utils';
 import { useSocket } from '../../hooks/useSocket';
 import SkeletonChatItem from '../../components/SkeletonCustom/SkeletonChatItem';
 import moment from 'moment';
+import { useEffect, useRef } from 'react';
 
 const RecentChats = ({ recentChats, handleChatClick, isFirstLoad, loadMoreChats, loading }) => {
     const { onlineUsers } = useSocket();
+    const lastChatElementRef = useRef();
 
     const filteredChats = recentChats.filter((chat) => chat.lastMessage);
+
+    useEffect(() => {
+        if (loading) return;
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                loadMoreChats();
+            }
+        });
+        if (lastChatElementRef.current) {
+            observer.observe(lastChatElementRef.current);
+        }
+        return () => {
+            if (lastChatElementRef.current) {
+                observer.unobserve(lastChatElementRef.current);
+            }
+        };
+    }, [loading, loadMoreChats]);
 
     return (
         <div className='body-chat'>
@@ -24,7 +43,12 @@ const RecentChats = ({ recentChats, handleChatClick, isFirstLoad, loadMoreChats,
                     isFirstLoad ? (
                         <SkeletonChatItem key={index} />
                     ) : (
-                        <List.Item className='list-item' key={item._id} onClick={() => handleChatClick(item)}>
+                        <List.Item
+                            className='list-item'
+                            key={item._id}
+                            onClick={() => handleChatClick(item)}
+                            ref={index === filteredChats.length - 1 ? lastChatElementRef : null}
+                        >
                             <List.Item.Meta
                                 avatar={
                                     item.typeRoom === 'OneToOne' ? (
@@ -115,11 +139,6 @@ const RecentChats = ({ recentChats, handleChatClick, isFirstLoad, loadMoreChats,
             {loading && (
                 <div style={{ textAlign: 'center', marginTop: 12 }}>
                     <Spin />
-                </div>
-            )}
-            {recentChats.length > 0 && !loading && (
-                <div style={{ textAlign: 'center', marginTop: 12 }}>
-                    <Button onClick={loadMoreChats}>Load More</Button>
                 </div>
             )}
         </div>

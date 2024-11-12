@@ -46,17 +46,15 @@ const NotificationSidebar = ({ onClose }) => {
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
+    const observer = useRef();
 
     useEffect(() => {
         const fetchNotifications = async () => {
             setLoading(true);
-            try {
-                const response = await notificationApi.getAll(page);
-                setNotifications((prevNotifications) => [...prevNotifications, ...response.data]);
-                setHasMore(response.data.length > 0);
-            } catch (error) {
-                console.error('Failed to fetch notifications:', error);
-            }
+            const response = await notificationApi.getAll(page);
+            setNotifications((prevNotifications) => [...prevNotifications, ...response.data]);
+            setHasMore(response.data.length > 0);
+
             setLoading(false);
         };
 
@@ -105,25 +103,33 @@ const NotificationSidebar = ({ onClose }) => {
             </Menu>
         );
 
+        let avatarSrc = item.avatar;
+        let link = `/message/${item.detail}`;
+        if (item.type === 'ChatRooms' && item.detail) {
+            avatarSrc = item.detail.chatRoomImage;
+            link = `/message/${item.detail._id}`;
+        } else if (item.type === 'FriendRequests' && item.detail) {
+            avatarSrc = item.detail.senderAvatar;
+            link = `/user/${item.detail.sender}`;
+        }
+
         return (
-            <List.Item
-                actions={[
-                    <Dropdown key={item._id} overlay={menu} trigger={['click']}>
-                        <Button shape='circle' size='small' icon={<EllipsisOutlined />} />
-                    </Dropdown>
-                ]}
-            >
-                <List.Item.Meta
-                    className='hover: bg-gray-300 cursor-pointer'
-                    avatar={<Avatar src={item.type === 'ChatRooms' ? item.detail.chatRoomImage : item.avatar} />}
-                    title={
-                        <a href={item.type === 'ChatRooms' ? `/message/${item.detail._id}` : `/message/${item.detail}`}>
-                            {item.message}
-                        </a>
-                    }
-                    description={moment(item.createdAt).fromNow()}
-                />
-            </List.Item>
+            (
+                <List.Item
+                    actions={[
+                        <Dropdown key={item._id} overlay={menu} trigger={['click']}>
+                            <Button shape='circle' size='small' icon={<EllipsisOutlined />} />
+                        </Dropdown>
+                    ]}
+                >
+                    <List.Item.Meta
+                        className='hover: bg-gray-300 cursor-pointer'
+                        avatar={<Avatar src={avatarSrc} />}
+                        title={<a href={link}>{item.message}</a>}
+                        description={moment(item.createdAt).fromNow()}
+                    />
+                </List.Item>
+            )
         );
     };
 
@@ -137,11 +143,19 @@ const NotificationSidebar = ({ onClose }) => {
     const readNotifications = notifications.filter((item) => item.isRead);
     const unreadNotifications = notifications.filter((item) => !item.isRead);
 
-    const loadMoreNotifications = () => {
-        if (hasMore && !loading) {
-            setPage((prevPage) => prevPage + 1);
+    const lastNotificationElementRef = useRef();
+    useEffect(() => {
+        if (loading) return;
+        if (observer.current) observer.current.disconnect();
+        observer.current = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && hasMore) {
+                setPage((prevPage) => prevPage + 1);
+            }
+        });
+        if (lastNotificationElementRef.current) {
+            observer.current.observe(lastNotificationElementRef.current);
         }
-    };
+    }, [loading, hasMore]);
 
     return (
         <SidebarContainer ref={sidebarRef}>
@@ -166,14 +180,11 @@ const NotificationSidebar = ({ onClose }) => {
                         <List
                             itemLayout='horizontal'
                             dataSource={unreadNotifications}
-                            renderItem={renderNotificationItem}
-                            loadMore={
-                                hasMore && !loading ? (
-                                    <div style={{ textAlign: 'center', marginTop: 12 }}>
-                                        <Button onClick={loadMoreNotifications}>Load More</Button>
-                                    </div>
-                                ) : null
-                            }
+                            renderItem={(item, index) => (
+                                <div ref={index === unreadNotifications.length - 1 ? lastNotificationElementRef : null}>
+                                    {renderNotificationItem(item)}
+                                </div>
+                            )}
                         />
                         {loading && (
                             <div style={{ textAlign: 'center', marginTop: 12 }}>
@@ -185,14 +196,11 @@ const NotificationSidebar = ({ onClose }) => {
                         <List
                             itemLayout='horizontal'
                             dataSource={readNotifications}
-                            renderItem={renderNotificationItem}
-                            loadMore={
-                                hasMore && !loading ? (
-                                    <div style={{ textAlign: 'center', marginTop: 12 }}>
-                                        <Button onClick={loadMoreNotifications}>Load More</Button>
-                                    </div>
-                                ) : null
-                            }
+                            renderItem={(item, index) => (
+                                <div ref={index === readNotifications.length - 1 ? lastNotificationElementRef : null}>
+                                    {renderNotificationItem(item)}
+                                </div>
+                            )}
                         />
                         {loading && (
                             <div style={{ textAlign: 'center', marginTop: 12 }}>

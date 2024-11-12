@@ -16,7 +16,7 @@ const UserPage = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [caption, setCaption] = useState('');
     const { user: currentUser } = useSelector(authSelector);
-    const { isLoading, fetchData } = useFetch({ showSuccess: false });
+    const { isLoading, fetchData, contextHolder } = useFetch({ showSuccess: true, showError: true });
     const navigate = useNavigate();
 
     const handleContact = async () => {
@@ -59,6 +59,7 @@ const UserPage = () => {
 
     return (
         <>
+            {contextHolder}
             <Container>
                 <Image width={'100%'} src={user.backgroundImage} />
                 <div className='relative -top-[100px] flex flex-col items-center gap-y-6'>
