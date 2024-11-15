@@ -16,7 +16,7 @@ const UserPage = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [caption, setCaption] = useState('');
     const { user: currentUser } = useSelector(authSelector);
-    const { isLoading, fetchData, contextHolder } = useFetch({ showSuccess: true, showError: true });
+    const { isLoading, fetchData, contextHolder } = useFetch({ showSuccess: false, showError: false });
     const navigate = useNavigate();
 
     const handleContact = async () => {
@@ -36,7 +36,7 @@ const UserPage = () => {
     };
 
     const handleOk = async () => {
-        await userApi.addFriend({ friendId: id, caption });
+        userApi.addFriend({ friendId: id, caption });
         setIsModalVisible(false);
     };
 

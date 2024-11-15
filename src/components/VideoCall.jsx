@@ -5,8 +5,16 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { Peer } from 'peerjs';
 import { useSocket } from '../hooks/useSocket';
 import VideoGrid from './VideoGrid';
+import { useSelector } from 'react-redux';
+import { authSelector } from '../redux/features/auth/authSelections';
 
 const VideoCall = () => {
+    const { chatRoomId: currentChatRoomId } = useParams();
+    const [searchParams] = useSearchParams();
+    const typeCall = searchParams.get('type');
+    const { socket } = useSocket();
+    const { user: currentUser } = useSelector(authSelector);
+
     const myStreamRef = useRef(null);
     const screenStreamRef = useRef(null);
     const currentPeer = useRef(null);
@@ -16,25 +24,22 @@ const VideoCall = () => {
     const [calleePeers, setCalleePeers] = useState([]);
     const [isMuted, setIsMuted] = useState(false);
     const [isVideoStopped, setIsVideoStopped] = useState(false);
-
-    const { chatRoomId: currentChatRoomId } = useParams();
-    const [searchParams] = useSearchParams();
-    const typeCall = searchParams.get('type');
-    const { socket } = useSocket();
-
-    const [callStatus, setCallStatus] = useState(() => (typeCall === 'answer' ? 'accept' : 'calling'));
+    const [callStatus, setCallStatus] = useState(() => (typeCall === 'answer' ? 'connected' : 'calling')); // calling, connected, end-calling
 
     const startCall = useCallback(
         async (calleePeerId) => {
-            const call = myPeer?.call(calleePeerId, myStreamRef.current);
+            const call = myPeer?.call(calleePeerId, myStreamRef.current, {
+                metadata: {
+                    user: { name: currentUser.name, avatar: currentUser.avatar, id: currentUser._id }
+                }
+            });
             call?.on('stream', (remoteStream) => {
                 setCalleePeers((prevPeers) => {
-                    const streamExists = prevPeers.some((stream) => stream.id === remoteStream.id);
-                    if (streamExists) {
-                        return prevPeers; // If it exists, return the array as-is
-                    }
-                    // Otherwise, add the new remoteStream
-                    return [remoteStream, ...prevPeers];
+                    // Add stream with metadata
+                    const newPeer = { stream: remoteStream, user: call.metadata.user };
+                    return prevPeers.some((peer) => peer.stream.id === remoteStream.id)
+                        ? prevPeers
+                        : [newPeer, ...prevPeers];
                 });
             });
 
@@ -43,7 +48,7 @@ const VideoCall = () => {
             });
             currentPeer.current = call;
         },
-        [myPeer]
+        [myPeer, currentUser?.name, currentUser?.avatar, currentUser?._id]
     );
 
     const toggleScreenShare = async () => {
@@ -52,8 +57,7 @@ const VideoCall = () => {
                 const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
                 screenStreamRef.current = screenStream;
                 setIsScreenSharing(true);
-                console.log(myStreamRef.current);
-                // Replace video track with screen track
+
                 const videoTrack = screenStream.getVideoTracks()[0];
                 const sender = myStreamRef.current.getVideoTracks()[0];
                 sender.stop();
@@ -82,26 +86,35 @@ const VideoCall = () => {
         }
     };
 
-    const answerCall = useCallback(async (incomingCall) => {
-        try {
-            // Trả lời cuộc gọi với stream của mình
-            incomingCall.answer(myStreamRef.current);
-
-            // Lắng nghe sự kiện 'stream' từ người gọi đến
-            incomingCall.on('stream', (remoteStream) => {
-                setCalleePeers((prevPeers) => {
-                    const streamExists = prevPeers.some((stream) => stream.id === remoteStream.id);
-                    if (streamExists) {
-                        return prevPeers; // If it exists, return the array as-is
+    const answerCall = useCallback(
+        async (incomingCall) => {
+            try {
+                
+                incomingCall.answer(myStreamRef.current, {
+                    metadata: {
+                        user: {
+                            name: currentUser.name,
+                            avatar: currentUser.avatar,
+                            id: currentUser._id
+                        }
                     }
-                    // Otherwise, add the new remoteStream
-                    return [remoteStream, ...prevPeers];
                 });
-            });
-        } catch (error) {
-            console.error('Error answering the call:', error);
-        }
-    }, []);
+
+                // Lắng nghe sự kiện 'stream' từ người gọi đến
+                incomingCall.on('stream', (remoteStream) => {
+                    setCalleePeers((prevPeers) => {
+                        const newPeer = { stream: remoteStream, user: incomingCall.metadata.user };
+                        return prevPeers.some((stream) => stream.id === remoteStream.id)
+                            ? prevPeers
+                            : [newPeer, ...prevPeers];
+                    });
+                });
+            } catch (error) {
+                console.error('Error answering the call:', error);
+            }
+        },
+        [currentUser?._id, currentUser?.avatar, currentUser?.name]
+    );
 
     const leaveCall = useCallback(() => {
         myStreamRef.current?.getTracks().forEach((track) => track.stop());
@@ -144,8 +157,6 @@ const VideoCall = () => {
             });
 
             peer.on('call', async (incomingCall) => {
-                console.log('Incoming call:', incomingCall);
-
                 await answerCall(incomingCall);
             });
 
@@ -222,10 +233,13 @@ const VideoCall = () => {
                 )}
 
                 {callStatus === 'end-calling' && (
-                    <div className='flex items-center justify-center gap-4 p-10'>
-                        <Button onClick={leaveCall}>Thoát</Button>
-                        <Button onClick={() => window.location.reload()}>Gọi lại</Button>
-                    </div>
+                    <>
+                        <div>Đã kết thúc cuộc gọi</div>
+                        <div className='flex items-center justify-center gap-4 p-10'>
+                            <Button onClick={leaveCall}>Thoát</Button>
+                            <Button onClick={() => window.location.reload()}>Gọi lại</Button>
+                        </div>
+                    </>
                 )}
             </div>
         </>

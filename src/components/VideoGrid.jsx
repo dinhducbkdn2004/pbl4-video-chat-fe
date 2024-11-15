@@ -1,6 +1,6 @@
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { authSelector } from '../redux/features/auth/authSelections';
-import { useState } from 'react';
 
 const VideoGrid = ({ localStream, calleePeers }) => {
     const { user: currentUser } = useSelector(authSelector);
@@ -9,18 +9,18 @@ const VideoGrid = ({ localStream, calleePeers }) => {
     const handleVideoClick = (stream) => {
         setSelectedStream(stream === selectedStream ? null : stream);
     };
-    console.log(selectedStream);
-    const renderStream = (stream, label) => (
-        <div className='w-1/4 p-3' onClick={() => handleVideoClick(stream)}>
+
+    const renderStream = (streamObj, label) => (
+        <div key={streamObj.stream.id} className='w-1/4 p-3' onClick={() => handleVideoClick(streamObj.stream)}>
             <video
                 ref={(el) => {
                     if (el) {
-                        el.srcObject = stream;
+                        el.srcObject = streamObj.stream;
                     }
                 }}
                 autoPlay
                 className='h-auto w-full cursor-pointer'
-                muted={stream.id === localStream.id}
+                muted={streamObj.stream.id === localStream.id}
             />
             <div className='mt-3 text-center text-white-default'>{label}</div>
         </div>
@@ -43,15 +43,15 @@ const VideoGrid = ({ localStream, calleePeers }) => {
                         />
                     </div>
                     <div className='flex flex-col'>
-                        {[localStream, ...calleePeers]
-                            .filter((peer) => selectedStream.id !== peer.id)
-                            .map((peer, index) => renderStream(peer, index))}
+                        {[{ stream: localStream, user: currentUser }, ...calleePeers]
+                            .filter((peer) => selectedStream.id !== peer.stream.id)
+                            .map((peer) => renderStream(peer, peer.user?.name || 'Unknown User'))}
                     </div>
                 </div>
             ) : (
                 <div className='flex flex-row flex-wrap items-center justify-center'>
-                    {localStream && renderStream(localStream, currentUser?.name)}
-                    {calleePeers.map((peer, index) => renderStream(peer, `Caller ${index + 1}`))}
+                    {localStream && renderStream({ stream: localStream, user: currentUser }, currentUser?.name)}
+                    {calleePeers.map((peer) => renderStream(peer, peer.user?.name || 'Unknown User'))}
                 </div>
             )}
         </div>

@@ -4,13 +4,14 @@ import { createContext, useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useSocket } from '../hooks/useSocket';
 import { authSelector } from '../redux/features/auth/authSelections';
+import { useSetDataOneToOneRoom } from '../hooks/useSetDataOneToOneRoom';
 
 export const CallContext = createContext();
 
 export const CallContextProvider = ({ children }) => {
     const { socket } = useSocket();
     const { user: currentUser } = useSelector(authSelector);
-
+    const setData = useSetDataOneToOneRoom()
     const [chatRoomData, setChatRoomData] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const audioRef = useRef(null);
@@ -42,7 +43,7 @@ export const CallContextProvider = ({ children }) => {
     useEffect(() => {
         socket?.on('server:send_new_call', ({ from, chatRoom }) => {
             console.log('new video call', from, chatRoom);
-            setChatRoomData(chatRoom);
+            setChatRoomData(setData(chatRoom));
             showModal();
 
             audioRef.current.play();
@@ -51,7 +52,7 @@ export const CallContextProvider = ({ children }) => {
         return () => {
             socket?.off('new video call');
         };
-    }, [socket, currentUser]);
+    }, [socket, currentUser, setData]);
 
     return (
         <CallContext.Provider value={{ chatRoomData }}>
