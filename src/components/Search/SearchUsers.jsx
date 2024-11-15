@@ -1,16 +1,19 @@
 import { Input, Typography, Select, Checkbox } from 'antd';
+import { useSelector } from 'react-redux';
 import { useEffect, useState, useCallback } from 'react';
 import { debounce } from 'lodash';
 import userApi from './../../apis/userApi';
 import Loading from './../../components/Loading/Loading';
 import useFetch from './../../hooks/useFetch';
 import UserCard from '../../components/Search/UserCard';
+import { authSelector } from '../../redux/features/auth/authSelections';
 
 const { Search } = Input;
 const { Paragraph } = Typography;
 const { Option } = Select;
 
 const SearchUsers = () => {
+    const { user: currentUser } = useSelector(authSelector);
     const { fetchData, isLoading } = useFetch({ showSuccess: false });
     const [users, setUsers] = useState([]);
     const [searchMode, setSearchMode] = useState('name');
@@ -19,7 +22,6 @@ const SearchUsers = () => {
     useEffect(() => {
         (async () => {
             const data = await fetchData(() => userApi.getAllUser());
-
             if (data.isOk) {
                 setUsers(data.data);
             }
@@ -66,7 +68,7 @@ const SearchUsers = () => {
                 />
             </div>
             <div className='flex flex-col gap-6' style={{ height: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                {isLoading ? <Loading /> : users.map((user) => <UserCard key={user._id} data={user} />)}
+                {isLoading ? <Loading /> : users.filter(user => user._id !== currentUser._id).map((user) => <UserCard key={user._id} data={user} />)}
             </div>
         </div>
     );

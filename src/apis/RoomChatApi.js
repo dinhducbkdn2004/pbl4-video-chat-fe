@@ -74,22 +74,19 @@ const RoomChatApi = {
             }
         }),
 
-    leaveGroup: (chatRoomId) => axiosClient.delete(`/chat-rooms/leave-group/`, 
-        {
+    leaveGroup: (chatRoomId) =>
+        axiosClient.delete(`/chat-rooms/leave-group/`, {
             data: {
                 chatRoomId
             }
-        }
-        ),
+        }),
 
     changeRole: (chatRoomId, userId, role) =>
         axiosClient.patch(`/chat-rooms/change-role/`, {
             chatRoomId,
             userId,
             role
-        }),
-    
-        
+        })
 };
 
 export default RoomChatApi;

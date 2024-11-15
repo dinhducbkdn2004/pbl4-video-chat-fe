@@ -11,10 +11,11 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 const MessageList = () => {
     const { socket } = useSocket();
     const { chatRoomId: currentChatRoomId } = useParams();
-    const { fetchData, isLoading } = useFetch({ showSuccess: false, showError: false });
+    const { fetchData, isLoading } = useFetch({ showSuccess: true, showError: true });
     const [messages, setMessages] = useState([]);
     const [hasMore, setHasMore] = useState(true);
     const [page, setPage] = useState(1);
+    const [isFetchingMore, setIsFetchingMore] = useState(false);
 
     const handleSetMessages = useCallback((newMessage) => {
         if (Array.isArray(newMessage)) {
@@ -43,7 +44,14 @@ const MessageList = () => {
         })();
     }, [currentChatRoomId, handleSetMessages, fetchData]);
 
+    useEffect(() => {
+        setMessages([]);
+        setHasMore(true);
+        setPage(1);
+    }, [currentChatRoomId]);
+
     const fetchMoreMessages = async () => {
+        setIsFetchingMore(true);
         const nextPage = page + 1;
         const { data, isOk } = await fetchData(() => RoomChatApi.getChatRoomById(currentChatRoomId, nextPage, 10));
         if (isOk) {
@@ -54,6 +62,7 @@ const MessageList = () => {
                 setPage(nextPage);
             }
         }
+        setIsFetchingMore(false);
     };
 
     const groupMessages = (messages) => {
@@ -76,9 +85,10 @@ const MessageList = () => {
     if (isLoading && messages.length === 0)
         return (
             <div className='flex h-full items-center justify-center'>
-                <Spin size='small' className='custom-spinner' />
+                <Spin size='medium' />
             </div>
         );
+    else if (messages.length === 0) return <div className='flex h-full items-center justify-center'>No messages</div>;
 
     const groupedMessages = groupMessages(messages);
 
@@ -101,6 +111,16 @@ const MessageList = () => {
                     />
                 ))}
             </InfiniteScroll>
+            {isFetchingMore && (
+                <div className='flex justify-center'>
+                    <Spin size='small' />
+                </div>
+            )}
+            {!hasMore && (
+                <div className='flex justify-center text-gray'>
+                    <span>Không còn tin nhắn cũ</span>
+                </div>
+            )}
         </div>
     );
 };
