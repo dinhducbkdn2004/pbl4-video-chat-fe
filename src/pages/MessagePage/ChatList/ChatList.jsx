@@ -16,6 +16,7 @@ import { authSelector } from '../../../redux/features/auth/authSelections.js';
 const debouncedSearch = debounce(async (value, setSearchResults) => {
     const data = await RoomChatApi.searchChatroomByName(value, true);
     if (data.isOk) setSearchResults(data.data);
+    console.log('searchResults', data.data);
 }, 350);
 
 const ChatList = () => {
@@ -32,6 +33,7 @@ const ChatList = () => {
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const audioRef = useRef(null);
+    const currentUserId = user._id;
 
     const handleSearchChange = (e) => {
         setSearchValue(e.target.value);
@@ -111,6 +113,7 @@ const ChatList = () => {
                     handleSearchChange={handleSearchChange}
                     searchResults={searchResults}
                     handleChatClick={handleChatClick}
+                    currentUserId={currentUserId}
                 />
                 <OnlineUsers recentChats={recentChats} handleChatClick={handleChatClick}/>
                 <RecentChats
