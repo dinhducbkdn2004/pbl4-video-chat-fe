@@ -54,7 +54,7 @@ const NotificationSidebar = ({ onClose }) => {
             const response = await notificationApi.getAll(page);
             setNotifications((prevNotifications) => [...prevNotifications, ...response.data]);
             setHasMore(response.data.length > 0);
-
+            console.log('response.data', response.data);
             setLoading(false);
         };
 
@@ -76,18 +76,18 @@ const NotificationSidebar = ({ onClose }) => {
 
     const handleMenuClick = async (key, notification) => {
         if (key === 'markAsRead') {
-            await notificationApi.seenNotification(notification._id);
-            setNotifications((prevNotifications) =>
-                prevNotifications.map((item) => (item._id === notification._id ? { ...item, isRead: true } : item))
-            );
+            // await notificationApi.seenNotification(notification._id);
+            // setNotifications((prevNotifications) =>
+            //     prevNotifications.map((item) => (item._id === notification._id ? { ...item, isRead: true } : item))
+            // );
         } else if (key === 'markAsUnread') {
-            await notificationApi.unseenNotification(notification._id);
-            setNotifications((prevNotifications) =>
-                prevNotifications.map((item) => (item._id === notification._id ? { ...item, isRead: false } : item))
-            );
+            // await notificationApi.unseenNotification(notification._id);
+            // setNotifications((prevNotifications) =>
+            //     prevNotifications.map((item) => (item._id === notification._id ? { ...item, isRead: false } : item))
+            // );
         } else if (key === 'delete') {
-            await notificationApi.deleteNotification(notification._id);
-            setNotifications((prevNotifications) => prevNotifications.filter((item) => item._id !== notification._id));
+            // await notificationApi.deleteNotification(notification._id);
+            // setNotifications((prevNotifications) => prevNotifications.filter((item) => item._id !== notification._id));
         }
     };
 
@@ -114,22 +114,20 @@ const NotificationSidebar = ({ onClose }) => {
         }
 
         return (
-            (
-                <List.Item
-                    actions={[
-                        <Dropdown key={item._id} overlay={menu} trigger={['click']}>
-                            <Button shape='circle' size='small' icon={<EllipsisOutlined />} />
-                        </Dropdown>
-                    ]}
-                >
-                    <List.Item.Meta
-                        className='hover: bg-gray-300 cursor-pointer'
-                        avatar={<Avatar src={avatarSrc} />}
-                        title={<a href={link}>{item.message}</a>}
-                        description={moment(item.createdAt).fromNow()}
-                    />
-                </List.Item>
-            )
+            <List.Item
+                actions={[
+                    <Dropdown key={item._id} overlay={menu} trigger={['click']}>
+                        <Button shape='circle' size='small' icon={<EllipsisOutlined />} />
+                    </Dropdown>
+                ]}
+            >
+                <List.Item.Meta
+                    className='hover: bg-gray-300 cursor-pointer'
+                    avatar={<Avatar src={avatarSrc} />}
+                    title={<a href={link}>{item.message}</a>}
+                    description={moment(item.createdAt).fromNow()}
+                />
+            </List.Item>
         );
     };
 
