@@ -38,7 +38,7 @@ const userApi = {
         return axiosClient.post('/friend-requests/add-friend', data);
     },
     acceptFriendRequest: (requestId, status) => {
-        return axiosClient.patch(`/friend-requests/update`, { requestId, status });
+        return axiosClient.patch(`/friend-requests/update/${requestId}`, { requestId, status });
     }
 };
 

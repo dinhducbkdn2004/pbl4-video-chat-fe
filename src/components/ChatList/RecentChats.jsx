@@ -6,13 +6,21 @@ import { useSocket } from '../../hooks/useSocket';
 import SkeletonChatItem from '../../components/SkeletonCustom/SkeletonChatItem';
 import moment from 'moment';
 import { useEffect, useRef } from 'react';
+import { useSetDataOneToOneRoom } from '../../hooks/useSetDataOneToOneRoom';
 
 const RecentChats = ({ recentChats, handleChatClick, isFirstLoad, loadMoreChats, loading }) => {
     const { onlineUsers } = useSocket();
     const lastChatElementRef = useRef();
-
-    const filteredChats = recentChats.filter((chat) => chat.lastMessage);
-
+    const setData = useSetDataOneToOneRoom();
+    const filteredChats = recentChats
+        .filter((chat) => chat.lastMessage)
+        .map((chat) => {
+            if (chat.typeRoom === 'OneToOne') {
+                return setData(chat);
+            }
+            return chat;
+        });
+    // console.log('filteredChats', filteredChats);
     useEffect(() => {
         if (loading) return;
         const observer = new IntersectionObserver((entries) => {
@@ -94,22 +102,33 @@ const RecentChats = ({ recentChats, handleChatClick, isFirstLoad, loadMoreChats,
                                                 </span>
                                             )}
                                             {item.lastMessage && (
-                                                <span className={`text-gray ${!item.isRead ? 'font-sans' : ''} flex items-center`}>
+                                                <span
+                                                    className={`text-gray ${!item.isRead ? 'font-sans' : ''} flex items-center`}
+                                                >
                                                     {item.lastMessage.type === 'Document' && (
                                                         <>
-                                                            <AiOutlineFile className='mr-1' style={{ color: '#1890ff' }} />
+                                                            <AiOutlineFile
+                                                                className='mr-1'
+                                                                style={{ color: '#1890ff' }}
+                                                            />
                                                             Đã gửi một file
                                                         </>
                                                     )}
                                                     {item.lastMessage.type === 'Video' && (
                                                         <>
-                                                            <AiOutlineVideoCamera className='mr-1' style={{ color: '#f5222d' }} />
+                                                            <AiOutlineVideoCamera
+                                                                className='mr-1'
+                                                                style={{ color: '#f5222d' }}
+                                                            />
                                                             Đã gửi một video
                                                         </>
                                                     )}
                                                     {item.lastMessage.type === 'Picture' && (
                                                         <>
-                                                            <AiOutlinePicture className='mr-1' style={{ color: '#52c41a' }} />
+                                                            <AiOutlinePicture
+                                                                className='mr-1'
+                                                                style={{ color: '#52c41a' }}
+                                                            />
                                                             Đã gửi một ảnh
                                                         </>
                                                     )}
