@@ -18,8 +18,6 @@ const MessageComponent = ({ messages, isFirstMessage, isLastMessage }) => {
     const { isLoading, fetchData } = useFetch({ showError: false, showSuccess: false });
     const [seoData, setSeoData] = useState(null);
 
-    console.log(messages);
-
     const checkMessageType = (message) => {
         switch (message.type) {
             case 'Text':
