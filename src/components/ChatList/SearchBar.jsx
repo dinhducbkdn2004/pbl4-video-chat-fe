@@ -3,20 +3,27 @@ import PropTypes from 'prop-types';
 import { SearchOutlined } from '@ant-design/icons';
 import { Input, List, Avatar } from 'antd';
 import userApi from '../../apis/userApi';
+import { useSelector } from 'react-redux';
+import { authSelector } from '../../redux/features/auth/authSelections';
 
-const SearchBar = ({ searchValue, handleSearchChange, searchResults, handleChatClick, currentUserId }) => {
+const SearchBar = ({ searchValue, handleSearchChange, searchResults, handleChatClick }) => {
     const [friendList, setFriendList] = useState([]);
+    const { user } = useSelector(authSelector);
 
     useEffect(() => {
-        const fetchFriendList = async () => {
-            const response = await userApi.getFriendList(currentUserId);
-            setFriendList(response.data);
-        };
-        fetchFriendList();
-    }, [currentUserId]);
+        if (user && user._id) {
+            const fetchFriendList = async () => {
+                const response = await userApi.getFriendList(user._id);
+                setFriendList(response.data);
+                console.log('friendList', response.data);
+            };
+            fetchFriendList();
+        }
+    }, [user]);
 
     const isFriend = (userId) => {
-        return friendList.some((friend) => friend._id !== userId);
+        console.log('userId', userId);
+        return friendList.some((friend) => friend._id === userId);
     };
 
     return (
@@ -49,12 +56,14 @@ const SearchBar = ({ searchValue, handleSearchChange, searchResults, handleChatC
                                 );
                             } else if (item.typeRoom === 'OneToOne') {
                                 const otherParticipant = item.participants.find(
-                                    (participant) => participant._id !== currentUserId
+                                    (participant) => user && participant._id !== user._id
                                 );
 
                                 descriptionContent = (
                                     <span className='participants text-xs'>
-                                        {isFriend(otherParticipant._id) ? 'Bạn bè' : 'Người dùng trên Connectica'}
+                                        {otherParticipant && isFriend(otherParticipant._id)
+                                            ? 'Bạn bè'
+                                            : 'Người dùng trên Connectica'}
                                     </span>
                                 );
                             }
@@ -62,7 +71,13 @@ const SearchBar = ({ searchValue, handleSearchChange, searchResults, handleChatC
                             return (
                                 <List.Item className='list-item' key={item._id} onClick={() => handleChatClick(item)}>
                                     <List.Item.Meta
-                                        avatar={<Avatar src={item.chatRoomImage} className='avatar' size={38} />}
+                                        avatar={
+                                            <Avatar
+                                                src={item.chatRoomImage}
+                                                className='avatar flex flex-row'
+                                                size={38}
+                                            />
+                                        }
                                         title={<span className='title text-base font-semibold'>{item.name}</span>}
                                         description={descriptionContent}
                                     />
@@ -80,8 +95,7 @@ SearchBar.propTypes = {
     searchValue: PropTypes.string.isRequired,
     handleSearchChange: PropTypes.func.isRequired,
     searchResults: PropTypes.array.isRequired,
-    handleChatClick: PropTypes.func.isRequired,
-    currentUserId: PropTypes.object.isRequired
+    handleChatClick: PropTypes.func.isRequired
 };
 
 export default SearchBar;
