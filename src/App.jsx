@@ -20,7 +20,7 @@ import GroupListPage from './pages/ContactPage/GroupListPage/GroupListPage';
 import FriendRequestPage from './pages/ContactPage/FriendRequestPage/FriendRequestPage';
 import VideoCall from './components/VideoCall';
 import SettingPage from './pages/SettingPage/SettingPage';
-import GroupListPage from './pages/ContactPage/GroupListPage/GroupListPage';
+
 import GroupRequestPage from './pages/ContactPage/GroupRequestPage/GroupRequestPage';
 
 function App() {
@@ -43,7 +43,7 @@ function App() {
                         <Route path='friend-list' element={<FriendListPage />} />
                         <Route path='groups-list' element={<GroupListPage />} />
                         <Route path='friend-request' element={<FriendRequestPage />} />
-                        <Route path='group-list' element={<GroupListPage />} />
+                    
                         <Route path='group-request' element={<GroupRequestPage />} />
                     </Route>
                     <Route path='search' element={<SearchPage />}>
