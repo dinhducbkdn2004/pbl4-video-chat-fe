@@ -61,7 +61,6 @@ const ChatList = () => {
         setLoading(true);
         const data = await fetchData(() => RoomChatApi.getAllChatrooms(true, page));
         if (data.isOk) {
-            console.log(data.data);
             setRecentChats((prevChats) => [...prevChats, ...data.data]);
             setHasMore(data.data.length > 0);
             if (isFirstLoad) setIsFirstLoad(false);
