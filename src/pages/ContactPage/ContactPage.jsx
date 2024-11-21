@@ -9,7 +9,7 @@ const menuItems = [
         icon: <UserOutlined className='mr-2' />
     },
     {
-        key: 'group-list',
+        key: 'groups-list',
         label: 'Danh sách cộng đồng',
         icon: <TeamOutlined className='mr-2' />
     },

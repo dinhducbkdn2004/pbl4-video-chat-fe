@@ -2,12 +2,10 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import { Avatar, Badge, Button, Popover, Tooltip } from 'antd';
 import CallModal from './CallModal';
 import { useSocket } from '../../hooks/useSocket';
-import { useSelector } from 'react-redux';
-import { authSelector } from '../../redux/features/auth/authSelections';
 
-const Header = ({ chatInfo, toggleSidebar }) => {
+const Header = ({ chatInfo, me, toggleSidebar }) => {
     const { onlineUsers } = useSocket();
-    const { user: currentUser } = useSelector(authSelector);
+    const currentUser = me || {};
 
     const { name: roomName, participants: members, typeRoom, chatRoomImage } = chatInfo || {};
 

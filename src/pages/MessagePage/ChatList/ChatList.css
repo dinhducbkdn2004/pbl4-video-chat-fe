@@ -58,7 +58,7 @@
 .chat-list .search-bar {
     margin-top: 10px;
     padding: 10px 20px;
-    width: 93%;
+    width: 90%;
     margin: auto;
     margin-bottom: 0;
     height: 41px;
@@ -96,9 +96,9 @@
     top: 125px;
     left: 50%;
     transform: translateX(-50%);
-    width: 93%;
+    width: 90%;
     max-width: 600px;
-    background-color: #FFFFFF;
+    background-color: #ffffff;
     border: none;
     border-radius: 0 0 10px 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
@@ -159,7 +159,6 @@
     position: sticky;
     top: 120px;
     z-index: 8;
-
 }
 
 .chat-list .online-now h4 {
@@ -293,12 +292,11 @@
 /* Existing styles... */
 
 @media (max-width: 768px) {
-    
     .chat-list {
         width: 100%;
     }
 
-    .chat-list .header {      
+    .chat-list .header {
         align-items: center;
         justify-self: center;
     }

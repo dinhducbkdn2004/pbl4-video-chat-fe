@@ -14,7 +14,7 @@ import { useSelector } from 'react-redux';
 import { authSelector } from '../../../redux/features/auth/authSelections.js';
 
 const debouncedSearch = debounce(async (value, setSearchResults) => {
-    const data = await RoomChatApi.searchChatroomByName(value, true);
+    const data = await RoomChatApi.searchChatroomByName(value);
     if (data.isOk) setSearchResults(data.data);
 }, 350);
 
