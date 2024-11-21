@@ -11,7 +11,7 @@ import typeOfFile from '../../helpers/typeOfFile';
 const MessageInput = () => {
     const [isEmojiPickerVisible, setIsEmojiPickerVisible] = useState(false);
     const [message, setMessage] = useState('');
-    const [fileList, setFileList] = useState([]); // File list for displaying the attached files
+    const [fileList, setFileList] = useState([]); 
     const { chatRoomId: currentChatRoomId } = useParams();
     const { fetchData } = useFetch({ showError: false, showSuccess: false });
 

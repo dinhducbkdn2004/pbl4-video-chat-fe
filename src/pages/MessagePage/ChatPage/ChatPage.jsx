@@ -6,6 +6,8 @@ import ChatInfoSidebar from '../../../components/ChatInfoSidebar';
 import { useParams, useLocation } from 'react-router-dom';
 import RoomChatApi from '../../../apis/RoomChatApi';
 import useFetch from '../../../hooks/useFetch';
+import { useSelector } from 'react-redux';
+import { authSelector } from '../../../redux/features/auth/authSelections';
 import './ChatPage.css';
 
 const ChatPage = () => {
@@ -13,6 +15,7 @@ const ChatPage = () => {
     const [chatInfo, setChatInfo] = useState(null);
     const { chatRoomId } = useParams();
     const { fetchData } = useFetch({ showError: false, showSuccess: false });
+    const { user: me } = useSelector(authSelector);
     const location = useLocation();
 
     useEffect(() => {
@@ -37,10 +40,15 @@ const ChatPage = () => {
 
     return (
         <div className='flex h-screen flex-col'>
-            <Header chatInfo={chatInfo} toggleSidebar={toggleSidebar} />
+            <Header chatInfo={chatInfo} me={me} toggleSidebar={toggleSidebar} />
             <MessageList />
             <MessageInput />
-            <ChatInfoSidebar chatInfo={chatInfo} open={isSidebarVisible} onClose={toggleSidebar} />
+            <ChatInfoSidebar
+                chatInfo={chatInfo}
+                me={me}
+                open={isSidebarVisible}
+                onClose={toggleSidebar}
+            />
         </div>
     );
 };
