@@ -5,14 +5,26 @@ const notificationsApi = {
         return axiosClient.get('/notifications', {
             params: {
                 page,
-                limit,
-            },
+                limit
+            }
         });
     },
 
     seenNotification: async (notificationId) => {
-        return axiosClient.patch('/notifications/seen-notification', { notificationId });
+        return axiosClient.patch(`/notifications/seen-notification/${notificationId}`);
     },
+
+    updatedNotification: async (notificationId, isRead) => {
+        // isRead = true or false
+        return axiosClient.patch(`/notifications/update-notification`, {
+            notificationId,
+            isRead
+        });
+    },
+
+    deleteNotification: async (notificationId) => {
+        return axiosClient.delete(`/notifications/delete-notification/${notificationId}`);
+    }
 };
 
 export default notificationsApi;
