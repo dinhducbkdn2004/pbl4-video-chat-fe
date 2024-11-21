@@ -8,7 +8,6 @@ export const useSetDataOneToOneRoom = () => {
     const { onlineUsers } = useSocket();
     const setData = useCallback(
         (room) => {
-            console.log(user);
             if (room.typeRoom === 'OneToOne') {
                 const opponent = room.participants.find((participant) => participant._id !== user?._id);
                 room.name = opponent?.name || '';

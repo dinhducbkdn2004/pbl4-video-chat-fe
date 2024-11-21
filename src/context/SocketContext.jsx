@@ -11,7 +11,8 @@ import { useCallback } from 'react';
 export const SocketContext = createContext();
 
 export const SocketContextProvider = ({ children }) => {
-    const [socket, setSocket] = useState(null);
+    const socketRef = useRef(null);
+
     const [onlineUsers, setOnlineUsers] = useState([]);
     const [notifications, setNotifications] = useState([]);
     const { accessToken } = useSelector(authSelector);
@@ -33,7 +34,7 @@ export const SocketContextProvider = ({ children }) => {
         if (!accessToken) return;
 
         const socket = connectSocket();
-        setSocket(socket);
+        socketRef.current = socket;
 
         // Listen for connection
         socket.on('connect', () => {
@@ -66,11 +67,11 @@ export const SocketContextProvider = ({ children }) => {
         });
 
         return () => {
-            socket.off('connect');
             socket.off('new notification');
             socket.off('online friends');
             socket.off('new online friend');
             socket.off('disconnect friend');
+            socket.disconnect();
         };
     }, [accessToken, api, connectSocket]);
 
@@ -86,7 +87,7 @@ export const SocketContextProvider = ({ children }) => {
     useNotificationTitle(notifications);
 
     return (
-        <SocketContext.Provider value={{ socket, onlineUsers, notifications }}>
+        <SocketContext.Provider value={{ socket: socketRef.current, onlineUsers, notifications }}>
             <audio ref={audioRef} src='/sounds/notification.mp3' />
             {contextHolder}
             {children}

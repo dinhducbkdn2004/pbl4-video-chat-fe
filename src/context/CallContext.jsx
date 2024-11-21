@@ -11,7 +11,7 @@ export const CallContext = createContext();
 export const CallContextProvider = ({ children }) => {
     const { socket } = useSocket();
     const { user: currentUser } = useSelector(authSelector);
-    const setData = useSetDataOneToOneRoom()
+    const setData = useSetDataOneToOneRoom();
     const [chatRoomData, setChatRoomData] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const audioRef = useRef(null);
@@ -32,37 +32,50 @@ export const CallContextProvider = ({ children }) => {
 
     const handleButtonStart = useCallback(() => {
         const baseUrl = window.location.origin;
-        const videoCallUrl = `${baseUrl}/video-call/${chatRoomData?._id}?type=answer`;
+        const videoCallUrl = `${baseUrl}/video-call/${chatRoomData.chatRoom._id}?type=answer`;
         audioRef.current && audioRef.current.pause();
         audioRef.current.currentTime = 0;
         setIsModalOpen(false);
 
         window.open(videoCallUrl, '_blank');
-    }, [chatRoomData?._id]);
+    }, [chatRoomData]);
 
     useEffect(() => {
         socket?.on('server:send_new_call', ({ from, chatRoom }) => {
             console.log('new video call', from, chatRoom);
-            setChatRoomData(setData(chatRoom));
-            showModal();
+            setChatRoomData({ chatRoom, from });
 
+            setIsModalOpen(true);
             audioRef.current.play();
         });
 
         return () => {
-            socket?.off('new video call');
+            socket?.off('server:send_new_call');
         };
     }, [socket, currentUser, setData]);
 
     return (
         <CallContext.Provider value={{ chatRoomData }}>
             <audio src='/sounds/thongbao-cuocgoi.mp3' ref={audioRef} loop />
-            <Modal title='Cuộc gọi đến' open={isModalOpen} footer={null} onCancel={cancelCall}>
-                <Avatar src={chatRoomData?.chatRoomImage} />
-                <h2>{`${chatRoomData?.name} Đang gọi cho bạn`}</h2>
-                <Button onClick={handleButtonStart}>bắt máy</Button>
-                <Button onClick={cancelCall}>hủy bỏ</Button>
-            </Modal>
+            {chatRoomData && (
+                <Modal title='Cuộc gọi đến' open={isModalOpen} footer={null} onCancel={cancelCall}>
+                    {chatRoomData.chatRoom.typeRoom === 'OneToOne' && (
+                        <>
+                            <Avatar src={chatRoomData.from.avatar} />
+                            <h2>{`${chatRoomData.chatRoom.name} Đang gọi cho bạn`}</h2>
+                        </>
+                    )}
+                    {chatRoomData.chatRoom.typeRoom === 'Group' && (
+                        <>
+                            <Avatar src={chatRoomData.chatRoom.chatRoomImage} />
+                            <h2>{`${chatRoomData.from.name} đang bắt đầu 1 cuộc gọi trong phòng ${chatRoomData.chatRoom.name}`}</h2>
+                        </>
+                    )}
+
+                    <Button onClick={handleButtonStart}>bắt máy</Button>
+                    <Button onClick={cancelCall}>hủy bỏ</Button>
+                </Modal>
+            )}
             {children}
         </CallContext.Provider>
     );

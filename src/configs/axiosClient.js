@@ -27,7 +27,8 @@ axiosClient.interceptors.request.use(
         return Promise.reject(error);
     }
 );
-
+let isRefreshing = false;
+let failedQueue = [];
 // Add a response interceptor
 axiosClient.interceptors.response.use(
     (response) => {
@@ -38,33 +39,44 @@ axiosClient.interceptors.response.use(
         const originalRequest = error.config;
 
         switch (error.response.status) {
-            case 401: {
-                break;
-            }
-
             case 410: {
                 if (!originalRequest._retry) {
                     originalRequest._retry = true;
-                    const refreshToken = localStorage.getItem('REFRESH_TOKEN');
-                    const { isOk, data } = await authApi.resetAccessToken(refreshToken);
+                    if (!isRefreshing) {
+                        isRefreshing = true;
+                        try {
+                            const refreshToken = localStorage.getItem('REFRESH_TOKEN');
+                            const { isOk, data } = await authApi.resetAccessToken(refreshToken);
 
-                    if (isOk) {
-                        const { accessToken } = data;
-                        localStorage.setItem('ACCESS_TOKEN', accessToken);
-                        store.dispatch(
-                            authActions.setCredentials({
-                                accessToken,
-                                refreshToken
-                            })
-                        );
+                            if (isOk) {
+                                const { accessToken } = data;
+                                localStorage.setItem('ACCESS_TOKEN', accessToken);
+                                store.dispatch(
+                                    authActions.setCredentials({
+                                        accessToken,
+                                        refreshToken
+                                    })
+                                );
 
-                        axiosClient.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-                        return axiosClient(originalRequest);
+                                axiosClient.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+                            }
+                        } catch (error) {
+                            store.dispatch(authActions.logout());
+                            return Promise.reject(error);
+                        } finally {
+                            isRefreshing = false;
+                            failedQueue.forEach((fn) => fn(error));
+                            failedQueue = [];
+                        }
                     }
-                    store.dispatch(authActions.logout());
-                    return Promise.reject(error);
+                    return new Promise((resolve) => {
+                        failedQueue.push(() => {
+                            originalRequest.headers['Authorization'] = `Bearer ${localStorage.getItem('ACCESS_TOKEN')}`;
+                            resolve(axiosClient(originalRequest));
+                        });
+                    });
                 }
-                store.dispatch(authActions.logout());
+
                 return Promise.reject(error);
             }
 
