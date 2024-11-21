@@ -5,10 +5,12 @@ const RoomChatApi = {
         const isGroupChat = users.length > 1;
         return axiosClient.post('/chat-rooms', { name, users, privacy, isGroupChat });
     },
-    searchChatroomByName: (name, getMy = true) => {
+    searchChatroomByName: (name, page = 1, limit = 10, getMy = true) => {
         return axiosClient.get('/chat-rooms/search', {
             params: {
                 name,
+                page,
+                limit,
                 getMy
             }
         });
@@ -19,6 +21,17 @@ const RoomChatApi = {
                 getMy,
                 page,
                 limit
+            }
+        });
+    },
+    getGroup: ( privacy, typeRoom, page = 1, limit = 10, getMy = true) => {
+        return axiosClient.get('/chat-rooms/search', {
+            params: {
+                privacy,
+                typeRoom,
+                page,
+                limit,
+                getMy,
             }
         });
     },
@@ -86,7 +99,19 @@ const RoomChatApi = {
             chatRoomId,
             userId,
             role
-        })
+        }),
+
+    getRequestByChatRoomId: (chatRoomId, page = 1, limit = 10) =>
+        axiosClient.get(`/group-requests/get-request-by-chat-room-id`, {
+            params: {
+                chatRoomId,
+                page,
+                limit
+            }
+        }),
+
+    createRequest: (chatRoomId, message) => axiosClient.post(`/group-requests`, { chatRoomId, message }),
+    updatedRequest: (requestId, status) => axiosClient.patch(`/group-requests/${requestId}`, { status })
 };
 
 export default RoomChatApi;

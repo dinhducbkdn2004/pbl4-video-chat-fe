@@ -15,14 +15,12 @@ const SearchBar = ({ searchValue, handleSearchChange, searchResults, handleChatC
             const fetchFriendList = async () => {
                 const response = await userApi.getFriendList(user._id);
                 setFriendList(response.data);
-                console.log('friendList', response.data);
             };
             fetchFriendList();
         }
     }, [user]);
 
     const isFriend = (userId) => {
-        console.log('userId', userId);
         return friendList.some((friend) => friend._id === userId);
     };
 

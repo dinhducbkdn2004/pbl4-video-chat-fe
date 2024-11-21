@@ -46,11 +46,6 @@ const Sidebar = () => {
             className: 'custom-menu-item'
         },
         {
-            key: 'call',
-            icon: <TbPhoneCall size={20} />,
-            className: 'custom-menu-item'
-        },
-        {
             key: 'contact/friend-list',
             icon: <LuContact2 size={20} />,
             className: 'custom-menu-item'

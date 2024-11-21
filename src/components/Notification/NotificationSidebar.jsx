@@ -54,7 +54,7 @@ const NotificationSidebar = ({ onClose }) => {
             const response = await notificationApi.getAll(page);
             setNotifications((prevNotifications) => [...prevNotifications, ...response.data]);
             setHasMore(response.data.length > 0);
-            console.log('response.data', response.data);
+            // console.log('response.data', response.data);
             setLoading(false);
         };
 

@@ -11,7 +11,7 @@ const uploadApi = {
     },
     upload: async function (file, folder) {
         const res = await this.getPresignedUrl(folder, file.name); // Truyền file.name vào getPresignedUrl
-        console.log(res.data);
+        // console.log(res.data);
         const formData = new FormData();
 
         formData.append('file', file); // File cần upload
@@ -19,8 +19,7 @@ const uploadApi = {
         formData.append('timestamp', res.data.timestamp);
         formData.append('signature', res.data.signature);
         formData.append('folder', res.data.folder); // Thư mục lưu trữ
-        formData.append('public_id', res.data.public_id
-        ); // Đặt tên gốc làm public_id
+        formData.append('public_id', res.data.public_id); // Đặt tên gốc làm public_id
 
         let uploadEndpoint;
         switch (typeOfFile(file)) {
