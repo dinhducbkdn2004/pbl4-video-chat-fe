@@ -113,11 +113,9 @@ const NotificationSidebar = ({ onClose }) => {
         let avatarElement = <Avatar src={avatarSrc} />;
     
         if (item.type === 'ChatRooms' && item.detail) {
-            console.log('ChatRooms item:', item);
             avatarSrc = item.detail.chatRoomImage;
             link = `/message/${item.detail._id}`;
             avatarElement = <Avatar src={avatarSrc} />;
-            console.log('ChatRooms avatarSrc:', avatarSrc);
         } else if (item.type === 'FriendRequests') {
             if (item.detail) {
                 avatarSrc = item.detail.senderAvatar;
@@ -128,7 +126,6 @@ const NotificationSidebar = ({ onClose }) => {
                     avatarElement = <CloseCircleOutlined style={{ fontSize: '24px', color: 'red' }} />;
                 }
             } else {
-                console.log('FriendRequests item with null detail:', item);
                 avatarElement = <UserAddOutlined style={{ fontSize: '24px', color: 'blue' }} />;
             }
         }
