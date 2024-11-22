@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch';
 import userApi from '../../apis/userApi';
+import authApi from '../../apis/authApi';
 import Loading from '../../components/Loading/Loading';
 import { Button, Image, Modal, Input } from 'antd';
 import Container from '../../components/Container';
@@ -16,8 +17,15 @@ const UserPage = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [caption, setCaption] = useState('');
     const { user: currentUser } = useSelector(authSelector);
-    const { isLoading, fetchData, contextHolder } = useFetch({ showSuccess: false, showError: false });
+    const { isLoading, fetchData, contextHolder } = useFetch({ showSuccess: true, showError: true });
     const navigate = useNavigate();
+
+    const [isEmailModalVisible, setIsEmailModalVisible] = useState(false);
+    const [isResetPasswordModalVisible, setIsResetPasswordModalVisible] = useState(false);
+    const [email, setEmail] = useState('');
+    const [otp, setOtp] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
 
     const handleContact = async () => {
         const { data, isOk } = await RoomChatApi.getOneToOneChatRoom(id);
@@ -42,6 +50,27 @@ const UserPage = () => {
 
     const handleCancel = () => {
         setIsModalVisible(false);
+    };
+
+    const showEmailModal = () => {
+        setIsEmailModalVisible(true);
+    };
+
+    const handleSendOtp = async () => {
+        await fetchData(() => authApi.forgotPassword(email));
+        setIsEmailModalVisible(false);
+        setIsResetPasswordModalVisible(true);
+    };
+
+    const handleResetPassword = async () => {
+        const response = await fetchData(() => authApi.resetPassword(email, otp, newPassword, confirmPassword));
+        if (response.isOk) {
+            setIsResetPasswordModalVisible(false);
+            setEmail('');
+            setOtp('');
+            setNewPassword('');
+            setConfirmPassword('');
+        }
     };
 
     useEffect(() => {
@@ -73,7 +102,12 @@ const UserPage = () => {
                             </>
                         )}
 
-                        {currentUser._id === id && <EditProfile data={user} />}
+                        {currentUser._id === id && (
+                            <>
+                                <EditProfile data={user} />
+                                <Button onClick={showEmailModal}>Change Password</Button>
+                            </>
+                        )}
                     </div>
                 </div>
                 <div>
@@ -81,6 +115,43 @@ const UserPage = () => {
                 </div>
                 <Modal title='Kết bạn' visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                     <Input placeholder='Nhập mô tả...' value={caption} onChange={(e) => setCaption(e.target.value)} />
+                </Modal>
+                <Modal
+                    title='Nhập Email'
+                    visible={isEmailModalVisible}
+                    onOk={handleSendOtp}
+                    onCancel={() => setIsEmailModalVisible(false)}
+                >
+                    <Input
+                        placeholder='Email'
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        style={{ marginBottom: '10px' }}
+                    />
+                </Modal>
+                <Modal
+                    title='Change Password'
+                    visible={isResetPasswordModalVisible}
+                    onOk={handleResetPassword}
+                    onCancel={() => setIsResetPasswordModalVisible(false)}
+                >
+                    <Input
+                        placeholder='OTP'
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value)}
+                        style={{ marginBottom: '10px' }}
+                    />
+                    <Input.Password
+                        placeholder='Mật khẩu mới'
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        style={{ marginBottom: '10px' }}
+                    />
+                    <Input.Password
+                        placeholder='Xác nhận mật khẩu'
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
                 </Modal>
             </Container>
         </>
