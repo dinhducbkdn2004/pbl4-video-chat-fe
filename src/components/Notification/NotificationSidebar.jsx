@@ -2,7 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import moment from 'moment';
 import notificationApi from '../../apis/notificationApi';
 import { Button, List, Typography, Layout, Avatar, Tabs, Dropdown, Menu, Spin } from 'antd';
-import { CloseOutlined, EllipsisOutlined } from '@ant-design/icons';
+import {
+    CloseOutlined,
+    EllipsisOutlined,
+    CloseCircleOutlined,
+    CheckCircleOutlined,
+    UserAddOutlined
+} from '@ant-design/icons';
 import styled from 'styled-components';
 
 const { Content } = Layout;
@@ -54,7 +60,6 @@ const NotificationSidebar = ({ onClose }) => {
             const response = await notificationApi.getAll(page);
             setNotifications((prevNotifications) => [...prevNotifications, ...response.data]);
             setHasMore(response.data.length > 0);
-            // console.log('response.data', response.data);
             setLoading(false);
         };
 
@@ -63,7 +68,7 @@ const NotificationSidebar = ({ onClose }) => {
 
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+            if (sidebarRef.current && !sidebarRef.current.contains(event.target) && !event.target.closest('.ant-dropdown')) {
                 onClose();
             }
         };
@@ -76,18 +81,18 @@ const NotificationSidebar = ({ onClose }) => {
 
     const handleMenuClick = async (key, notification) => {
         if (key === 'markAsRead') {
-            // await notificationApi.seenNotification(notification._id);
-            // setNotifications((prevNotifications) =>
-            //     prevNotifications.map((item) => (item._id === notification._id ? { ...item, isRead: true } : item))
-            // );
+            await notificationApi.updatedNotification(notification._id, true);
+            setNotifications((prevNotifications) =>
+                prevNotifications.map((item) => (item._id === notification._id ? { ...item, isRead: true } : item))
+            );
         } else if (key === 'markAsUnread') {
-            // await notificationApi.unseenNotification(notification._id);
-            // setNotifications((prevNotifications) =>
-            //     prevNotifications.map((item) => (item._id === notification._id ? { ...item, isRead: false } : item))
-            // );
+            await notificationApi.updatedNotification(notification._id, false);
+            setNotifications((prevNotifications) =>
+                prevNotifications.map((item) => (item._id === notification._id ? { ...item, isRead: false } : item))
+            );
         } else if (key === 'delete') {
-            // await notificationApi.deleteNotification(notification._id);
-            // setNotifications((prevNotifications) => prevNotifications.filter((item) => item._id !== notification._id));
+            await notificationApi.deleteNotification(notification._id);
+            setNotifications((prevNotifications) => prevNotifications.filter((item) => item._id !== notification._id));
         }
     };
 
@@ -102,17 +107,29 @@ const NotificationSidebar = ({ onClose }) => {
                 <Menu.Item key='delete'>Delete</Menu.Item>
             </Menu>
         );
-
+    
         let avatarSrc = item.avatar;
         let link = `/message/${item.detail}`;
+        let avatarElement = <Avatar src={avatarSrc} />;
+    
         if (item.type === 'ChatRooms' && item.detail) {
             avatarSrc = item.detail.chatRoomImage;
             link = `/message/${item.detail._id}`;
-        } else if (item.type === 'FriendRequests' && item.detail) {
-            avatarSrc = item.detail.senderAvatar;
-            link = `/user/${item.detail.sender}`;
+            avatarElement = <Avatar src={avatarSrc} />;
+        } else if (item.type === 'FriendRequests') {
+            if (item.detail) {
+                avatarSrc = item.detail.senderAvatar;
+                link = `/user/${item.detail.sender}`;
+                if (item.detail.status === 'ACCEPTED') {
+                    avatarElement = <CheckCircleOutlined style={{ fontSize: '24px', color: 'green' }} />;
+                } else if (item.detail.status === 'DECLINED') {
+                    avatarElement = <CloseCircleOutlined style={{ fontSize: '24px', color: 'red' }} />;
+                }
+            } else {
+                avatarElement = <UserAddOutlined style={{ fontSize: '24px', color: 'blue' }} />;
+            }
         }
-
+    
         return (
             <List.Item
                 actions={[
@@ -123,7 +140,7 @@ const NotificationSidebar = ({ onClose }) => {
             >
                 <List.Item.Meta
                     className='hover: bg-gray-300 cursor-pointer'
-                    avatar={<Avatar src={avatarSrc} />}
+                    avatar={avatarElement}
                     title={<a href={link}>{item.message}</a>}
                     description={moment(item.createdAt).fromNow()}
                 />

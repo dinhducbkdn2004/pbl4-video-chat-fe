@@ -1,6 +1,5 @@
-import { useState } from 'react';
-import { TbPhoneCall } from 'react-icons/tb';
-import { TbUserSearch } from 'react-icons/tb';
+import { useState, useEffect } from 'react';
+import { TbPhoneCall, TbUserSearch } from 'react-icons/tb';
 import { Avatar, Badge, Dropdown, Layout, Menu } from 'antd';
 import { RiLogoutCircleRLine } from 'react-icons/ri';
 import { BiMessageSquareDots } from 'react-icons/bi';
@@ -9,6 +8,7 @@ import { LuContact2 } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 import { handleLogout } from '../../components/Logout';
 import { authSelector } from '../../redux/features/auth/authSelections';
+import notificationsApi from '../../apis/notificationApi';
 import { useSelector } from 'react-redux';
 import assets from '../../assets/index';
 import './SideBar.css';
@@ -18,9 +18,20 @@ const { Sider } = Layout;
 
 const Sidebar = () => {
     const [isNotificationSidebarVisible, setNotificationSidebarVisible] = useState(false);
+    const [notifications, setNotifications] = useState([]);
     const logout = handleLogout();
     const navigate = useNavigate();
     const { user } = useSelector(authSelector);
+
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            const { data, isOk } = await notificationsApi.getAll();
+            if (isOk) setNotifications(data);
+        };
+        fetchNotifications();
+    }, []);
+
+    const unreadCount = notifications.filter((item) => !item.isRead).length;
 
     const menuItems = [
         {
@@ -57,14 +68,13 @@ const Sidebar = () => {
         },
         {
             key: 'notification',
-            icon: <IoNotificationsOutline size={20} />,
+            icon: (
+                <Badge count={unreadCount}>
+                    <IoNotificationsOutline size={20} />
+                </Badge>
+            ),
             className: 'custom-menu-item',
             onClick: () => setNotificationSidebarVisible(true)
-        },
-        {
-            key: 'setting',
-            icon: <IoSettingsOutline size={20} />,
-            className: 'custom-menu-item'
         }
     ];
 
@@ -97,14 +107,14 @@ const Sidebar = () => {
                 <div className='mt-auto flex flex-col items-center'>
                     <Dropdown menu={{ items: menuItems }} trigger={['click']}>
                         <div className='mt-4 flex cursor-pointer flex-col items-center'>
-                            <Badge count={1} status='success'>
-                                <Avatar size={46} src={user?.avatar} />
-                            </Badge>
+                            <Avatar size={46} src={user?.avatar} />
                         </div>
                     </Dropdown>
                 </div>
             </Sider>
-            {isNotificationSidebarVisible && <NotificationSidebar onClose={() => setNotificationSidebarVisible(false)} />}
+            {isNotificationSidebarVisible && (
+                <NotificationSidebar onClose={() => setNotificationSidebarVisible(false)} />
+            )}
         </>
     );
 };
