@@ -28,17 +28,33 @@ const VideoCall = () => {
     const [isScreenSharing, setIsScreenSharing] = useState(false);
 
     useEffect(() => {
-        if (peerStreams.length > 0) {
+        if (peerStreams.length > 1) {
             setCallStatus('connected');
         }
     }, [peerStreams]);
+
+    useEffect(() => {
+        if (!socket) return;
+        if (typeCall === 'calling') {
+            console.log('calling');
+            console.log(socket);
+            socket.emit('caller:start_new_call', { chatRoomId: currentChatRoomId });
+            return;
+        }
+
+        if (typeCall === 'answer') {
+            console.log('answer');
+            socket.emit('callee:accept_call', { chatRoomId: currentChatRoomId, peerId: peerRef.current?.id });
+            return;
+        }
+    }, [currentChatRoomId, socket, typeCall]);
 
     console.log(peerStreams);
 
     const addVideoStream = useCallback(({ peerId, stream, user }) => {
         setPeerStreams((prevPeerStreams) => {
             // Check if the peerId already exists in the current state
-            if (prevPeerStreams.some((ps) => ps.peerId === peerId)) {
+            if (prevPeerStreams.some((ps) => ps.user._id === user._id)) {
                 return prevPeerStreams; // Return the current state if the peerId exists
             }
 
@@ -47,32 +63,47 @@ const VideoCall = () => {
         });
     }, []);
 
+    const updatePeerStreams = useCallback(() => {
+        const connections = peerRef.current?.connections || {};
+        const currentStream = myStreamRef.current;
+
+        for (let peerId in connections) {
+            connections[peerId].forEach((connection) => {
+                const sender = connection.peerConnection.getSenders().find((s) => s.track.kind === 'video');
+                if (sender) {
+                    sender.replaceTrack(currentStream.getVideoTracks()[0]);
+                }
+            });
+        }
+
+        // Cập nhật lại danh sách `peerStreams` để đảm bảo UI đồng bộ
+        setPeerStreams((prevPeerStreams) =>
+            prevPeerStreams.map((peerStream) => ({
+                ...peerStream,
+                stream: peerStream.peerId === peerRef.current.id ? currentStream : peerStream.stream
+            }))
+        );
+    }, []);
+
     const stopScreenShare = useCallback(async () => {
         try {
             const cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-            // Trở lại camera ban đầu
-
-            const videoTrack = cameraStream.getVideoTracks()[0];
-
-            // Gửi stream camera đến các peer
-            const sender = peerRef.current?.connections;
-            for (let peerId in sender) {
-                sender[peerId].forEach((connection) => {
-                    connection.peerConnection
-                        .getSenders()
-                        .find((s) => s.track.kind === 'video')
-                        ?.replaceTrack(videoTrack);
-                });
-            }
 
             // Cập nhật stream local
             myStreamRef.current?.getTracks().forEach((track) => track.stop());
             myStreamRef.current = cameraStream;
+
+            if (myVideoRef.current) {
+                myVideoRef.current.srcObject = cameraStream;
+                myVideoRef.current.play();
+            }
+
+            updatePeerStreams();
             setIsScreenSharing(false);
         } catch (err) {
             console.error('Error switching back to camera:', err);
         }
-    }, []);
+    }, [updatePeerStreams]);
 
     const toggleScreenShare = useCallback(async () => {
         if (!isScreenSharing) {
@@ -87,20 +118,16 @@ const VideoCall = () => {
                     stopScreenShare();
                 };
 
-                // Gửi stream chia sẻ màn hình đến các peer
-                const sender = peerRef.current?.connections;
-                for (let peerId in sender) {
-                    sender[peerId].forEach((connection) => {
-                        connection.peerConnection
-                            .getSenders()
-                            .find((s) => s.track.kind === 'video')
-                            ?.replaceTrack(videoTrack);
-                    });
-                }
-
                 // Cập nhật trạng thái
                 myStreamRef.current?.getVideoTracks().forEach((track) => track.stop());
                 myStreamRef.current = screenStream;
+
+                if (myVideoRef.current) {
+                    myVideoRef.current.srcObject = screenStream;
+                    myVideoRef.current.play();
+                }
+                updatePeerStreams();
+
                 setIsScreenSharing(true);
             } catch (err) {
                 console.error('Error sharing screen:', err);
@@ -110,18 +137,30 @@ const VideoCall = () => {
         }
     }, [isScreenSharing, stopScreenShare]);
 
+    const removePeer = useCallback((userId) => {
+        setPeerStreams((prevPeerStreams) => prevPeerStreams.filter((ps) => ps.user._id !== userId)); // Remove peer by peerId
+    }, []);
+
     const connectToNewUser = useCallback(
         (peerId, stream, user) => {
             if (!peerRef.current) return;
-            console.log('Connecting to new user');
-            const call = peerRef.current.call(peerId, stream);
+            console.log(`Connecting to ${user.name} (${peerId})`);
+
+            const call = peerRef.current.call(peerId, stream, { metadata: { user: currentUser } });
+
             if (!call) return;
 
             call.on('stream', (remoteStream) => {
-                addVideoStream({ peerId, remoteStream, user });
+                console.log(`Received stream from ${user.name}`);
+                addVideoStream({ peerId, stream: remoteStream, user });
+            });
+
+            call.on('close', () => {
+                console.log(`Call with ${user.name} closed`);
+                removePeer(user._id);
             });
         },
-        [addVideoStream]
+        [addVideoStream, currentUser, removePeer]
     );
 
     const leaveCall = useCallback(() => {
@@ -148,10 +187,6 @@ const VideoCall = () => {
         }
     }, []);
 
-    const removePeer = useCallback((peerId) => {
-        setPeerStreams((prevPeerStreams) => prevPeerStreams.filter((ps) => ps.peerId !== peerId)); // Remove peer by peerId
-    }, []);
-
     const joinRoom = useCallback(
         (peerId) => {
             console.log('Joining room');
@@ -162,64 +197,63 @@ const VideoCall = () => {
 
     useEffect(() => {
         const handleUserConnected = ({ peerId, user }) => {
-            console.log(user);
-            connectToNewUser(peerId, myStreamRef.current, user);
+            console.log(`${user.name} connected with Peer ID: ${peerId}`);
+            connectToNewUser(peerId, myStreamRef.current, user); // Gửi stream của bạn đến người mới
         };
-        const handleUserDisconnected = ({ peerId }) => removePeer(peerId);
+
+        const handleUserDisconnected = ({ userId }) => {
+            console.log(`User ${userId} disconnected`);
+            removePeer(userId); // Loại bỏ peer khi người dùng rời khỏi
+        };
 
         socket?.on('user-connected', handleUserConnected);
-        socket?.on('user-disconnected', handleUserDisconnected);
+        socket?.on('user:leave_call', handleUserDisconnected);
 
         return () => {
-            socket?.off('user-connected');
-            socket?.off('user-disconnected');
+            socket?.off('user-connected', handleUserConnected);
+            socket?.off('user:leave_call', handleUserDisconnected);
         };
-    }, [connectToNewUser, currentChatRoomId, currentUser?._id, removePeer, socket]);
-
-    useEffect(() => {
-        if (!socket) return;
-        if (typeCall === 'calling') {
-            console.log('calling');
-            console.log(socket);
-            socket.emit('caller:start_new_call', { chatRoomId: currentChatRoomId });
-            return;
-        }
-
-        if (typeCall === 'answer') {
-            console.log('answer');
-            socket.emit('callee:accept_call', { chatRoomId: currentChatRoomId, peerId: peerRef.current?.id });
-            return;
-        }
-    }, [currentChatRoomId, socket, typeCall]);
+    }, [connectToNewUser, removePeer, socket]);
 
     useEffect(() => {
         (async () => {
-            if (!socket || !currentUser) return;
-            const myStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-            myStreamRef.current = myStream;
+            try {
+                if (!socket || !currentUser) return;
+                const myStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                if (myStream.getAudioTracks().length === 0) {
+                    console.error('No audio track found in stream.');
+                    MessageComponent.error('Không có micro khả dụng. Vui lòng kiểm tra thiết bị.');
+                }
+                myStreamRef.current = myStream;
 
-            if (myVideoRef.current) {
-                myVideoRef.current.srcObject = myStream;
-                myVideoRef.current.play();
-            }
+                if (myVideoRef.current) {
+                    myVideoRef.current.srcObject = myStream;
+                    myVideoRef.current.play();
+                }
 
-            // Initialize PeerJS
-            peerRef.current = new Peer();
+                // Initialize PeerJS
+                peerRef.current = new Peer();
 
-            // When PeerJS connection is opened
-            peerRef.current.on('open', (peerId) => {
-                console.log('My Peer ID:', peerId);
-                joinRoom(peerId);
-                addVideoStream({ peerId, stream: myStream, user: currentUser });
-            });
-
-            // Handle incoming calls
-            peerRef.current.on('call', (call) => {
-                call.answer(myStream); // Answer the call with current user's stream
-                call.on('stream', (remoteStream) => {
-                    addVideoStream({ peerId: call.peer, stream: remoteStream, user: currentUser });
+                // When PeerJS connection is opened
+                peerRef.current.on('open', (peerId) => {
+                    console.log('My Peer ID:', peerId);
+                    joinRoom(peerId);
+                    addVideoStream({ peerId, stream: myStream, user: currentUser });
                 });
-            });
+
+                // Handle incoming calls
+                peerRef.current.on('call', (call) => {
+                    console.log('Call received with metadata:', call.metadata);
+                    const { user } = call.metadata;
+                    call.answer(myStreamRef.current); // Answer the call with current user's stream
+                    call.on('stream', (remoteStream) => {
+                        addVideoStream({ peerId: call.peer, stream: remoteStream, user });
+                    });
+                });
+            } catch (error) {
+                console.error('Failed to access mic:', error);
+                MessageComponent.error('Không thể truy cập micro. Vui lòng kiểm tra quyền hoặc kết nối thiết bị.');
+            }
         })();
 
         // Cleanup on unmount
