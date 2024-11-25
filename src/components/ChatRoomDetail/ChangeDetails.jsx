@@ -1,14 +1,16 @@
 import { useState } from 'react';
-import { Modal, Input, Upload, Button, Spin } from 'antd';
+import { Modal, Input, Upload, Button, Spin, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import RoomChatApi from '../../apis/RoomChatApi';
 import useFetch from '../../hooks/useFetch';
 import uploadApi from '../../apis/uploadApi';
+import ImgCrop from 'antd-img-crop';
 
 const ChangeDetails = ({ type, chatRoomId, onClose }) => {
-    const { fetchData, isLoading, contextHolder } = useFetch({ showSuccess: true, showError: true });
+    const { fetchData, isLoading, contextHolder } = useFetch({ showSuccess: false, showError: false });
     const [name, setName] = useState('');
     const [file, setFile] = useState(null);
+    const [fileList, setFileList] = useState([]);
     const [isUploading, setIsUploading] = useState(false);
 
     const handleOk = async () => {
@@ -22,6 +24,22 @@ const ChangeDetails = ({ type, chatRoomId, onClose }) => {
         }
         await fetchData(() => RoomChatApi.changeDetailChatRoom(data));
         onClose();
+    };
+
+    const beforeUpload = async (file) => {
+        const isLt10M = file.size / 1024 / 1024 < 10;
+        if (!isLt10M) {
+            message.error('Image must smaller than 10MB!');
+        }
+        const isJpgOrPngOrGif = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif';
+        if (!isJpgOrPngOrGif) {
+            message.error('You can only upload JPG/PNG/GIF file!');
+        }
+        if (isJpgOrPngOrGif && isLt10M) {
+            setFile(file);
+            return false;
+        }
+        return Upload.LIST_IGNORE;
     };
 
     return (
@@ -43,14 +61,17 @@ const ChangeDetails = ({ type, chatRoomId, onClose }) => {
                     />
                 ) : null}
                 {type === 'image' || type === 'both' ? (
-                    <Upload
-                        beforeUpload={(file) => {
-                            setFile(file);
-                            return false;
-                        }}
-                    >
-                        <Button icon={<UploadOutlined />}>Select Image</Button>
-                    </Upload>
+                    <ImgCrop aspect={820 / 512} showReset quality={1}>
+                        <Upload
+                            multiple={false}
+                            listType='picture-card'
+                            fileList={fileList}
+                            beforeUpload={beforeUpload}
+                            onChange={({ fileList }) => setFileList(fileList.slice(-1))}
+                        >
+                            {fileList.length === 0 && '+ Upload'}
+                        </Upload>
+                    </ImgCrop>
                 ) : null}
                 {(isLoading || isUploading) && (
                     <div style={{ textAlign: 'center', marginTop: 12 }}>

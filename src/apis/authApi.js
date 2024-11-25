@@ -32,6 +32,9 @@ const authApi = {
     },
     checkOtp: async (email, otp) => {
         return axiosClient.put('/auth/check-otp', { email, otp })
+    },
+    changePassword: async (oldPassword, newPassword) => {
+        return axiosClient.put('/auth/change-password', { oldPassword, newPassword })
     }
 }
 

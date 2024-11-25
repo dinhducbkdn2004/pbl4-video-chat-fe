@@ -7,25 +7,6 @@
     flex-direction: column;
 }
 
-.chat-list::-webkit-scrollbar {
-    width: 6px;
-    opacity: 0; /* Ẩn thanh cuộn */
-    transition: opacity 0.3s; /* Thêm hiệu ứng chuyển đổi */
-}
-
-.chat-list:hover::-webkit-scrollbar {
-    opacity: 1; /* Hiển thị thanh cuộn khi hover */
-}
-
-.chat-list::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2); /* Màu mờ cho thanh cuộn */
-    border-radius: 5px;
-}
-
-.chat-list::-webkit-scrollbar-track {
-    background-color: rgba(0, 0, 0, 0.1); /* Màu mờ cho track của thanh cuộn */
-}
-
 .chat-list .header {
     display: flex;
     justify-content: space-between;
@@ -221,20 +202,6 @@
     height: 0; /* Ensure it takes up remaining space */
 }
 
-.chat-list .body-chat::-webkit-scrollbar {
-    width: 3px;
-    opacity: 0; /* Ẩn thanh cuộn */
-    transition: opacity 0.3s; /* Thêm hiệu ứng chuyển đổi */
-}
-
-.chat-list .body-chat:hover::-webkit-scrollbar {
-    opacity: 1; /* Hiển thị thanh cuộn khi hover */
-}
-
-.chat-list .body-chat::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.07); /* Màu mờ cho thanh cuộn */
-    border-radius: 5px;
-}
 .chat-list .divider {
     font-size: 16px;
     font-weight: 500;

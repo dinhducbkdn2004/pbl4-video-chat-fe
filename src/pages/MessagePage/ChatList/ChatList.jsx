@@ -14,7 +14,7 @@ import { useSelector } from 'react-redux';
 import { authSelector } from '../../../redux/features/auth/authSelections.js';
 
 const debouncedSearch = debounce(async (value, setSearchResults) => {
-    const data = await RoomChatApi.searchChatroomByName(value);
+    const data = await RoomChatApi.searchChatroomByName(true, value);
     if (data.isOk) setSearchResults(data.data);
 }, 350);
 
@@ -51,7 +51,26 @@ const ChatList = () => {
         setIsAddRoomModalVisible(false);
     };
 
-    const handleChatClick = (chatRoomData) => {
+    const handleChatClick = async (chatRoomData) => {
+        await RoomChatApi.seenMessage(chatRoomData._id);
+
+        setRecentChats((prevChats) =>
+            prevChats.map((chat) => {
+                if (chat._id === chatRoomData._id) {
+                    if (!chat.lastMessage?.isRead?.some((reader) => reader._id === user._id)) {
+                        return {
+                            ...chat,
+                            lastMessage: {
+                                ...chat.lastMessage,
+                                isRead: [...(chat.lastMessage.isRead || []), { _id: user._id }]
+                            }
+                        };
+                    }
+                }
+                return chat;
+            })
+        );
+
         navigate(`/message/${chatRoomData._id}`, {
             state: chatRoomData
         });
@@ -114,6 +133,7 @@ const ChatList = () => {
                 />
                 <OnlineUsers recentChats={recentChats} handleChatClick={handleChatClick} />
                 <RecentChats
+                    user={user}
                     recentChats={recentChats}
                     handleChatClick={handleChatClick}
                     isFirstLoad={isFirstLoad}

@@ -6,12 +6,14 @@ import { getLastName, truncateString } from '../helpers/utils';
 import { authSelector } from '../redux/features/auth/authSelections';
 import { useSocket } from '../hooks/useSocket';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import useFetch from '../hooks/useFetch';
 import messageApi from '../apis/messageApi';
 import { FileIcon, defaultStyles } from 'react-file-icon';
 
 const MessageComponent = ({ messages, isFirstMessage, isLastMessage }) => {
+    const navigate = useNavigate();
     const { user: currentUser } = useSelector(authSelector);
     const { sender, createdAt } = messages[0];
     const { onlineUsers } = useSocket();
@@ -70,7 +72,7 @@ const MessageComponent = ({ messages, isFirstMessage, isLastMessage }) => {
                     content: (
                         <div className='link-preview'>
                             <a href={message.content} target='_blank' className='link-title'>
-                                {truncateString(message.content, 40)}
+                                {message.content.length > 200 ? truncateString(message.content, 50) : message.content}
                             </a>
                             {seoData?.image && <img src={seoData?.image} alt='SEO preview' className='link-image' />}
                             <div className='link-details'>
@@ -106,7 +108,9 @@ const MessageComponent = ({ messages, isFirstMessage, isLastMessage }) => {
                         color={onlineUsers.find((onlineUser) => onlineUser._id === sender._id) ? '#52c41a' : '#d9d9d9'}
                         size='small'
                     >
-                        <Avatar src={sender.avatar} className='avatar' />
+                        <Avatar src={sender.avatar} size={33} className='cursor-pointer' onClick={()=>{
+                            navigate(`/user/${sender._id}`)
+                        }} />
                     </Badge>
                 </div>
             )}
@@ -145,22 +149,13 @@ const MessageComponent = ({ messages, isFirstMessage, isLastMessage }) => {
                                         : 'text-black mr-auto bg-white-dark'
                                     : ''
                             }`}
+                            style={{ wordBreak: 'break-word' }}
                         >
                             {content}
                         </div>
                     );
                 })}
-                {/* <div className='text-gray-500 mt-1 flex items-center text-xs' style={{ fontSize: '10px' }}>
-                    <span>{new Date(createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                </div> */}
             </div>
-            {/* {sender._id === currentUser._id && (
-                <div className='mb-5 ml-1 flex items-end'>
-                    <Badge dot offset={[-5, 28]} color={'#52c41a'} size='small'>
-                        <Avatar src={sender.avatar} className='avatar' />
-                    </Badge>
-                </div>
-            )} */}
         </div>
     );
 };

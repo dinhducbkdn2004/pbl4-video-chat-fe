@@ -46,13 +46,17 @@ const FriendRequestBox = ({ setRequestCount }) => {
     }, [fetchData, setRequestCount]);
 
     return (
-        <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
+        <div className='space-y-4'>
             {isLoading ? (
                 <div className='flex h-40 w-full items-center justify-center'>
                     <Loading />
                 </div>
-            ) : (
+            ) : requests.length > 0 ? (
                 requests.map((request) => <FriendRequestCard key={request._id} request={request} />)
+            ) : (
+                <div className='text-gray-500 flex items-center justify-center rounded-md border border-dashed py-4'>
+                    Không có lời kết bạn
+                </div>
             )}
         </div>
     );
@@ -74,7 +78,6 @@ const SentRequests = ({ setSentRequestCount }) => {
 
     return (
         <div className='space-y-4'>
-            <h2 className='text-gray-800 text-xl font-semibold'>Lời mời đã gửi</h2>
             {isLoading ? (
                 <div className='flex h-40 w-full items-center justify-center'>
                     <Loading />
@@ -106,7 +109,6 @@ const FriendSuggestions = ({ setSuggestionCount }) => {
 
     return (
         <div className='space-y-4'>
-            <h2 className='text-gray-800 text-xl font-semibold'>Gợi ý kết bạn</h2>
             {isLoading ? (
                 <div className='flex h-40 w-full items-center justify-center'>
                     <Loading />
