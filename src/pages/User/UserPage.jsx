@@ -10,6 +10,7 @@ import EditProfile from '../../components/UserPage/EditProfile';
 import { useSelector } from 'react-redux';
 import { authSelector } from '../../redux/features/auth/authSelections';
 import RoomChatApi from '../../apis/RoomChatApi';
+import './UserPage.css';
 
 const UserPage = () => {
     const { id } = useParams();
@@ -19,13 +20,6 @@ const UserPage = () => {
     const { user: currentUser } = useSelector(authSelector);
     const { isLoading, fetchData, contextHolder } = useFetch({ showSuccess: true, showError: true });
     const navigate = useNavigate();
-
-    const [isEmailModalVisible, setIsEmailModalVisible] = useState(false);
-    const [isResetPasswordModalVisible, setIsResetPasswordModalVisible] = useState(false);
-    const [email, setEmail] = useState('');
-    const [otp, setOtp] = useState('');
-    const [newPassword, setNewPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
 
     const handleContact = async () => {
         const { data, isOk } = await RoomChatApi.getOneToOneChatRoom(id);
@@ -52,27 +46,6 @@ const UserPage = () => {
         setIsModalVisible(false);
     };
 
-    const showEmailModal = () => {
-        setIsEmailModalVisible(true);
-    };
-
-    const handleSendOtp = async () => {
-        await fetchData(() => authApi.forgotPassword(email));
-        setIsEmailModalVisible(false);
-        setIsResetPasswordModalVisible(true);
-    };
-
-    const handleResetPassword = async () => {
-        const response = await fetchData(() => authApi.resetPassword(email, otp, newPassword, confirmPassword));
-        if (response.isOk) {
-            setIsResetPasswordModalVisible(false);
-            setEmail('');
-            setOtp('');
-            setNewPassword('');
-            setConfirmPassword('');
-        }
-    };
-
     useEffect(() => {
         (async () => {
             if (currentUser?._id === id) setUser(currentUser);
@@ -90,11 +63,11 @@ const UserPage = () => {
         <>
             {contextHolder}
             <Container>
-                <Image width={'100%'} src={user.backgroundImage} />
-                <div className='relative -top-[100px] flex flex-col items-center gap-y-6'>
-                    <Image src={user.avatar} className='mx-auto rounded-full object-cover' width={240} height={240} />
-                    <h1 className='mb-5 text-center'>{user.name}</h1>
-                    <div className='flex items-center justify-center gap-x-4'>
+                <Image width={'100%'} height={300} src={user.backgroundImage} className='background-image' />
+                <div className='profile-container'>
+                    <Image src={user.avatar} className='avatar' width={220} height={220} />
+                    <h1 className='user-name'>{user.name}</h1>
+                    <div className='action-buttons'>
                         {currentUser._id !== id && (
                             <>
                                 <Button onClick={handleAddFriend}>Thêm bạn bè</Button>
@@ -105,52 +78,19 @@ const UserPage = () => {
                         {currentUser._id === id && (
                             <>
                                 <EditProfile data={user} />
-                                <Button onClick={showEmailModal}>Change Password</Button>
                             </>
                         )}
                     </div>
                 </div>
-                <div>
-                    <p className='mx-auto max-w-[400px] text-center'>{user.introduction}</p>
+                <div className='introduction'>
+                    <p>{user.introduction}</p>
                 </div>
                 <Modal title='Kết bạn' visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-                    <Input placeholder='Nhập mô tả...' value={caption} onChange={(e) => setCaption(e.target.value)} />
-                </Modal>
-                <Modal
-                    title='Nhập Email'
-                    visible={isEmailModalVisible}
-                    onOk={handleSendOtp}
-                    onCancel={() => setIsEmailModalVisible(false)}
-                >
                     <Input
-                        placeholder='Email'
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        style={{ marginBottom: '10px' }}
-                    />
-                </Modal>
-                <Modal
-                    title='Change Password'
-                    visible={isResetPasswordModalVisible}
-                    onOk={handleResetPassword}
-                    onCancel={() => setIsResetPasswordModalVisible(false)}
-                >
-                    <Input
-                        placeholder='OTP'
-                        value={otp}
-                        onChange={(e) => setOtp(e.target.value)}
-                        style={{ marginBottom: '10px' }}
-                    />
-                    <Input.Password
-                        placeholder='Mật khẩu mới'
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        style={{ marginBottom: '10px' }}
-                    />
-                    <Input.Password
-                        placeholder='Xác nhận mật khẩu'
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder='Nhập mô tả...'
+                        value={caption}
+                        onChange={(e) => setCaption(e.target.value)}
+                        required
                     />
                 </Modal>
             </Container>

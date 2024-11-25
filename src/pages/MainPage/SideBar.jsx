@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TbPhoneCall, TbUserSearch } from 'react-icons/tb';
 import { Avatar, Badge, Dropdown, Layout, Menu } from 'antd';
 import { RiLogoutCircleRLine } from 'react-icons/ri';
@@ -13,11 +13,12 @@ import { useSelector } from 'react-redux';
 import assets from '../../assets/index';
 import './SideBar.css';
 import NotificationSidebar from '../../components/Notification/NotificationSidebar';
-
+import ChangePasswordForm from '../../components/ChangePasswordForm';
 const { Sider } = Layout;
 
 const Sidebar = () => {
     const [isNotificationSidebarVisible, setNotificationSidebarVisible] = useState(false);
+    const [isChangePasswordVisible, setChangePasswordVisible] = useState(false);
     const [notifications, setNotifications] = useState([]);
     const logout = handleLogout();
     const navigate = useNavigate();
@@ -41,6 +42,12 @@ const Sidebar = () => {
             onClick: () => {
                 navigate(`/user/${user?._id}`);
             }
+        },
+        {
+            key: 'change-password',
+            icon: <IoSettingsOutline size={15} />,
+            label: <span>Change Password</span>,
+            onClick: () => setChangePasswordVisible(true)
         },
         {
             key: 'logout',
@@ -115,6 +122,10 @@ const Sidebar = () => {
             {isNotificationSidebarVisible && (
                 <NotificationSidebar onClose={() => setNotificationSidebarVisible(false)} />
             )}
+            <ChangePasswordForm
+                visible={isChangePasswordVisible}
+                onClose={() => setChangePasswordVisible(false)}
+            />
         </>
     );
 };

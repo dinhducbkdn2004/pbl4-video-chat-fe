@@ -35,7 +35,7 @@ const ChangeBackgroundImage = ({ backgroundImage }) => {
         <div>
             {contextHolder}
 
-            <div className='flex items-center justify-between'>
+            <div className='flex items-center justify-between mb-2'>
                 <h1>Chỉnh sửa ảnh bìa</h1>
 
                 <Button

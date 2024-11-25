@@ -5,13 +5,13 @@ const RoomChatApi = {
         const isGroupChat = users.length > 1;
         return axiosClient.post('/chat-rooms', { name, users, privacy, isGroupChat });
     },
-    searchChatroomByName: (name, page = 1, limit = 10, getMy = true) => {
+    searchChatroomByName: (getMy = true, name, page = 1, limit = 10) => {
         return axiosClient.get('/chat-rooms/search', {
             params: {
+                getMy,
                 name,
                 page,
-                limit,
-                getMy
+                limit
             }
         });
     },
@@ -51,6 +51,8 @@ const RoomChatApi = {
         }
         return axiosClient.post('/messages', payload);
     },
+
+    seenMessage: (chatRoomId) => axiosClient.patch(`/messages/seen-message`, { chatRoomId }),
 
     getOneToOneChatRoom: (toId) =>
         axiosClient.get('/chat-rooms/getOneToOne', {

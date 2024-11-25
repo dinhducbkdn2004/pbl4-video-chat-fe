@@ -52,19 +52,20 @@ const NotificationSidebar = ({ onClose }) => {
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
+    const [activeTab, setActiveTab] = useState('1');
     const observer = useRef();
 
-    useEffect(() => {
-        const fetchNotifications = async () => {
-            setLoading(true);
-            const response = await notificationApi.getAll(page);
-            setNotifications((prevNotifications) => [...prevNotifications, ...response.data]);
-            setHasMore(response.data.length > 0);
-            setLoading(false);
-        };
+    const fetchNotifications = async (tab, page) => {
+        setLoading(true);
+        const response = await notificationApi.getAll(page);
+        setNotifications((prevNotifications) => [...prevNotifications, ...response.data]);
+        setHasMore(response.data.length > 0);
+        setLoading(false);
+    };
 
-        fetchNotifications();
-    }, [page]);
+    useEffect(() => {
+        fetchNotifications(activeTab, page);
+    }, [activeTab, page]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -107,29 +108,23 @@ const NotificationSidebar = ({ onClose }) => {
                 <Menu.Item key='delete'>Delete</Menu.Item>
             </Menu>
         );
-    
+
         let avatarSrc = item.avatar;
         let link = `/message/${item.detail}`;
         let avatarElement = <Avatar src={avatarSrc} />;
-    
+
         if (item.type === 'ChatRooms' && item.detail) {
             avatarSrc = item.detail.chatRoomImage;
             link = `/message/${item.detail._id}`;
             avatarElement = <Avatar src={avatarSrc} />;
         } else if (item.type === 'FriendRequests') {
             if (item.detail) {
-                avatarSrc = item.detail.senderAvatar;
-                link = `/user/${item.detail.sender}`;
-                if (item.detail.status === 'ACCEPTED') {
-                    avatarElement = <CheckCircleOutlined style={{ fontSize: '24px', color: 'green' }} />;
-                } else if (item.detail.status === 'DECLINED') {
-                    avatarElement = <CloseCircleOutlined style={{ fontSize: '24px', color: 'red' }} />;
-                }
-            } else {
-                avatarElement = <UserAddOutlined style={{ fontSize: '24px', color: 'blue' }} />;
+                avatarSrc = item.detail.sender.avatar;
+                link = `/user/${item.detail.sender._id}`;
+                avatarElement = <Avatar src={avatarSrc} />;
             }
         }
-    
+
         return (
             <List.Item
                 actions={[
@@ -149,9 +144,9 @@ const NotificationSidebar = ({ onClose }) => {
     };
 
     const markAllAsRead = async () => {
-        await Promise.all(notifications.map((notification) => notificationApi.seenNotification(notification._id)));
+        await notificationApi.seenNotification();
         setNotifications((prevNotifications) =>
-            prevNotifications.map((notification) => ({ ...notification, isRead: true }))
+            prevNotifications.map((item) => ({ ...item, isRead: true }))
         );
     };
 
@@ -172,6 +167,12 @@ const NotificationSidebar = ({ onClose }) => {
         }
     }, [loading, hasMore]);
 
+    const handleTabChange = (key) => {
+        setActiveTab(key);
+        setPage(1);
+        setNotifications([]);
+    };
+
     return (
         <SidebarContainer ref={sidebarRef}>
             <Header>
@@ -189,6 +190,7 @@ const NotificationSidebar = ({ onClose }) => {
             <ContentWrapper>
                 <Tabs
                     defaultActiveKey='1'
+                    onChange={handleTabChange}
                     tabBarExtraContent={{ right: <Button onClick={markAllAsRead}>Mark All as Read</Button> }}
                 >
                     <TabPane tab='Unread' key='1'>

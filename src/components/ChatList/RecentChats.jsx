@@ -7,10 +7,14 @@ import SkeletonChatItem from '../../components/SkeletonCustom/SkeletonChatItem';
 import moment from 'moment';
 import { useEffect, useRef } from 'react';
 import { useSetDataOneToOneRoom } from '../../hooks/useSetDataOneToOneRoom';
+import { useSelector } from 'react-redux';
+import { authSelector } from '../../redux/features/auth/authSelections';
 
 const RecentChats = ({ recentChats, handleChatClick, isFirstLoad, loadMoreChats, loading }) => {
     const { onlineUsers } = useSocket();
     const lastChatElementRef = useRef();
+    const { user } = useSelector(authSelector);
+
     const setData = useSetDataOneToOneRoom();
     const filteredChats = recentChats
         .filter((chat) => chat.lastMessage)
@@ -20,7 +24,6 @@ const RecentChats = ({ recentChats, handleChatClick, isFirstLoad, loadMoreChats,
             }
             return chat;
         });
-    // console.log('filteredChats', filteredChats);
     useEffect(() => {
         if (loading) return;
         const observer = new IntersectionObserver((entries) => {
@@ -80,10 +83,9 @@ const RecentChats = ({ recentChats, handleChatClick, isFirstLoad, loadMoreChats,
                                     ) : (
                                         <Tooltip title='Group Chat'>
                                             <Avatar
-                                                size='large'
+                                                size={43}
                                                 src={item.chatRoomImage}
-                                                className='avatar'
-                                                shape='circle'
+                                                className='flex items-center justify-center object-cover'
                                             />
                                         </Tooltip>
                                     )
@@ -95,16 +97,21 @@ const RecentChats = ({ recentChats, handleChatClick, isFirstLoad, loadMoreChats,
                                 }
                                 description={
                                     <div className='description flex items-center justify-between'>
-                                        <div className='flex items-center'>
+                                        <div
+                                            className={`flex items-center ${
+                                                !item.lastMessage?.isRead?.some((reader) => reader._id === user._id) &&
+                                                item.lastMessage?.sender._id !== user._id
+                                                    ? 'font-bold text-black-default'
+                                                    : 'font-sans'
+                                            }`}
+                                        >
                                             {item.lastMessage?.sender.name && (
                                                 <span className='text-gray-200 mr-1 font-bold'>
                                                     {getLastName(item.lastMessage.sender.name) + ':'}
                                                 </span>
                                             )}
                                             {item.lastMessage && (
-                                                <span
-                                                    className={`text-gray ${!item.isRead ? 'font-sans' : ''} flex items-center`}
-                                                >
+                                                <span className={`flex items-center`}>
                                                     {item.lastMessage.type === 'Document' && (
                                                         <>
                                                             <AiOutlineFile
@@ -134,7 +141,7 @@ const RecentChats = ({ recentChats, handleChatClick, isFirstLoad, loadMoreChats,
                                                     )}
                                                     {!['Document', 'Video', 'Picture'].includes(
                                                         item.lastMessage.type
-                                                    ) && truncateString(item.lastMessage.content, 17)}
+                                                    ) && truncateString(item.lastMessage.content, 14)}
                                                 </span>
                                             )}
                                         </div>
