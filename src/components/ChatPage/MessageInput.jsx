@@ -38,7 +38,7 @@ const MessageInput = () => {
     };
 
     const handleFileChange = ({ file, fileList }) => {
-        setFileList(fileList); // Update file list state to display selected files
+        setFileList(fileList);
     };
 
     return (
