@@ -15,7 +15,7 @@ export const SocketContextProvider = ({ children }) => {
 
     const [onlineUsers, setOnlineUsers] = useState([]);
     const [notifications, setNotifications] = useState([]);
-    const { accessToken, user: currentUser } = useSelector(authSelector);
+    const { accessToken } = useSelector(authSelector);
     const [api, contextHolder] = notification.useNotification({
         showProgress: true
     });
@@ -40,16 +40,17 @@ export const SocketContextProvider = ({ children }) => {
         socket.on('connect', () => {
             console.log('Socket connected: ');
         });
+
         socket.on('online friends', (users) => {
-            setOnlineUsers(users.filter((user) => user._id !== currentUser._id));
+            setOnlineUsers(users.filter((user) => user._id !== socket.id));
         });
 
         socket.on('new online friend', (newOnlineUser) => {
-            if (newOnlineUser._id !== currentUser._id) {
-                setOnlineUsers((users) =>
-                    users.some((user) => user._id === newOnlineUser._id) ? users : [...users, newOnlineUser]
-                );
-            }
+            setOnlineUsers((users) =>
+                users.some((user) => user._id === newOnlineUser._id) ? users : [...users, newOnlineUser]
+            );
+
+
         });
 
         socket.on('disconnect friend', (offlineUser) => {
@@ -74,7 +75,7 @@ export const SocketContextProvider = ({ children }) => {
             socket.off('disconnect friend');
             socket.disconnect();
         };
-    }, [accessToken, api, connectSocket, currentUser]);
+    }, [accessToken, api, connectSocket]);
 
     useEffect(() => {
         (async () => {

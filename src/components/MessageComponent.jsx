@@ -18,7 +18,7 @@ const MessageComponent = ({ messages, isFirstMessage, isLastMessage }) => {
     const { sender, createdAt } = messages[0];
     const { onlineUsers } = useSocket();
     const { isLoading, fetchData } = useFetch({ showError: false, showSuccess: false });
-    const [seoData, setSeoData] = useState(null);
+    const [seoData, setSeoData] = useState({});
 
     const checkMessageType = (message) => {
         switch (message.type) {
@@ -58,7 +58,7 @@ const MessageComponent = ({ messages, isFirstMessage, isLastMessage }) => {
                                 <p className='mb-1 font-medium'>{message.content || 'Document File'}</p>
                                 <Button type='primary' href={message.fileUrl} target='_blank' rel='noopener noreferrer'>
                                     <PaperClipOutlined style={{ fontSize: '25px', color: '#ffffff' }} />
-                                    Download ({(message.fileSize / 1024).toFixed(1)} KB)
+                                    Download ({(message?.fileSize || 0 / 1024).toFixed(1)} KB)
                                 </Button>
                             </div>
                         </div>
@@ -74,10 +74,14 @@ const MessageComponent = ({ messages, isFirstMessage, isLastMessage }) => {
                             <a href={message.content} target='_blank' className='link-title'>
                                 {message.content.length > 200 ? truncateString(message.content, 50) : message.content}
                             </a>
-                            {seoData?.image && <img src={seoData?.image} alt='SEO preview' className='link-image' />}
+                            {seoData[message._id]?.image?.url && (
+                                <img src={seoData[message._id]?.image?.url} alt='SEO preview' className='link-image' />
+                            )}
                             <div className='link-details'>
-                                <h3 className='link-heading'>{seoData?.title}</h3>
-                                <p className='link-description'>{seoData?.description}</p>
+                                <h3 className='link-heading'>{seoData[message._id]?.title}</h3>
+                                <p className='link-description line-clamp-3 text-[13px] leading-[16px] opacity-90'>
+                                    {seoData[message._id]?.description}
+                                </p>
                             </div>
                         </div>
                     ),
@@ -91,12 +95,14 @@ const MessageComponent = ({ messages, isFirstMessage, isLastMessage }) => {
 
     useEffect(() => {
         (async () => {
-            if (messages[0].type === 'Link') {
-                const { data } = await fetchData(() => messageApi.fetchSEOData(messages[0].content));
-                setSeoData(data);
+            for (const message of messages) {
+                if (message.type === 'Link' && !seoData[message._id]) {
+                    const { data } = await fetchData(() => messageApi.fetchSEOData(message.content));
+                    setSeoData((prevSeoData) => ({ ...prevSeoData, [message._id]: data }));
+                }
             }
         })();
-    }, [messages, fetchData]);
+    }, [messages, fetchData, seoData]);
 
     return (
         <div className={`mb-4 flex ${sender._id === currentUser._id ? 'justify-end' : ''}`}>
@@ -108,9 +114,14 @@ const MessageComponent = ({ messages, isFirstMessage, isLastMessage }) => {
                         color={onlineUsers.find((onlineUser) => onlineUser._id === sender._id) ? '#52c41a' : '#d9d9d9'}
                         size='small'
                     >
-                        <Avatar src={sender.avatar} size={33} className='cursor-pointer' onClick={()=>{
-                            navigate(`/user/${sender._id}`)
-                        }} />
+                        <Avatar
+                            src={sender.avatar}
+                            size={33}
+                            className='cursor-pointer'
+                            onClick={() => {
+                                navigate(`/user/${sender._id}`);
+                            }}
+                        />
                     </Badge>
                 </div>
             )}
