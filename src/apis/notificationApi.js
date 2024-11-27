@@ -10,8 +10,8 @@ const notificationsApi = {
         });
     },
 
-    seenNotification: async (notificationId) => {
-        return axiosClient.patch(`/notifications/seen-notification/${notificationId}`);
+    seenNotification: async () => {
+        return axiosClient.patch(`/notifications/seen-notification`);
     },
 
     updatedNotification: async (notificationId, isRead) => {

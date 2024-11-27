@@ -6,17 +6,19 @@ import { getLastName, truncateString } from '../helpers/utils';
 import { authSelector } from '../redux/features/auth/authSelections';
 import { useSocket } from '../hooks/useSocket';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import useFetch from '../hooks/useFetch';
 import messageApi from '../apis/messageApi';
 import { FileIcon, defaultStyles } from 'react-file-icon';
 
 const MessageComponent = ({ messages, isFirstMessage, isLastMessage }) => {
+    const navigate = useNavigate();
     const { user: currentUser } = useSelector(authSelector);
     const { sender, createdAt } = messages[0];
     const { onlineUsers } = useSocket();
     const { isLoading, fetchData } = useFetch({ showError: false, showSuccess: false });
-    const [seoData, setSeoData] = useState(null);
+    const [seoData, setSeoData] = useState({});
 
     const checkMessageType = (message) => {
         switch (message.type) {
@@ -56,7 +58,7 @@ const MessageComponent = ({ messages, isFirstMessage, isLastMessage }) => {
                                 <p className='mb-1 font-medium'>{message.content || 'Document File'}</p>
                                 <Button type='primary' href={message.fileUrl} target='_blank' rel='noopener noreferrer'>
                                     <PaperClipOutlined style={{ fontSize: '25px', color: '#ffffff' }} />
-                                    Download ({(message.fileSize / 1024).toFixed(1)} KB)
+                                    Download ({(message?.fileSize || 0 / 1024).toFixed(1)} KB)
                                 </Button>
                             </div>
                         </div>
@@ -70,12 +72,16 @@ const MessageComponent = ({ messages, isFirstMessage, isLastMessage }) => {
                     content: (
                         <div className='link-preview'>
                             <a href={message.content} target='_blank' className='link-title'>
-                                {truncateString(message.content, 40)}
+                                {message.content.length > 200 ? truncateString(message.content, 50) : message.content}
                             </a>
-                            {seoData?.image && <img src={seoData?.image} alt='SEO preview' className='link-image' />}
+                            {seoData[message._id]?.image?.url && (
+                                <img src={seoData[message._id]?.image?.url} alt='SEO preview' className='link-image' />
+                            )}
                             <div className='link-details'>
-                                <h3 className='link-heading'>{seoData?.title}</h3>
-                                <p className='link-description'>{seoData?.description}</p>
+                                <h3 className='link-heading'>{seoData[message._id]?.title}</h3>
+                                <p className='link-description line-clamp-3 text-[13px] leading-[16px] opacity-90'>
+                                    {seoData[message._id]?.description}
+                                </p>
                             </div>
                         </div>
                     ),
@@ -89,12 +95,14 @@ const MessageComponent = ({ messages, isFirstMessage, isLastMessage }) => {
 
     useEffect(() => {
         (async () => {
-            if (messages[0].type === 'Link') {
-                const { data } = await fetchData(() => messageApi.fetchSEOData(messages[0].content));
-                setSeoData(data);
+            for (const message of messages) {
+                if (message.type === 'Link' && !seoData[message._id]) {
+                    const { data } = await fetchData(() => messageApi.fetchSEOData(message.content));
+                    setSeoData((prevSeoData) => ({ ...prevSeoData, [message._id]: data }));
+                }
             }
         })();
-    }, [messages, fetchData]);
+    }, [messages, fetchData, seoData]);
 
     return (
         <div className={`mb-4 flex ${sender._id === currentUser._id ? 'justify-end' : ''}`}>
@@ -106,7 +114,14 @@ const MessageComponent = ({ messages, isFirstMessage, isLastMessage }) => {
                         color={onlineUsers.find((onlineUser) => onlineUser._id === sender._id) ? '#52c41a' : '#d9d9d9'}
                         size='small'
                     >
-                        <Avatar src={sender.avatar} className='avatar' />
+                        <Avatar
+                            src={sender.avatar}
+                            size={33}
+                            className='cursor-pointer'
+                            onClick={() => {
+                                navigate(`/user/${sender._id}`);
+                            }}
+                        />
                     </Badge>
                 </div>
             )}
@@ -145,22 +160,13 @@ const MessageComponent = ({ messages, isFirstMessage, isLastMessage }) => {
                                         : 'text-black mr-auto bg-white-dark'
                                     : ''
                             }`}
+                            style={{ wordBreak: 'break-word' }}
                         >
                             {content}
                         </div>
                     );
                 })}
-                {/* <div className='text-gray-500 mt-1 flex items-center text-xs' style={{ fontSize: '10px' }}>
-                    <span>{new Date(createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                </div> */}
             </div>
-            {/* {sender._id === currentUser._id && (
-                <div className='mb-5 ml-1 flex items-end'>
-                    <Badge dot offset={[-5, 28]} color={'#52c41a'} size='small'>
-                        <Avatar src={sender.avatar} className='avatar' />
-                    </Badge>
-                </div>
-            )} */}
         </div>
     );
 };

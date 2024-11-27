@@ -52,8 +52,8 @@ const OnlineUsers = ({ handleChatClick }) => {
                           >
                               <div className='relative'>
                                   <Space>
-                                      <Badge dot color='#52c41a' size='small' offset={[-16, 40]}>
-                                          <Avatar src={user.avatar} className='avatar' />
+                                      <Badge className='cursor-pointer' dot color='#52c41a' offset={[-6, 37]}>
+                                          <Avatar src={user.avatar} size={43} />
                                       </Badge>
                                   </Space>
                               </div>

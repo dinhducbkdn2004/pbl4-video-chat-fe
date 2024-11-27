@@ -5,15 +5,20 @@ import RoomChatApi from '../../apis/RoomChatApi';
 import userApi from '../../apis/userApi';
 import useFetch from '../../hooks/useFetch';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { authSelector } from '../../redux/features/auth/authSelections';
 
 const UserCard = ({ data }) => {
-    const { fetchData } = useFetch({ showError: true, showSuccess: true  });
-    const { name, email, avatar, isFriend = false, _id } = data;
+    const { fetchData } = useFetch({ showError: true, showSuccess: true });
+    console.log('data', data);
+    const { name, introduction, avatar, isFriend = false, _id } = data;
     const navigate = useNavigate();
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [caption, setCaption] = useState('');
     const [friendStatus, setFriendStatus] = useState(isFriend);
-
+    const { user: currentUser } = useSelector(authSelector);
+    const [caption, setCaption] = useState(
+        `Xin chào mình là ${currentUser.name}, mình biết bạn qua Connectica. Làm bạn với mình nhé!`
+    );
     const handleChatClick = async (e) => {
         e.stopPropagation();
         if (friendStatus) {
@@ -45,7 +50,7 @@ const UserCard = ({ data }) => {
                     <Avatar src={avatar} size={40} />
                     <div className='flex-1'>
                         <h1 className='text-black text-lg'>{name}</h1>
-                        <h2 className='text-black text-base'>{email}</h2>
+                        <h2 className='text-gray text-small'>{introduction}</h2>
                     </div>
                     <Button onClick={handleChatClick}>{friendStatus ? 'Nhắn tin' : 'Kết bạn'}</Button>
                 </div>
@@ -57,9 +62,11 @@ const UserCard = ({ data }) => {
                 onCancel={() => setIsModalVisible(false)}
             >
                 <Input.TextArea
+                    style={{ height: '100px', width: '100%' }}
                     value={caption}
                     onChange={(e) => setCaption(e.target.value)}
                     placeholder='Nhập mô tả cho lời mời kết bạn'
+                    maxLength={150}
                 />
             </Modal>
         </>

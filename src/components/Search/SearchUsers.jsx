@@ -15,28 +15,18 @@ const SearchUsers = () => {
     const { user: currentUser } = useSelector(authSelector);
     const { fetchData, isLoading } = useFetch({ showSuccess: false });
     const [users, setUsers] = useState([]);
-    const [friendList, setFriendList] = useState([]);
 
     useEffect(() => {
         if (currentUser && currentUser._id) {
-            const fetchUsersAndFriends = async () => {
-                const [usersData, friendsData] = await Promise.all([
-                    fetchData(() => userApi.getAllUser()),
-                    fetchData(() => userApi.getFriendList(currentUser._id))
-                ]);
-    
-                if (usersData.isOk && friendsData.isOk) {
-                    const friends = friendsData.data;
-                    const usersWithFriendStatus = usersData.data.map(user => ({
-                        ...user,
-                        isFriend: friends.some(friend => friend._id === user._id)
-                    }));
-                    setUsers(usersWithFriendStatus);
-                    setFriendList(friends);
+            const fetchUsers = async () => {
+                const usersData = await fetchData(() => userApi.getAllUser());
+
+                if (usersData.isOk) {
+                    setUsers(usersData.data);
                 }
             };
-    
-            fetchUsersAndFriends();
+
+            fetchUsers();
         }
     }, [fetchData, currentUser]);
 
@@ -44,15 +34,11 @@ const SearchUsers = () => {
         const data = await fetchData(() => userApi.searchUsers(value, 1, 10));
 
         if (data.isOk) {
-            const usersWithFriendStatus = data.data.map(user => ({
-                ...user,
-                isFriend: friendList.some(friend => friend._id === user._id)
-            }));
-            setUsers(usersWithFriendStatus);
+            setUsers(data.data);
         }
     };
 
-    const debouncedSearch = useCallback(debounce(handleSearchUsers, 300), [friendList]);
+    const debouncedSearch = useCallback(debounce(handleSearchUsers, 300), []);
 
     return (
         <div className='bg-white rounded-lg p-6 shadow-md'>

@@ -3,6 +3,8 @@ import { Card, Avatar, Typography, Button, Modal, Input } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import RoomChatApi from '../../apis/RoomChatApi';
 import useFetch from '../../hooks/useFetch';
+import { useSelector } from 'react-redux';
+import { authSelector } from '../../redux/features/auth/authSelections';
 
 const { Title, Text } = Typography;
 
@@ -10,7 +12,10 @@ const GroupCard = ({ data, isMember }) => {
     const navigate = useNavigate();
     const { fetchData } = useFetch({ showSuccess: true, showError: true });
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [requestMessage, setRequestMessage] = useState('');
+    const { user: currentUser } = useSelector(authSelector);
+    const [requestMessage, setRequestMessage] = useState(
+        `Xin chào mình là ${currentUser.name}, mình biết nhóm qua Connectica. Duyệt mình với nhé!`
+    );
     const [requestSent, setRequestSent] = useState(false);
 
     const handleButtonClick = () => {
@@ -61,7 +66,9 @@ const GroupCard = ({ data, isMember }) => {
                     </Text>
                 </div>
                 <div style={{ marginTop: '20px', flexGrow: 1 }}>
-                    <Text strong style={{ color: 'white' }}>Participants:</Text>
+                    <Text strong style={{ color: 'white' }}>
+                        Participants:
+                    </Text>
                     <div
                         style={{
                             display: 'flex',
@@ -71,13 +78,19 @@ const GroupCard = ({ data, isMember }) => {
                         }}
                     >
                         {data.participants.length > 0 ? (
-                            <Avatar.Group maxCount={5} size="small" maxStyle={{ color: '#f56a00', backgroundColor: '#fde3cf' }}>
+                            <Avatar.Group
+                                maxCount={5}
+                                size='small'
+                                maxStyle={{ color: '#f56a00', backgroundColor: '#fde3cf' }}
+                            >
                                 {data.participants.map((participant) => (
                                     <Avatar key={participant._id} src={participant.avatar} />
                                 ))}
                             </Avatar.Group>
                         ) : (
-                            <Text type='secondary' style={{ color: 'white' }}>No participants available.</Text>
+                            <Text type='secondary' style={{ color: 'white' }}>
+                                No participants available.
+                            </Text>
                         )}
                         <Button
                             type='primary'
@@ -92,10 +105,12 @@ const GroupCard = ({ data, isMember }) => {
             </Card>
 
             <Modal title='Request to Join Group' visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-                <Input
+                <Input.TextArea
+                    style={{ height: '100px', width: '100%' }}
                     value={requestMessage}
                     onChange={(e) => setRequestMessage(e.target.value)}
-                    placeholder='Enter your message'
+                    placeholder='Nhập mô tả cho lời mời tham gia nhóm'
+                    maxLength={150}
                 />
             </Modal>
         </>

@@ -69,13 +69,7 @@ const SearchBar = ({ searchValue, handleSearchChange, searchResults, handleChatC
                             return (
                                 <List.Item className='list-item' key={item._id} onClick={() => handleChatClick(item)}>
                                     <List.Item.Meta
-                                        avatar={
-                                            <Avatar
-                                                src={item.chatRoomImage}
-                                                className='avatar flex flex-row'
-                                                size={38}
-                                            />
-                                        }
+                                        avatar={<Avatar src={item.chatRoomImage} className='flex flex-row' size={38} />}
                                         title={<span className='title text-base font-semibold'>{item.name}</span>}
                                         description={descriptionContent}
                                     />
