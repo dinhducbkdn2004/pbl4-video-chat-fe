@@ -28,26 +28,12 @@ const VideoCall = () => {
     const [isScreenSharing, setIsScreenSharing] = useState(false);
 
     useEffect(() => {
-        if (peerStreams.length > 1) {
+        if (peerStreams.length >= 2) {
             setCallStatus('connected');
+        } else {
+            setCallStatus((pre) => (pre === 'connected' ? 'end-calling' : pre));
         }
     }, [peerStreams]);
-
-    useEffect(() => {
-        if (!socket) return;
-        if (typeCall === 'calling') {
-            console.log('calling');
-            console.log(socket);
-            socket.emit('caller:start_new_call', { chatRoomId: currentChatRoomId });
-            return;
-        }
-
-        if (typeCall === 'answer') {
-            console.log('answer');
-            socket.emit('callee:accept_call', { chatRoomId: currentChatRoomId, peerId: peerRef.current?.id });
-            return;
-        }
-    }, [currentChatRoomId, socket, typeCall]);
 
     console.log(peerStreams);
 
@@ -135,7 +121,7 @@ const VideoCall = () => {
         } else {
             stopScreenShare();
         }
-    }, [isScreenSharing, stopScreenShare]);
+    }, [isScreenSharing, stopScreenShare, updatePeerStreams]);
 
     const removePeer = useCallback((userId) => {
         setPeerStreams((prevPeerStreams) => prevPeerStreams.filter((ps) => ps.user._id !== userId)); // Remove peer by peerId
@@ -238,7 +224,24 @@ const VideoCall = () => {
                 peerRef.current.on('open', (peerId) => {
                     console.log('My Peer ID:', peerId);
                     joinRoom(peerId);
+
                     addVideoStream({ peerId, stream: myStream, user: currentUser });
+
+                    if (typeCall === 'calling') {
+                        console.log('calling');
+                        console.log(socket);
+                        socket.emit('caller:start_new_call', { chatRoomId: currentChatRoomId });
+                        return;
+                    }
+
+                    if (typeCall === 'answer') {
+                        console.log('answer');
+                        socket.emit('callee:accept_call', {
+                            chatRoomId: currentChatRoomId,
+                            peerId: peerRef.current?.id
+                        });
+                        return;
+                    }
                 });
 
                 // Handle incoming calls
@@ -260,7 +263,7 @@ const VideoCall = () => {
         return () => {
             peerRef.current?.destroy();
         };
-    }, [addVideoStream, currentUser, joinRoom, socket]);
+    }, [addVideoStream, currentChatRoomId, currentUser, joinRoom, socket, typeCall]);
 
     useEffect(() => {
         const handleBeforeUnload = (event) => {
