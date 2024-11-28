@@ -13,7 +13,7 @@ import ImgCrop from 'antd-img-crop';
 const ChangeBackgroundImage = ({ backgroundImage }) => {
     const [isChangingAvatar, setIsChangingAvatar] = useState(false);
     const [fileList, setFileList] = useState([]);
-    const { fetchData, isLoading, contextHolder } = useFetch();
+    const { fetchData, isLoading, contextHolder } = useFetch({ showSuccess: true, showError: true });
     const dispatch = useDispatch();
 
     const onUpload = async (file) => {
@@ -35,7 +35,7 @@ const ChangeBackgroundImage = ({ backgroundImage }) => {
         <div>
             {contextHolder}
 
-            <div className='flex items-center justify-between mb-2'>
+            <div className='mb-2 flex items-center justify-between'>
                 <h1>Chỉnh sửa ảnh bìa</h1>
 
                 <Button

@@ -32,12 +32,12 @@ const FriendRequestPage = () => {
 };
 
 const FriendRequestBox = ({ setRequestCount }) => {
-    const { fetchData, isLoading } = useFetch({ showSuccess: false });
+    const { fetchData, isLoading } = useFetch({ showSuccess: false, showError: false });
     const [requests, setRequests] = useState([]);
 
     useEffect(() => {
         (async () => {
-            const data = await fetchData(() => userApi.getFriendRequest(0, 10)); // chưa có api
+            const data = await fetchData(() => userApi.getFriendRequest(0, 10));
             if (data.isOk) {
                 setRequests(data.data);
                 setRequestCount(data.data.length);
@@ -63,12 +63,12 @@ const FriendRequestBox = ({ setRequestCount }) => {
 };
 
 const SentRequests = ({ setSentRequestCount }) => {
-    const { fetchData, isLoading } = useFetch({ showSuccess: false });
+    const { fetchData, isLoading } = useFetch({ showSuccess: false, showError: false });
     const [sentRequests, setSentRequests] = useState([]);
 
     useEffect(() => {
         (async () => {
-            const data = await fetchData(() => userApi.getSentRequests(0, 10)); // chưa có api
+            const data = await fetchData(() => userApi.getSentRequests(0, 10));
             if (data.isOk) {
                 setSentRequests(data.data);
                 setSentRequestCount(data.data.length);
@@ -94,18 +94,18 @@ const SentRequests = ({ setSentRequestCount }) => {
 };
 
 const FriendSuggestions = ({ setSuggestionCount }) => {
-    const { fetchData, isLoading } = useFetch({ showSuccess: false });
+    const { fetchData, isLoading } = useFetch({ showSuccess: false, showError: false });
     const [suggestions, setSuggestions] = useState([]);
 
-    useEffect(() => {
-        (async () => {
-            const data = await fetchData(() => userApi.getFriendSuggestions(0, 10));
-            if (data.isOk) {
-                setSuggestions(data.data);
-                setSuggestionCount(data.data.length);
-            }
-        })();
-    }, [fetchData, setSuggestionCount]);
+    // useEffect(() => {
+    //     (async () => {
+    //         const data = await fetchData(() => userApi.getFriendSuggestions(0, 10)); // chua co api
+    //         if (data.isOk) {
+    //             setSuggestions(data.data);
+    //             setSuggestionCount(data.data.length);
+    //         }
+    //     })();
+    // }, [fetchData, setSuggestionCount]);
 
     return (
         <div className='space-y-4'>

@@ -11,7 +11,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 const MessageList = () => {
     const { socket } = useSocket();
     const { chatRoomId: currentChatRoomId } = useParams();
-    const { fetchData, isLoading } = useFetch({ showSuccess: false, showError: true });
+    const { fetchData, isLoading } = useFetch({ showSuccess: false, showError: false });
     const [messages, setMessages] = useState([]);
     const [hasMore, setHasMore] = useState(true);
     const [page, setPage] = useState(1);

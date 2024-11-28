@@ -13,7 +13,7 @@ const { Paragraph } = Typography;
 
 const SearchUsers = () => {
     const { user: currentUser } = useSelector(authSelector);
-    const { fetchData, isLoading } = useFetch({ showSuccess: false });
+    const { fetchData, isLoading } = useFetch({ showSuccess: false, showError: false });
     const [users, setUsers] = useState([]);
 
     useEffect(() => {

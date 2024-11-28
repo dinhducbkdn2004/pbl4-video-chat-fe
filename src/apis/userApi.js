@@ -18,6 +18,9 @@ const userApi = {
             }
         });
     },
+    getSentRequests: () => {
+        return axiosClient.get(`/friend-requests/getSentRequest`);
+    },
 
     getFriendList: (userId) => {
         return axiosClient.get(`/users/get-detail/${userId}/friend-list`);

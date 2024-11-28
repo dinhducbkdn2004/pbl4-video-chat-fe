@@ -28,7 +28,7 @@ const GroupListPage = () => {
 };
 
 const PrivateGroups = ({ setPrivateGroupCount }) => {
-    const { fetchData, isLoading } = useFetch({ showSuccess: false });
+    const { fetchData, isLoading } = useFetch({ showSuccess: false, showError: false });
     const [privateGroups, setPrivateGroups] = useState([]);
 
     useEffect(() => {
@@ -61,7 +61,7 @@ const PrivateGroups = ({ setPrivateGroupCount }) => {
 };
 
 const CommunityGroups = ({ setCommunityGroupCount }) => {
-    const { fetchData, isLoading } = useFetch({ showSuccess: false });
+    const { fetchData, isLoading } = useFetch({ showSuccess: false, showError: false });
     const [communityGroups, setCommunityGroups] = useState([]);
 
     useEffect(() => {

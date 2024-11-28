@@ -17,7 +17,7 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose }) => {
     const { chatRoomId: currentChatRoomId } = useParams();
     const { name: roomName, participants: members, typeRoom, chatRoomImage, admins, moderators } = chatInfo || {};
     const currentUser = me || {};
-    const { fetchData, contextHolder } = useFetch({ showSuccess: false, showError: true });
+    const { fetchData, contextHolder } = useFetch({ showSuccess: false, showError: false });
     const [isChangeDetailsVisible, setIsChangeDetailsVisible] = useState(false);
     const [changeDetailsType, setChangeDetailsType] = useState('');
     const [stateOpenKeys, setStateOpenKeys] = useState(['1']);

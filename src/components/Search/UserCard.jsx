@@ -9,8 +9,7 @@ import { useSelector } from 'react-redux';
 import { authSelector } from '../../redux/features/auth/authSelections';
 
 const UserCard = ({ data }) => {
-    const { fetchData } = useFetch({ showError: true, showSuccess: true });
-    console.log('data', data);
+    const { fetchData } = useFetch({ showError: false, showSuccess: false });
     const { name, introduction, avatar, isFriend = false, _id } = data;
     const navigate = useNavigate();
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -50,7 +49,7 @@ const UserCard = ({ data }) => {
                     <Avatar src={avatar} size={40} />
                     <div className='flex-1'>
                         <h1 className='text-black text-lg'>{name}</h1>
-                        <h2 className='text-gray text-small'>{introduction}</h2>
+                        <h2 className='text-small text-gray'>{introduction}</h2>
                     </div>
                     <Button onClick={handleChatClick}>{friendStatus ? 'Nhắn tin' : 'Kết bạn'}</Button>
                 </div>
