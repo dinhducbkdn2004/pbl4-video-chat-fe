@@ -14,7 +14,7 @@ const FriendListPage = () => {
     const [users, setUsers] = useState([]);
     const [sortOrder, setSortOrder] = useState('asc');
     const [searchQuery, setSearchQuery] = useState('');
-    const { isLoading, fetchData } = useFetch({ showSuccess: false });
+    const { isLoading, fetchData } = useFetch({ showSuccess: false, showError: false });
     const { user } = useSelector(authSelector);
 
     useEffect(() => {

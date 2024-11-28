@@ -89,24 +89,6 @@
     padding: 8px 0;
 }
 
-.chat-list .search-results::-webkit-scrollbar {
-    width: 6px;
-    opacity: 0; /* Ẩn thanh cuộn */
-    transition: opacity 0.3s; /* Thêm hiệu ứng chuyển đổi */
-}
-
-.chat-list .search-results:hover::-webkit-scrollbar {
-    opacity: 1; /* Hiển thị thanh cuộn khi hover */
-}
-
-.chat-list .search-results::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2); /* Màu mờ cho thanh cuộn */
-    border-radius: 5px;
-}
-
-.chat-list .search-results::-webkit-scrollbar-track {
-    background-color: rgba(0, 0, 0, 0.1); /* Màu mờ cho track của thanh cuộn */
-}
 
 .chat-list .search-results .list-item {
     border: none;

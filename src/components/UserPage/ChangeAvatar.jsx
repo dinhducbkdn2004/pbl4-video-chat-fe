@@ -12,7 +12,7 @@ import Loading from '../Loading/Loading';
 const ChangeAvatar = ({ avatar }) => {
     const [isChangingAvatar, setIsChangingAvatar] = useState(false);
     const [file, setFile] = useState([]);
-    const { fetchData, isLoading, contextHolder } = useFetch();
+    const { fetchData, isLoading, contextHolder } = useFetch({ showSuccess: true, showError: true });
     const dispatch = useDispatch();
 
     const onUpload = async (file) => {

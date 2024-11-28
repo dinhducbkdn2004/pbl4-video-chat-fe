@@ -11,7 +11,7 @@ const { Option } = Select;
 
 const AddRoomModal = ({ open, onCreate, onCancel }) => {
     const [users, setUsers] = useState([]);
-    const { isLoading, fetchData } = useFetch({ showSuccess: false });
+    const { isLoading, fetchData } = useFetch({ showSuccess: true, showError: false });
     const { user } = useSelector(authSelector);
 
     useEffect(() => {

@@ -5,10 +5,19 @@ import { Input, List, Avatar } from 'antd';
 import userApi from '../../apis/userApi';
 import { useSelector } from 'react-redux';
 import { authSelector } from '../../redux/features/auth/authSelections';
+import { debounce } from 'lodash';
+import RoomChatApi from '../../apis/RoomChatApi';
 
-const SearchBar = ({ searchValue, handleSearchChange, searchResults, handleChatClick }) => {
+const SearchBar = ({ handleChatClick }) => {
+    const [searchValue, setSearchValue] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
     const [friendList, setFriendList] = useState([]);
     const { user } = useSelector(authSelector);
+
+    const debouncedSearch = debounce(async (value) => {
+        const data = await RoomChatApi.searchChatroomByName(true, value);
+        if (data.isOk) setSearchResults(data.data);
+    }, 700);
 
     useEffect(() => {
         if (user && user._id) {
@@ -19,6 +28,11 @@ const SearchBar = ({ searchValue, handleSearchChange, searchResults, handleChatC
             fetchFriendList();
         }
     }, [user]);
+
+    const handleSearchChange = (e) => {
+        setSearchValue(e.target.value);
+        debouncedSearch(e.target.value);
+    };
 
     const isFriend = (userId) => {
         return friendList.some((friend) => friend._id === userId);
@@ -42,17 +56,11 @@ const SearchBar = ({ searchValue, handleSearchChange, searchResults, handleChatC
                 <div className='search-results'>
                     <List
                         itemLayout='horizontal'
-                        dataSource={searchResults}
+                        dataSource={searchResults.sort((a, b) => a.typeRoom === 'OneToOne' ? -1 : 1)}
                         renderItem={(item) => {
                             let descriptionContent = null;
 
-                            if (item.typeRoom === 'Group') {
-                                descriptionContent = (
-                                    <span className='participants text-xs'>
-                                        {item.participants.map((participant) => participant.name).join(', ')}
-                                    </span>
-                                );
-                            } else if (item.typeRoom === 'OneToOne') {
+                            if (item.typeRoom === 'OneToOne') {
                                 const otherParticipant = item.participants.find(
                                     (participant) => user && participant._id !== user._id
                                 );
@@ -62,6 +70,13 @@ const SearchBar = ({ searchValue, handleSearchChange, searchResults, handleChatC
                                         {otherParticipant && isFriend(otherParticipant._id)
                                             ? 'Bạn bè'
                                             : 'Người dùng trên Connectica'}
+                                    </span>
+                                );
+                            } else if (item.typeRoom === 'Group') {
+                                const participantsToShow = item.participants.slice(0, 3).map((participant) => participant.name).join(', ');
+                                descriptionContent = (
+                                    <span className='participants text-xs'>
+                                        {participantsToShow}{item.participants.length > 3 ? ', ...' : ''}
                                     </span>
                                 );
                             }
@@ -84,9 +99,6 @@ const SearchBar = ({ searchValue, handleSearchChange, searchResults, handleChatC
 };
 
 SearchBar.propTypes = {
-    searchValue: PropTypes.string.isRequired,
-    handleSearchChange: PropTypes.func.isRequired,
-    searchResults: PropTypes.array.isRequired,
     handleChatClick: PropTypes.func.isRequired
 };
 
