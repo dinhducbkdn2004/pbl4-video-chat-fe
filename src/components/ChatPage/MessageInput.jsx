@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { Button, Input, Popover, Upload, Spin } from 'antd';
 import { PaperClipOutlined, SmileOutlined, SendOutlined } from '@ant-design/icons';
 import EmojiPicker from 'emoji-picker-react';
@@ -7,17 +7,44 @@ import RoomChatApi from '../../apis/RoomChatApi';
 import uploadApi from '../../apis/uploadApi';
 import { useParams } from 'react-router-dom';
 import typeOfFile from '../../helpers/typeOfFile';
+import { useSocket } from '../../hooks/useSocket';
+import { useSelector } from 'react-redux';
+import { authSelector } from '../../redux/features/auth/authSelections';
+import { debounce } from 'lodash';
 
 const MessageInput = () => {
     const [isEmojiPickerVisible, setIsEmojiPickerVisible] = useState(false);
     const [message, setMessage] = useState('');
-    const [fileList, setFileList] = useState([]); 
+    const [fileList, setFileList] = useState([]);
     const { chatRoomId: currentChatRoomId } = useParams();
     const { fetchData } = useFetch({ showError: false, showSuccess: false });
+    const { socket } = useSocket();
+    const { user } = useSelector(authSelector);
+    const isChangeMessageRef = useRef(false);
+
+    const debounceEmitStop = useRef(
+        debounce(() => {
+            socket.emit('user:stop-change-message', { chatRoomId: currentChatRoomId, user });
+            isChangeMessageRef.current = false;
+        }, 2000)
+    ).current;
+
+    const handleChangeMessage = useCallback(
+        (e) => {
+            setMessage(e.target.value);
+
+            if (!isChangeMessageRef.current) {
+                isChangeMessageRef.current = true;
+                socket.emit('user:change-message', { chatRoomId: currentChatRoomId, user });
+            }
+            debounceEmitStop();
+        },
+        [currentChatRoomId, debounceEmitStop, socket, user]
+    );
 
     const handleSendMessage = async () => {
         if (message.length > 0)
-            await fetchData(() =>
+            fetchData(() =>
                 RoomChatApi.createMessage(message, currentChatRoomId, message.startsWith('http') ? 'Link' : 'Text')
             );
 
@@ -25,7 +52,9 @@ const MessageInput = () => {
             for (const file of fileList) {
                 const uploadResponse = await uploadApi.upload(file.originFileObj, 'chat_files');
                 const fileUrl = uploadResponse.data.url;
-                await fetchData(() => RoomChatApi.createMessage(file.originFileObj.name, currentChatRoomId, typeOfFile(file), fileUrl));
+                await fetchData(() =>
+                    RoomChatApi.createMessage(file.originFileObj.name, currentChatRoomId, typeOfFile(file), fileUrl)
+                );
             }
         }
 
@@ -49,7 +78,7 @@ const MessageInput = () => {
             {fileList.length > 0 && (
                 <div className='mb-2'>
                     <Upload
-                        listType='picture' 
+                        listType='picture'
                         fileList={fileList}
                         onChange={handleFileChange}
                         beforeUpload={() => false}
@@ -96,7 +125,7 @@ const MessageInput = () => {
 
                 <Input
                     value={message}
-                    onChange={(e) => setMessage(e.target.value)}
+                    onChange={handleChangeMessage}
                     onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                     placeholder='Type your message here...'
                     className='rounded-5 mr-2 flex-1 p-2'

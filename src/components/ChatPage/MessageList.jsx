@@ -50,6 +50,19 @@ const MessageList = () => {
         setPage(1);
     }, [currentChatRoomId]);
 
+    useEffect(() => {
+        socket?.on('sever:user-start-typing', ({ user, chatRoomId }) => {
+            console.log(user);
+        });
+        socket?.on('sever:user-stop-typing', ({ user, chatRoomId }) => {
+            console.log(user);
+        });
+        return () => {
+            socket?.off('sever:user-stop-typing', () => {});
+            socket?.off('sever:user-stop-typing', () => {});
+        };
+    }, [socket]);
+
     const fetchMoreMessages = async () => {
         setIsFetchingMore(true);
         const nextPage = page + 1;
@@ -68,7 +81,7 @@ const MessageList = () => {
     const groupMessages = (messages) => {
         const groupedMessages = [];
         let currentGroup = [];
-        messages.forEach((msg, index) => {
+        messages.forEach((msg) => {
             if (currentGroup.length === 0 || currentGroup[0].sender._id === msg.sender._id) {
                 currentGroup.push(msg);
             } else {
