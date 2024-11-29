@@ -13,7 +13,7 @@ import { InboxOutlined, MailOutlined, AppstoreOutlined, LogoutOutlined, UserAddO
 
 const { Text } = Typography;
 
-const ChatInfoSidebar = ({ chatInfo, me, open, onClose }) => {
+const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
     const { chatRoomId: currentChatRoomId } = useParams();
     const { name: roomName, participants: members, typeRoom, chatRoomImage, admins, moderators } = chatInfo || {};
     const currentUser = me || {};
@@ -50,10 +50,12 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose }) => {
         if (currentUserRole === 'Admin' || (currentUserRole === 'Moderator' && memberRole === 'Member')) {
             await fetchData(() => RoomChatApi.removeMember(currentChatRoomId, memberId));
         }
+        await updateChatInfo();
     };
 
     const handleChangeRole = async (memberId, newRole) => {
         await fetchData(() => RoomChatApi.changeRole(currentChatRoomId, memberId, newRole));
+        await updateChatInfo();
     };
 
     const handleLeaveGroup = async () => {
@@ -72,12 +74,14 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose }) => {
         await fetchData(() => RoomChatApi.updatedRequest(requestId, 'ACCEPTED'));
         setRequests((prevRequests) => prevRequests.filter((request) => request._id !== requestId));
         setRequestsCount((prevCount) => prevCount - 1);
+        await updateChatInfo();
     };
 
     const handleRejectRequest = async (requestId) => {
         await fetchData(() => RoomChatApi.updatedRequest(requestId, 'DECLINED'));
         setRequests((prevRequests) => prevRequests.filter((request) => request._id !== requestId));
         setRequestsCount((prevCount) => prevCount - 1);
+        await updateChatInfo();
     };
 
     const createMemberItems = (role) =>
@@ -92,6 +96,7 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose }) => {
                         handleChangeRole={handleChangeRole}
                         currentUser={currentUser}
                         currentUserRole={getRole(currentUser._id)}
+                        updateChatInfo={updateChatInfo}
                     />
                 )
             }));
@@ -286,6 +291,7 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose }) => {
                         type={changeDetailsType}
                         chatRoomId={currentChatRoomId}
                         onClose={handleCloseChangeDetails}
+                        updateChatInfo={updateChatInfo}
                     />
                 )}
             </Drawer>

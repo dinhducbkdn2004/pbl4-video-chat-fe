@@ -2,18 +2,27 @@ import React from 'react';
 import { Avatar, Dropdown, Menu, Button } from 'antd';
 import { EllipsisOutlined } from '@ant-design/icons';
 
-const MemberItem = ({ member, handleRemoveMember, handleChangeRole, currentUser, currentUserRole }) => {
+const MemberItem = ({ member, handleRemoveMember, handleChangeRole, currentUser, currentUserRole, updateChatInfo }) => {
     const menu = (
         <Menu>
-            <Menu.Item key='remove' onClick={() => handleRemoveMember(member._id)}>
+            <Menu.Item key='remove' onClick={async () => {
+                await handleRemoveMember(member._id);
+                await updateChatInfo();
+            }}>
                 Xóa thành viên
             </Menu.Item>
             {currentUserRole === 'Admin' && (
                 <Menu.SubMenu key='changeRole' title='Thay đổi vai trò'>
-                    <Menu.Item key='admin' onClick={() => handleChangeRole(member._id, 'admin')}>
+                    <Menu.Item key='admin' onClick={async () => {
+                        await handleChangeRole(member._id, 'admin');
+                        await updateChatInfo();
+                    }}>
                         Admin
                     </Menu.Item>
-                    <Menu.Item key='member' onClick={() => handleChangeRole(member._id, 'moderator')}>
+                    <Menu.Item key='moderator' onClick={async () => {
+                        await handleChangeRole(member._id, 'moderator');
+                        await updateChatInfo();
+                    }}>
                         Moderator
                     </Menu.Item>
                 </Menu.SubMenu>

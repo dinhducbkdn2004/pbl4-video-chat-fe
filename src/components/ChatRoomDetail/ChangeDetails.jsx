@@ -6,7 +6,7 @@ import useFetch from '../../hooks/useFetch';
 import uploadApi from '../../apis/uploadApi';
 import ImgCrop from 'antd-img-crop';
 
-const ChangeDetails = ({ type, chatRoomId, onClose }) => {
+const ChangeDetails = ({ type, chatRoomId, onClose, updateChatInfo }) => {
     const { fetchData, isLoading, contextHolder } = useFetch({ showSuccess: false, showError: false });
     const [name, setName] = useState('');
     const [file, setFile] = useState(null);
@@ -23,6 +23,7 @@ const ChangeDetails = ({ type, chatRoomId, onClose }) => {
             setIsUploading(false);
         }
         await fetchData(() => RoomChatApi.changeDetailChatRoom(data));
+        await updateChatInfo();
         onClose();
     };
 

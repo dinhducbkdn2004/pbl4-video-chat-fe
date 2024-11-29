@@ -2,13 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import moment from 'moment';
 import notificationApi from '../../apis/notificationApi';
 import { Button, List, Typography, Layout, Avatar, Tabs, Dropdown, Menu, Spin } from 'antd';
-import {
-    CloseOutlined,
-    EllipsisOutlined,
-    CloseCircleOutlined,
-    CheckCircleOutlined,
-    UserAddOutlined
-} from '@ant-design/icons';
+import { CloseOutlined, EllipsisOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 
 const { Content } = Layout;
@@ -46,7 +40,7 @@ const ContentWrapper = styled(Content)`
     height: calc(100vh - 120px);
 `;
 
-const NotificationSidebar = ({ onClose }) => {
+const NotificationSidebar = ({ onClose, markAllAsRead }) => {
     const sidebarRef = useRef();
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -69,7 +63,11 @@ const NotificationSidebar = ({ onClose }) => {
 
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (sidebarRef.current && !sidebarRef.current.contains(event.target) && !event.target.closest('.ant-dropdown')) {
+            if (
+                sidebarRef.current &&
+                !sidebarRef.current.contains(event.target) &&
+                !event.target.closest('.ant-dropdown')
+            ) {
                 onClose();
             }
         };
@@ -143,11 +141,10 @@ const NotificationSidebar = ({ onClose }) => {
         );
     };
 
-    const markAllAsRead = async () => {
+    const markAllAsReadHandler = async () => {
         await notificationApi.seenNotification();
-        setNotifications((prevNotifications) =>
-            prevNotifications.map((item) => ({ ...item, isRead: true }))
-        );
+        setNotifications((prevNotifications) => prevNotifications.map((item) => ({ ...item, isRead: true })));
+        markAllAsRead();
     };
 
     const readNotifications = notifications.filter((item) => item.isRead);
@@ -191,7 +188,7 @@ const NotificationSidebar = ({ onClose }) => {
                 <Tabs
                     defaultActiveKey='1'
                     onChange={handleTabChange}
-                    tabBarExtraContent={{ right: <Button onClick={markAllAsRead}>Mark All as Read</Button> }}
+                    tabBarExtraContent={{ right: <Button onClick={markAllAsReadHandler}>Mark All as Read</Button> }}
                 >
                     <TabPane tab='Unread' key='1'>
                         <List
