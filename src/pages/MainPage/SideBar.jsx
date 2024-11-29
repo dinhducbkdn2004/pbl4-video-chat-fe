@@ -34,6 +34,19 @@ const Sidebar = () => {
 
     const unreadCount = notifications.filter((item) => !item.isRead).length;
 
+    const markAllAsRead = () => {
+        const updatedNotifications = notifications.map((notification) => ({
+            ...notification,
+            isRead: true
+        }));
+        setNotifications(updatedNotifications);
+    };
+
+    const handleNotificationClick = () => {
+        setNotificationSidebarVisible(true);
+        markAllAsRead();
+    };
+
     const menuItems = [
         {
             key: 'profile',
@@ -81,7 +94,7 @@ const Sidebar = () => {
                 </Badge>
             ),
             className: 'custom-menu-item',
-            onClick: () => setNotificationSidebarVisible(true)
+            onClick: handleNotificationClick
         }
     ];
 
@@ -120,7 +133,10 @@ const Sidebar = () => {
                 </div>
             </Sider>
             {isNotificationSidebarVisible && (
-                <NotificationSidebar onClose={() => setNotificationSidebarVisible(false)} />
+                <NotificationSidebar
+                    onClose={() => setNotificationSidebarVisible(false)}
+                    markAllAsRead={markAllAsRead}
+                />
             )}
             <ChangePasswordForm
                 visible={isChangePasswordVisible}

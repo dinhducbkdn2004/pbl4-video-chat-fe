@@ -34,6 +34,10 @@ const ChatPage = () => {
         }
     };
 
+    const updateChatInfo = async () => {
+        getAllChatRoom();
+    };
+
     const toggleSidebar = () => {
         setIsSidebarVisible((prev) => !prev);
     };
@@ -48,6 +52,7 @@ const ChatPage = () => {
                 me={me}
                 open={isSidebarVisible}
                 onClose={toggleSidebar}
+                updateChatInfo={updateChatInfo}
             />
         </div>
     );
