@@ -12,7 +12,7 @@ const GroupListPage = () => {
     const [communityGroupCount, setCommunityGroupCount] = useState(0);
 
     return (
-        <div className="space-y-6 bg-white-default dark:bg-black-light px-3 py-3" style={{ height: '100vh' }}>
+        <div className="space-y-6 rounded-lg bg-white-default dark:bg-black-light px-3 py-3" style={{ height: '100vh' }}>
             <div className="m-0 rounded-lg bg-white-default dark:bg-black-light p-5" style={{ height: '100%' }}>
                 <Tabs defaultActiveKey="1">
                     <TabPane tab={`Nhóm riêng tư (${privateGroupCount})`} key="1">

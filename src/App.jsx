@@ -35,7 +35,7 @@ function App({ setIsDarkMode, isDarkMode }) {
             {/* Protected route for authenticated users */}
             <Route element={<ProtectedRoute />}>
                 <Route path='/' element={<MainPage setIsDarkMode={setIsDarkMode} isDarkMode={isDarkMode} />}>
-                    <Route index element={<Navigate to='/message' replace />} /> {/* Redirect to /message */}
+                    <Route index element={<Navigate to='/message' replace />} />
                     <Route path='message' element={<MessagePage />}>
                         <Route path=':chatRoomId' element={<ChatPage />} />
                     </Route>
