@@ -42,6 +42,9 @@ const userApi = {
     },
     acceptFriendRequest: (requestId, status) => {
         return axiosClient.patch(`/friend-requests/update/${requestId}`, { status });
+    },
+    revokeRequest: (receiverId) => {
+        return axiosClient.patch(`/friend-requests/revoke/`, { receiverId });
     }
 };
 

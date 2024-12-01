@@ -15,35 +15,26 @@ const ChangePasswordForm = ({ visible, onClose }) => {
     };
 
     return (
-        <Modal
-            title="Change Password"
-            visible={visible}
-            onCancel={onClose}
-            footer={null}
-        >
+        <Modal title='Change Password' visible={visible} onCancel={onClose} footer={null}>
             {contextHolder}
-            <Form
-                onFinish={handleFinish}
-                labelCol={{ span: 8 }}
-                wrapperCol={{ span: 16 }}
-            >
+            <Form onFinish={handleFinish} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
                 <Form.Item
-                    name="oldPassword"
-                    label="Old Password"
+                    name='oldPassword'
+                    label='Old Password'
                     rules={[{ required: true, message: 'Please input your old password!' }]}
                 >
-                    <Input.Password />
+                    <Input.Password placeholder='Enter your old password' />
                 </Form.Item>
                 <Form.Item
-                    name="newPassword"
-                    label="New Password"
+                    name='newPassword'
+                    label='New Password'
                     rules={[{ required: true, message: 'Please input your new password!' }]}
                 >
-                    <Input.Password />
+                    <Input.Password placeholder='Enter new password' />
                 </Form.Item>
                 <Form.Item
-                    name="confirmPassword"
-                    label="Confirm Password"
+                    name='confirmPassword'
+                    label='Confirm Password'
                     dependencies={['newPassword']}
                     rules={[
                         { required: true, message: 'Please confirm your new password!' },
@@ -53,14 +44,14 @@ const ChangePasswordForm = ({ visible, onClose }) => {
                                     return Promise.resolve();
                                 }
                                 return Promise.reject(new Error('The two passwords do not match!'));
-                            },
-                        }),
+                            }
+                        })
                     ]}
                 >
-                    <Input.Password />
+                    <Input.Password placeholder='Confirm new password' />
                 </Form.Item>
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                    <Button type="primary" htmlType="submit" loading={isLoading}>
+                    <Button type='primary' htmlType='submit' loading={isLoading}>
                         Change Password
                     </Button>
                 </Form.Item>

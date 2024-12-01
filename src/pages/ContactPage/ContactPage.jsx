@@ -30,45 +30,24 @@ const ContactPage = () => {
     const currentItem = menuItems.find((item) => item.key === window.location.pathname.split('/').pop());
 
     return (
-        <div style={{ display: 'flex', height: '100vh' }}>
-            <div
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    width: '20rem',
-                    backgroundColor: 'white',
-                    borderRight: '1px solid #e0e0e0',
-                    height: '100vh',
-                    overflow: 'auto'
-                }}
-            >
-                <div
-                    className='flex h-[73px] items-center justify-between border-b border-[#e0e0e0] bg-white-default p-4'
-                    style={{ position: 'sticky', top: 0, zIndex: 10, height: '73px', padding: '18px 24px' }}
-                >
-                    <h2 className='text-blue' style={{ fontSize: '21px', fontWeight: 750 }}>
-                        Contacts
-                    </h2>
+        <div className='flex h-screen'>
+            <div className='flex h-screen w-80 flex-col overflow-auto rounded-lg'>
+                <div className='sticky top-0 z-10 flex h-[65px] items-center justify-between rounded-lg bg-white-default p-4 dark:bg-black-light'>
+                    <h2 className='ml-1 text-xl font-bold text-blue'>Contacts</h2>
                 </div>
                 <Menu
                     items={menuItems}
                     onClick={(e) => navigate(`/contact/${e.key}`)}
-                    style={{
-                        backgroundColor: 'white',
-                        overflow: 'auto'
-                    }}
+                    className='mt-3 overflow-auto rounded-lg bg-white-default dark:bg-black-light'
                 />
             </div>
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <div
-                    className='flex h-[73px] items-center justify-between border-b border-[#e0e0e0] bg-white-default p-4'
-                    style={{ position: 'sticky', top: 0, zIndex: 10, height: '73px' }}
-                >
-                    <h2 className='text-lg font-bold'>
+            <div className='ml-4 flex flex-1 flex-col'>
+                <div className='border-gray-300 sticky top-0 z-10 flex h-[65px] items-center justify-between rounded-lg bg-white-default p-4 dark:bg-black-light'>
+                    <h2 className='text-lg font-bold dark:text-white-dark'>
                         {currentItem?.icon} {currentItem?.label}
                     </h2>
                 </div>
-                <div style={{ flex: 1, overflowY: 'auto' }}>
+                <div className='mt-3 flex-1'>
                     <Outlet />
                 </div>
             </div>

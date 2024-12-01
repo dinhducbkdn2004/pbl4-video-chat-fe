@@ -18,7 +18,7 @@ const SearchGroup = () => {
 
     useEffect(() => {
         (async () => {
-            const data = await fetchData(() => RoomChatApi.getAllChatrooms(false, 1, 10));
+            const data = await fetchData(() => RoomChatApi.getGroup('PUBLIC', 'Group', 1, 10, false));
             if (data.isOk) {
                 const groupRooms = data.data.filter((room) => room.typeRoom === 'Group');
                 setGroups(groupRooms);
@@ -27,7 +27,7 @@ const SearchGroup = () => {
     }, [fetchData]);
 
     const handleSearchGroups = async (value) => {
-        const data = await fetchData(() => RoomChatApi.getAllChatrooms(false, 1, 10));
+        const data = await fetchData(() => RoomChatApi.getGroup('PUBLIC', 'Group', 1, 10, false));
         if (data.isOk) {
             const groupRooms = data.data.filter((room) => room.typeRoom === 'Group' && room.name.includes(value));
             setGroups(groupRooms);
@@ -37,8 +37,8 @@ const SearchGroup = () => {
     const debouncedSearch = useCallback(debounce(handleSearchGroups, 300), []);
 
     return (
-        <div className='bg-white rounded-lg p-6'>
-            <Paragraph className='text-gray-600 mb-6'>
+        <div className='bg-white rounded-lg bg-white-default p-6 dark:bg-black-light'>
+            <Paragraph className='text-gray-600 mb-6 dark:text-white-dark'>
                 Use the search box below to find groups by their name. You can view their profiles and join them.
             </Paragraph>
             <Search
@@ -50,7 +50,7 @@ const SearchGroup = () => {
                 enterButton
             />
 
-            <div className='flex flex-col gap-6' style={{ height: 'calc(100vh - 200px)' }}>
+            <div className='flex flex-col gap-6 overflow-y-auto' style={{ height: 'calc(100vh - 200px)' }}>
                 {isLoading ? (
                     <Loading />
                 ) : (

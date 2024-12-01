@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { TbPhoneCall, TbUserSearch } from 'react-icons/tb';
-import { Avatar, Badge, Dropdown, Layout, Menu } from 'antd';
+import { Avatar, Badge, Button, Dropdown, Layout, Menu } from 'antd';
 import { RiLogoutCircleRLine } from 'react-icons/ri';
 import { BiMessageSquareDots } from 'react-icons/bi';
-import { IoNotificationsOutline, IoSettingsOutline } from 'react-icons/io5';
+import { FiSun } from 'react-icons/fi';
+
+import { IoNotificationsOutline, IoSettingsOutline, IoMoonSharp } from 'react-icons/io5';
 import { LuContact2 } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 import { handleLogout } from '../../components/Logout';
@@ -16,10 +18,11 @@ import NotificationSidebar from '../../components/Notification/NotificationSideb
 import ChangePasswordForm from '../../components/ChangePasswordForm';
 const { Sider } = Layout;
 
-const Sidebar = () => {
+const Sidebar = ({setIsDarkMode, isDarkMode}) => {
     const [isNotificationSidebarVisible, setNotificationSidebarVisible] = useState(false);
     const [isChangePasswordVisible, setChangePasswordVisible] = useState(false);
     const [notifications, setNotifications] = useState([]);
+    const [theme, setTheme] = useState('light');
     const logout = handleLogout();
     const navigate = useNavigate();
     const { user } = useSelector(authSelector);
@@ -31,6 +34,22 @@ const Sidebar = () => {
         };
         fetchNotifications();
     }, []);
+
+    useEffect(() => {
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            setTheme('dark');
+        } else {
+            setTheme('light');
+        }
+    }, []);
+
+    useEffect(() => {
+        if (isDarkMode) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }, [isDarkMode]);
 
     const unreadCount = notifications.filter((item) => !item.isRead).length;
 
@@ -47,6 +66,10 @@ const Sidebar = () => {
         markAllAsRead();
     };
 
+    const handleThemeSwitch = () => {
+        setIsDarkMode(!isDarkMode);
+    };
+
     const menuItems = [
         {
             key: 'profile',
@@ -55,6 +78,12 @@ const Sidebar = () => {
             onClick: () => {
                 navigate(`/user/${user?._id}`);
             }
+        },
+        {
+            key: 'dark-mode',
+            icon: isDarkMode ? <FiSun size={15} /> : <IoMoonSharp size={15} />,
+            label: <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>,
+            onClick: handleThemeSwitch
         },
         {
             key: 'change-password',
@@ -108,19 +137,19 @@ const Sidebar = () => {
         <>
             <Sider
                 width={72}
-                className='flex h-full flex-col items-center justify-between border-r border-slate-200 bg-white-default py-4'
+                className='sidebar-container flex flex-col items-center justify-between rounded-lg bg-white-default p-4 py-2 dark:bg-black-light'
             >
                 <div className='mb-5 flex items-center justify-center'>
                     <img
                         src={assets.Designer}
                         alt='Logo'
-                        className='h-12 w-12 cursor-pointer rounded-full border border-slate-200'
+                        className='h-12 w-12 cursor-pointer rounded-full'
                         onClick={() => navigate('/message')}
                     />
                 </div>
                 <Menu
                     mode='vertical'
-                    className='flex flex-grow flex-col items-center justify-start bg-white-default'
+                    className='flex flex-grow flex-col items-center justify-start bg-white-default dark:bg-black-light dark:text-white-default'
                     onClick={handleMenuClick}
                     items={sidebarItems}
                 />
@@ -138,10 +167,7 @@ const Sidebar = () => {
                     markAllAsRead={markAllAsRead}
                 />
             )}
-            <ChangePasswordForm
-                visible={isChangePasswordVisible}
-                onClose={() => setChangePasswordVisible(false)}
-            />
+            <ChangePasswordForm visible={isChangePasswordVisible} onClose={() => setChangePasswordVisible(false)} />
         </>
     );
 };

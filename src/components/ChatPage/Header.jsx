@@ -14,7 +14,7 @@ const Header = ({ chatInfo, me, toggleSidebar }) => {
         members.some((member) => onlineUsers.some((onlineUser) => onlineUser._id === member._id));
 
     return (
-        <div className='flex h-[73px] items-center justify-between border-b border-[#e0e0e0] bg-white-default p-4'>
+        <div className='flex h-[65px] items-center justify-between rounded-lg bg-white-default mb-3 p-4 dark:bg-black-light dark:text-white-default'>
             <div className='flex items-center'>
                 {typeRoom === 'OneToOne' && members?.length > 0 && (
                     <Tooltip title={roomName}>

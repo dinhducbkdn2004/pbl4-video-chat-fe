@@ -1,0 +1,16 @@
+.list-item {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(194, 189, 189, 0.1);
+    border-radius: 6px;
+    transition: ease all 0.5s;
+}
+
+.dark .list-item {
+    border: 1px solid #333;
+    background-color: #1f1f1f;
+}

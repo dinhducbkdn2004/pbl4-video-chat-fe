@@ -72,8 +72,8 @@ const MessageInput = () => {
 
     return (
         <div
-            className='flex flex-col p-4'
-            style={{ backgroundColor: '#f5f5f5', boxShadow: '0 -4px 10px rgba(0, 0, 0, 0.05)' }}
+            className='mt-4 mb-8 flex flex-col rounded-lg bg-white-default p-4 dark:bg-black-light dark:text-white-default'
+            style={{ boxShadow: '0 -4px 10px rgba(0, 0, 0, 0.05)' }}
         >
             {fileList.length > 0 && (
                 <div className='mb-2'>
@@ -128,7 +128,7 @@ const MessageInput = () => {
                     onChange={handleChangeMessage}
                     onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                     placeholder='Type your message here...'
-                    className='rounded-5 mr-2 flex-1 p-2'
+                    className='rounded-5 mr-2 flex-1 p-2 dark:bg-black-default dark:text-white-default'
                 />
 
                 <Button className='h-[34px]' type='primary' icon={<SendOutlined />} onClick={handleSendMessage}>

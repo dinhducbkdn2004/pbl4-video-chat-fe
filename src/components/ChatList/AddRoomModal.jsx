@@ -47,6 +47,7 @@ const AddRoomModal = ({ open, onCreate, onCancel }) => {
 
     return (
         <Modal
+            className='add-room-modal'
             open={open}
             title='Create a new chat room'
             okText='Create'
@@ -54,8 +55,14 @@ const AddRoomModal = ({ open, onCreate, onCancel }) => {
             onCancel={onCancel}
             onOk={handleOk}
         >
-            <Form form={form} layout='vertical' name='form_in_modal' initialValues={{ modifier: 'public' }}>
-                <Form.Item name='roomName' label='Room Name' rules={[{ message: 'Please enter the room name!' }]}>
+            <Form
+                className='bg-white-default dark:bg-black-light dark:text-white-default'
+                form={form}
+                layout='vertical'
+                name='form_in_modal'
+                initialValues={{ modifier: 'public' }}
+            >
+                <Form.Item                name='roomName' label='Room Name' rules={[{ message: 'Please enter the room name!' }]}>
                     <Input placeholder='Enter room name' />
                 </Form.Item>
                 <Form.Item

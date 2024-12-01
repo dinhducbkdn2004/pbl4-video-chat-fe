@@ -106,7 +106,7 @@ const MessageList = () => {
     const groupedMessages = groupMessages(messages);
 
     return (
-        <div id='scrollable-div' className='bg-white flex flex-1 flex-col-reverse overflow-auto p-5'>
+        <div id='scrollable-div' className='bg-white-default dark:bg-black-light rounded-lg flex flex-1 flex-col-reverse overflow-auto p-5 bg-white-default dark:bg-black-default dark:text-white-default'>
             <InfiniteScroll
                 className='flex flex-col-reverse'
                 dataLength={messages?.length || 0}

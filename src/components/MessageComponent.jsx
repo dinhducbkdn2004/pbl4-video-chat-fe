@@ -127,7 +127,7 @@ const MessageComponent = ({ messages, isFirstMessage, isLastMessage }) => {
             )}
             <div className={`flex flex-col ${sender._id === currentUser._id ? 'items-end' : 'items-start'}`}>
                 {sender._id !== currentUser._id && (
-                    <div className='ml-3 font-medium text-gray' style={{ fontSize: '12px' }}>
+                    <div className='ml-3 font-medium text-gray dark:text-white-dark' style={{ fontSize: '12px' }}>
                         {getLastName(sender.name)}
                     </div>
                 )}
@@ -157,7 +157,7 @@ const MessageComponent = ({ messages, isFirstMessage, isLastMessage }) => {
                                 hasBackground
                                     ? sender._id === currentUser._id
                                         ? 'ml-auto bg-blue text-white-default'
-                                        : 'text-black mr-auto bg-white-dark'
+                                        : ' mr-auto bg-white-dark dark:bg-gray dark:text-white-dark'
                                     : ''
                             }`}
                             style={{ wordBreak: 'break-word' }}

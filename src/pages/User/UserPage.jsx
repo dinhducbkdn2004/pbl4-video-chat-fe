@@ -63,10 +63,20 @@ const UserPage = () => {
         <>
             {contextHolder}
             <Container>
-                <Image width={'100%'} height={300} src={user.backgroundImage} className='background-image' />
+                <Image
+                    width={'100%'}
+                    height={300}
+                    src={user.backgroundImage}
+                    className='background-image'
+                />
                 <div className='profile-container'>
-                    <Image src={user.avatar} className='avatar' width={220} height={220} />
-                    <h1 className='user-name'>{user.name}</h1>
+                    <Image
+                        src={user.avatar}
+                        className='avatar'
+                        width={220}
+                        height={220}
+                    />
+                    <h1 className='user-name dark:text-white-default'>{user.name}</h1>
                     <div className='action-buttons'>
                         {currentUser._id !== id && (
                             <>
@@ -82,15 +92,22 @@ const UserPage = () => {
                         )}
                     </div>
                 </div>
-                <div className='introduction'>
+                <div className='introduction dark:text-white-default'>
                     <p>{user.introduction}</p>
                 </div>
-                <Modal title='Kết bạn' visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+                <Modal
+                    title='Kết bạn'
+                    visible={isModalVisible}
+                    onOk={handleOk}
+                    onCancel={handleCancel}
+                    className='dark:bg-black-light dark:text-white-default'
+                >
                     <Input
                         placeholder='Nhập mô tả...'
                         value={caption}
                         onChange={(e) => setCaption(e.target.value)}
                         required
+                        className='dark:bg-black-light dark:text-white-default'
                     />
                 </Modal>
             </Container>
