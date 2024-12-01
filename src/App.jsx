@@ -23,7 +23,7 @@ import SettingPage from './pages/SettingPage/SettingPage';
 
 import GroupRequestPage from './pages/ContactPage/GroupRequestPage/GroupRequestPage';
 
-function App() {
+function App({ setIsDarkMode, isDarkMode }) {
     return (
         <Routes>
             {/* Public route for unauthenticated users */}
@@ -34,7 +34,7 @@ function App() {
 
             {/* Protected route for authenticated users */}
             <Route element={<ProtectedRoute />}>
-                <Route path='/' element={<MainPage />}>
+                <Route path='/' element={<MainPage setIsDarkMode={setIsDarkMode} isDarkMode={isDarkMode} />}>
                     <Route index element={<Navigate to='/message' replace />} /> {/* Redirect to /message */}
                     <Route path='message' element={<MessagePage />}>
                         <Route path=':chatRoomId' element={<ChatPage />} />
@@ -43,7 +43,7 @@ function App() {
                         <Route path='friend-list' element={<FriendListPage />} />
                         <Route path='groups-list' element={<GroupListPage />} />
                         <Route path='friend-request' element={<FriendRequestPage />} />
-                    
+
                         <Route path='group-request' element={<GroupRequestPage />} />
                     </Route>
                     <Route path='search' element={<SearchPage />}>

@@ -12,13 +12,13 @@ const GroupListPage = () => {
     const [communityGroupCount, setCommunityGroupCount] = useState(0);
 
     return (
-        <div className='space-y-6 bg-white-dark px-3 py-3' style={{ height: '100vh' }}>
-            <div className='m-0 rounded-lg bg-white-default p-5' style={{ height: '100%' }}>
-                <Tabs defaultActiveKey='1'>
-                    <TabPane tab={`Nhóm riêng tư (${privateGroupCount})`} key='1'>
+        <div className="space-y-6 bg-white-default dark:bg-black-light px-3 py-3" style={{ height: '100vh' }}>
+            <div className="m-0 rounded-lg bg-white-default dark:bg-black-light p-5" style={{ height: '100%' }}>
+                <Tabs defaultActiveKey="1">
+                    <TabPane tab={`Nhóm riêng tư (${privateGroupCount})`} key="1">
                         <PrivateGroups setPrivateGroupCount={setPrivateGroupCount} />
                     </TabPane>
-                    <TabPane tab={`Cộng Đồng (${communityGroupCount})`} key='2'>
+                    <TabPane tab={`Cộng Đồng (${communityGroupCount})`} key="2">
                         <CommunityGroups setCommunityGroupCount={setCommunityGroupCount} />
                     </TabPane>
                 </Tabs>
@@ -42,9 +42,9 @@ const PrivateGroups = ({ setPrivateGroupCount }) => {
     }, [fetchData, setPrivateGroupCount]);
 
     return (
-        <div className='flex flex-col gap-6' style={{ height: 'calc(100vh - 200px)' }}>
+        <div className="flex flex-col gap-6 overflow-y-auto" style={{ height: 'calc(100vh - 200px)' }}>
             {isLoading ? (
-                <div className='flex h-40 w-full items-center justify-center'>
+                <div className="flex h-40 w-full items-center justify-center">
                     <Loading />
                 </div>
             ) : (
@@ -67,7 +67,6 @@ const CommunityGroups = ({ setCommunityGroupCount }) => {
     useEffect(() => {
         (async () => {
             const data = await fetchData(() => RoomChatApi.getGroup('PUBLIC', 'Group', 0, 10, true));
-
             if (data.isOk) {
                 setCommunityGroups(data.data);
                 setCommunityGroupCount(data.data.length);
@@ -76,9 +75,9 @@ const CommunityGroups = ({ setCommunityGroupCount }) => {
     }, [fetchData, setCommunityGroupCount]);
 
     return (
-        <div className='flex flex-col gap-6' style={{ height: 'calc(100vh - 200px)' }}>
+        <div className="flex flex-col gap-6 overflow-y-auto" style={{ height: 'calc(100vh - 200px)' }}>
             {isLoading ? (
-                <div className='flex h-40 w-full items-center justify-center'>
+                <div className="flex h-40 w-full items-center justify-center">
                     <Loading />
                 </div>
             ) : (

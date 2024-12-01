@@ -40,10 +40,10 @@ const SearchBar = ({ handleChatClick }) => {
 
     return (
         <>
-            <div className='search-bar bg-white-default'>
+            <div className='search-bar bg-white-default dark:bg-black-default dark:text-white-default'>
                 <SearchOutlined className='search-icon text-blue' />
                 <Input
-                    className='search-input'
+                    className='search-input dark:bg-black-default dark:text-white-default'
                     placeholder='Search chats...'
                     value={searchValue}
                     onChange={handleSearchChange}
@@ -53,10 +53,10 @@ const SearchBar = ({ handleChatClick }) => {
             </div>
 
             {searchValue && (
-                <div className='search-results'>
+                <div className='search-results dark:bg-black-default'>
                     <List
                         itemLayout='horizontal'
-                        dataSource={searchResults.sort((a, b) => a.typeRoom === 'OneToOne' ? -1 : 1)}
+                        dataSource={searchResults.sort((a, b) => (a.typeRoom === 'OneToOne' ? -1 : 1))}
                         renderItem={(item) => {
                             let descriptionContent = null;
 
@@ -66,26 +66,38 @@ const SearchBar = ({ handleChatClick }) => {
                                 );
 
                                 descriptionContent = (
-                                    <span className='participants text-xs'>
+                                    <span className='participants text-xs dark:text-white-default'>
                                         {otherParticipant && isFriend(otherParticipant._id)
                                             ? 'Bạn bè'
                                             : 'Người dùng trên Connectica'}
                                     </span>
                                 );
                             } else if (item.typeRoom === 'Group') {
-                                const participantsToShow = item.participants.slice(0, 3).map((participant) => participant.name).join(', ');
+                                const participantsToShow = item.participants
+                                    .slice(0, 3)
+                                    .map((participant) => participant.name)
+                                    .join(', ');
                                 descriptionContent = (
-                                    <span className='participants text-xs'>
-                                        {participantsToShow}{item.participants.length > 3 ? ', ...' : ''}
+                                    <span className='participants text-xs dark:text-white-default'>
+                                        {participantsToShow}
+                                        {item.participants.length > 3 ? ', ...' : ''}
                                     </span>
                                 );
                             }
 
                             return (
-                                <List.Item className='list-item' key={item._id} onClick={() => handleChatClick(item)}>
+                                <List.Item
+                                    className='list-item dark:bg-black-light dark:text-white-default'
+                                    key={item._id}
+                                    onClick={() => handleChatClick(item)}
+                                >
                                     <List.Item.Meta
                                         avatar={<Avatar src={item.chatRoomImage} className='flex flex-row' size={38} />}
-                                        title={<span className='title text-base font-semibold'>{item.name}</span>}
+                                        title={
+                                            <span className='title text-base font-semibold dark:text-white-default'>
+                                                {item.name}
+                                            </span>
+                                        }
                                         description={descriptionContent}
                                     />
                                 </List.Item>

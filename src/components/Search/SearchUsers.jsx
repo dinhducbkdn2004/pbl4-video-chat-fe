@@ -41,8 +41,8 @@ const SearchUsers = () => {
     const debouncedSearch = useCallback(debounce(handleSearchUsers, 300), []);
 
     return (
-        <div className='bg-white rounded-lg p-6 shadow-md'>
-            <Paragraph className='text-gray-600 mb-6'>
+        <div className='bg-white rounded-lg p-6 bg-white-default dark:bg-black-light'>
+            <Paragraph className='text-gray-600 mb-6 dark:text-white-dark'>
                 Use the search box below to find users. You can view their profiles and connect with them.
             </Paragraph>
             <div className='mb-6 flex items-center'>
@@ -56,7 +56,13 @@ const SearchUsers = () => {
                 />
             </div>
             <div className='flex flex-col gap-6' style={{ height: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                {isLoading ? <Loading /> : users.filter(user => user._id !== currentUser._id).map((user) => <UserCard key={user._id} data={user} />)}
+                {isLoading ? (
+                    <Loading />
+                ) : (
+                    users
+                        .filter((user) => user._id !== currentUser._id)
+                        .map((user) => <UserCard key={user._id} data={user} />)
+                )}
             </div>
         </div>
     );

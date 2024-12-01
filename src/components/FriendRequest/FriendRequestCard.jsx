@@ -24,22 +24,21 @@ const FriendRequestCard = ({ request }) => {
 
     return (
         <Card
-            className='cursor-pointer transition-transform duration-300 ease-in-out hover:shadow-md'
+            className='cursor-pointer shadow-md transition-transform duration-300 ease-in-out hover:shadow-md'
             onClick={() => {
                 navigate(`/user/${sender._id}`);
             }}
             key={_id}
-            bordered={false}
         >
-            <div className='flex items-center gap-x-4'>
-                <Avatar src={sender.avatar} szie={100} />
-                <div>
+            <div className='flex flex-col items-center gap-x-4 md:flex-row'>
+                <Avatar src={sender.avatar} size={43} />
+                <div className='text-center md:text-left'>
                     <h1>{sender.name}</h1>
                     <h1>{dayjs(createdAt).format('DD/MM/YYYY')}</h1>
                 </div>
             </div>
             <p className='py-4'>{caption}</p>
-            <div className='flex gap-x-4' ref={buttonRef}>
+            <div className='flex flex-col gap-x-4 md:flex-row' ref={buttonRef}>
                 <Button
                     onClick={() => {
                         handleButtonClick('DECLINED');

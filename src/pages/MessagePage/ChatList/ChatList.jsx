@@ -104,8 +104,8 @@ const ChatList = () => {
     return (
         <>
             <audio src={'/sounds/tin-nhan.mp3'} ref={audioRef} />
-            <div className='chat-list bg-white-default'>
-                <div className='header bg-white-default'>
+            <div className='chat-list h-100vh rounded-md overflow-hidden bg-white-dark dark:bg-black-default'>
+                <div className='header rounded-lg bg-white-default dark:bg-black-default'>
                     <div className='title text-blue'>All Chats</div>
                     <div className='icons'>
                         <UsergroupAddOutlined className='icon text-gray' onClick={showAddRoomModal} />

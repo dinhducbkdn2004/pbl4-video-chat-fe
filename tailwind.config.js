@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+    darkMode: 'class',
     content: ['./index.html', './src/**/*.{js,jsx}'],
     theme: {
         extend: {
@@ -8,20 +9,21 @@ export default {
             },
             colors: {
                 black: {
-                    default: '#0D0F10',
-                    light: '#131619',
-                    blue: '#0C1132'
+                    default: '#181818',
+                    light: '#1F1F1F',
+                    blue: '#0C1132',
+                    hover: '#545454'
                 },
                 green: {
-                    defaut: '#B6F09C'
+                    default: '#B6F09C'
                 },
-
                 white: {
                     default: '#FFFFFF',
-                    dark: '#F0F0F0'
+                    dark: '#F5F5F5'
                 },
-                gray: '#72778D',
-                blue: '#0066FF'
+                gray: '#4C4C4C',
+                blue: '#0066FF',
+                yellow: '#FFD700'
             }
         }
     },

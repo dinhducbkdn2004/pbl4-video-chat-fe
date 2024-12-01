@@ -41,8 +41,8 @@ const GroupCard = ({ data, isMember }) => {
     return (
         <>
             <Card
-                className='bg-white-default shadow-md'
-                hoverable
+                className='rounded-lg bg-white-default shadow-md'
+                hoverable={true}
                 style={{
                     width: '90%',
                     padding: '10px',

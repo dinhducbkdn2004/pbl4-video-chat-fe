@@ -14,6 +14,78 @@
     animation-duration: 0.5s;
 }
 
+.dark .ant-btn {
+    background-color: #363636;
+    color: #fff;
+    border-color: #333;
+}
+
+.dark .ant-btn:hover {
+    background-color: #333;
+    color: #fff;
+    border-color: #333;
+}
+
+.dark .ant-btn-primary {
+    background-color: #1890ff;
+    color: #fff;
+    border-color: #1890ff;
+}
+
+.dark .ant-btn-primary:hover {
+    background-color: #40a9ff;
+    color: #fff;
+    border-color: #40a9ff;
+}
+
+.dark .ant-popover {
+    background-color: #363636;
+    color: #fff;
+    border-radius: 15px !important;
+}
+
+.dark .ant-popover-arrow::before {
+    border-top-color: #363636;
+    background-color: #363636;
+}
+
+.dark .ant-popover-content {
+    background-color: #363636;
+    color: #fff;
+    border-radius: 15px;
+}
+
+.dark .ant-popover-inner {
+    background-color: #363636;
+    color: #fff;
+}
+
+.dark .ant-popover-inner-content {
+    background-color: #363636;
+    color: #fff;
+}
+
+.dark .epr-main {
+    background-color: #363636;
+    color: #fff;
+    border: 1px solid #4d4a4a;
+}
+
+.dark .epr-main .epr-header {
+    background-color: #363636;
+    color: #fff;
+}
+
+.dark .epr-main .epr-header .epr-category {
+    background-color: #363636;
+    color: #fff;
+}
+
+.dark .epr-emoji-list .epr-emoji-category  .epr-emoji-category-label  {
+    background-color: #363636;
+    color: #fff;
+}
+
 @media (max-width: 768px) {
     .h-screen {
         height: auto;

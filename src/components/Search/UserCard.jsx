@@ -1,38 +1,57 @@
-import { Avatar, Button, Card, Modal, Input } from 'antd';
+import { Avatar, Button, Card, Modal, Input, Badge, Tooltip } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import RoomChatApi from '../../apis/RoomChatApi';
 import userApi from '../../apis/userApi';
 import useFetch from '../../hooks/useFetch';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { authSelector } from '../../redux/features/auth/authSelections';
+import './UserCard.css';
 
 const UserCard = ({ data }) => {
+    const { name, avatar } = data;
     const { fetchData } = useFetch({ showError: false, showSuccess: false });
-    const { name, introduction, avatar, isFriend = false, _id } = data;
     const navigate = useNavigate();
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [friendStatus, setFriendStatus] = useState(isFriend);
+    const [friendStatus, setFriendStatus] = useState(data.isFriend);
+    const [sentRequestStatus, setSentRequestStatus] = useState(data.isSentRequest);
     const { user: currentUser } = useSelector(authSelector);
     const [caption, setCaption] = useState(
         `Xin chào mình là ${currentUser.name}, mình biết bạn qua Connectica. Làm bạn với mình nhé!`
     );
+
+    useEffect(() => {
+        setFriendStatus(data.isFriend);
+        setSentRequestStatus(data.isSentRequest);
+    }, [data.isFriend, data.isSentRequest]);
+
     const handleChatClick = async (e) => {
         e.stopPropagation();
         if (friendStatus) {
-            const response = await fetchData(() => RoomChatApi.getOneToOneChatRoom(_id));
+            const response = await fetchData(() => RoomChatApi.getOneToOneChatRoom(data._id));
             const roomId = response.data._id;
-            navigate(`/message/${roomId}`);
+            navigate(`/message/${roomId}`, {
+                state: {
+                    name: name,
+                    chatRoomImage: avatar,
+                    typeRoom: 'OneToOne'
+                }
+            });
+        } else if (sentRequestStatus) {
+            const response = await fetchData(() => userApi.revokeRequest(data._id));
+            if (response.isOk) {
+                setSentRequestStatus(false);
+            }
         } else {
             setIsModalVisible(true);
         }
     };
 
     const handleAddFriend = async () => {
-        const response = await fetchData(() => userApi.addFriend({ friendId: _id, caption }));
+        const response = await fetchData(() => userApi.addFriend({ friendId: data._id, caption }));
         if (response.isOk) {
-            setFriendStatus(true);
+            setSentRequestStatus(true);
             setIsModalVisible(false);
         }
     };
@@ -40,18 +59,33 @@ const UserCard = ({ data }) => {
     return (
         <>
             <Card
+                size='small'
+                hoverable={true}
                 onClick={() => {
-                    navigate(`/user/${_id}`);
+                    navigate(`/user/${data._id}`);
                 }}
-                className='cursor-pointer transition-transform duration-300 ease-in-out hover:shadow-md'
+                className='list-item cursor-pointer bg-white-default transition-transform duration-300 ease-in-out hover:shadow-md dark:bg-black-light dark:hover:shadow-md'
             >
-                <div className='bg-white flex items-center gap-2.5 rounded-2xl'>
-                    <Avatar src={avatar} size={40} />
+                <div className='flex items-center gap-2.5 rounded-lg p-4 dark:bg-black-light'>
+                    <Badge
+                        dot={true}
+                        color={friendStatus ? '#52c41a' : '#B6B6B6'}
+                        offset={[-7, 36]}
+                    >
+                        <Avatar src={data.avatar} size={40} />
+                    </Badge>
                     <div className='flex-1'>
-                        <h1 className='text-black text-lg'>{name}</h1>
-                        <h2 className='text-small text-gray'>{introduction}</h2>
+                        <div className='flex flex-row items-center'>
+                            <h1 className='text-black text-lg dark:text-white-default'>{data.name}</h1>
+                            <span className='ml-2 text-sm text-blue'>
+                                &#8226; {data.isFriend ? 'Bạn bè' : 'Người dùng trên Connectica'}
+                            </span>
+                        </div>
+                        <h2 className='text-md text-gray'>{data.introduction}</h2>
                     </div>
-                    <Button onClick={handleChatClick}>{friendStatus ? 'Nhắn tin' : 'Kết bạn'}</Button>
+                    <Button onClick={handleChatClick}>
+                        {friendStatus ? 'Nhắn tin' : sentRequestStatus ? 'Huỷ lời mời' : 'Kết bạn'}
+                    </Button>
                 </div>
             </Card>
             <Modal

@@ -60,6 +60,7 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
 
     const handleLeaveGroup = async () => {
         await fetchData(() => RoomChatApi.leaveGroup(currentChatRoomId));
+        await updateChatInfo();
     };
 
     const handleFetchRequests = async () => {
@@ -107,7 +108,7 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
             ? [
                   {
                       key: '1',
-                      icon: <MailOutlined />,
+                      icon: <MailOutlined className='dark:text-white-default' />,
                       label: 'Tuỳ chỉnh đoạn chat',
                       children: [
                           { key: '1-1', label: 'Đổi tên đoạn chat', onClick: () => handleChangeDetails('name') },
@@ -122,7 +123,7 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
             ? [
                   {
                       key: '2',
-                      icon: <AppstoreOutlined />,
+                      icon: <AppstoreOutlined className='dark:text-white-default' />,
                       label: 'Thành viên trong đoạn chat',
                       children: [
                           { key: '2-1', label: 'Admin', children: createMemberItems('Admin') },
@@ -134,7 +135,7 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
             : []),
         {
             key: '3',
-            icon: <InboxOutlined />,
+            icon: <InboxOutlined className='dark:text-white-default' />,
             label: 'File phương tiện, file và liên kết',
             children: [
                 { key: '3-1', label: 'File phương tiện' },
@@ -144,12 +145,17 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
         },
         ...(typeRoom === 'Group'
             ? [
-                  { key: '4', icon: <LogoutOutlined className='mr-2' />, label: 'Rời nhóm', onClick: handleLeaveGroup },
+                  {
+                      key: '4',
+                      icon: <LogoutOutlined className='mr-2 dark:text-white-default' />,
+                      label: 'Rời nhóm',
+                      onClick: handleLeaveGroup
+                  },
                   ...(currentUserRole !== 'Member'
                       ? [
                             {
                                 key: '5',
-                                icon: <UserAddOutlined className='mr-2' />,
+                                icon: <UserAddOutlined className='mr-2 dark:text-white-default' />,
                                 label: `Yêu cầu vào nhóm (${requestsCount})`,
                                 onClick: handleFetchRequests
                             }
@@ -219,6 +225,7 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
         <>
             {contextHolder}
             <Drawer
+                className='bg-white-default dark:bg-black-default dark:text-white-default'
                 title={
                     <DrawerTitle
                         isBackButtonVisible={isBackButtonVisible}

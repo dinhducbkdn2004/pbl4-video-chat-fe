@@ -66,7 +66,10 @@ const FileMediaLinks = ({ stateOpenKeys, onOpenChange, items, chatRoomId }) => {
                 return <Image src={item.fileUrl} alt='media' style={{ width: '100%' }} />;
             case 'Document':
                 return (
-                    <Card hoverable className='h-25 w-full'>
+                    <Card
+                        hoverable
+                        className='h-25 w-full  dark:border-gray dark:bg-black-default dark:text-white-default'
+                    >
                         <Card.Meta
                             avatar={
                                 <div className='flex items-center justify-center rounded-lg border border-white-dark bg-white-dark p-3'>
@@ -74,13 +77,20 @@ const FileMediaLinks = ({ stateOpenKeys, onOpenChange, items, chatRoomId }) => {
                                 </div>
                             }
                             title={
-                                <a href={item && item.fileUrl} target='_blank' rel='noreferrer'>
+                                <a
+                                    className='dark:text-white-default'
+                                    href={item && item.fileUrl}
+                                    target='_blank'
+                                    rel='noreferrer'
+                                >
                                     {item.content}
                                 </a>
                             }
                             description={
                                 <>
-                                    <div className='text-sm'>{new Date(item.createdAt).toLocaleString()}</div>
+                                    <div className='text-sm dark:text-white-default'>
+                                        {new Date(item.createdAt).toLocaleString()}
+                                    </div>
                                 </>
                             }
                         />
@@ -88,7 +98,10 @@ const FileMediaLinks = ({ stateOpenKeys, onOpenChange, items, chatRoomId }) => {
                 );
             case 'Link':
                 return (
-                    <Card hoverable className='h-25 w-full'>
+                    <Card
+                        hoverable
+                        className='h-25 w-full dark:border-gray dark:bg-black-default dark:text-white-default'
+                    >
                         <Card.Meta
                             avatar={
                                 <Avatar
@@ -97,13 +110,20 @@ const FileMediaLinks = ({ stateOpenKeys, onOpenChange, items, chatRoomId }) => {
                                 />
                             }
                             title={
-                                <a href={item && item.content} target='_blank' rel='noreferrer'>
+                                <a
+                                    className='dark:text-white-default'
+                                    href={item && item.content}
+                                    target='_blank'
+                                    rel='noreferrer'
+                                >
                                     {item.content}
                                 </a>
                             }
                             description={
                                 <>
-                                    <div className='text-sm'>{new Date(item.createdAt).toLocaleString()}</div>
+                                    <div className='text-sm dark:text-white-default'>
+                                        {new Date(item.createdAt).toLocaleString()}
+                                    </div>
                                 </>
                             }
                         />
@@ -113,8 +133,9 @@ const FileMediaLinks = ({ stateOpenKeys, onOpenChange, items, chatRoomId }) => {
                 return <Typography.Text>{item.name}</Typography.Text>;
         }
     };
+
     return (
-        <div className='flex flex-col items-center justify-around'>
+        <div className='flex flex-col items-center justify-around bg-white-default dark:bg-black-default'>
             <Menu
                 mode='horizontal'
                 defaultSelectedKeys={['3-1']}
@@ -123,6 +144,7 @@ const FileMediaLinks = ({ stateOpenKeys, onOpenChange, items, chatRoomId }) => {
                 style={{ width: '100%' }}
                 items={fileMediaItems}
                 onClick={handleMenuClick}
+                className='dark:bg-black-default dark:text-white-default'
             />
             <div className='mt-4 w-full'>
                 {selectedType === 'Media' ? (
@@ -136,7 +158,11 @@ const FileMediaLinks = ({ stateOpenKeys, onOpenChange, items, chatRoomId }) => {
                 ) : (
                     <List
                         dataSource={content}
-                        renderItem={(item) => <List.Item key={item.id}>{renderMediaItem(item)}</List.Item>}
+                        renderItem={(item) => (
+                            <List.Item key={item.id} className='dark:bg-black-default dark:text-white-default'>
+                                {renderMediaItem(item)}
+                            </List.Item>
+                        )}
                     />
                 )}
             </div>

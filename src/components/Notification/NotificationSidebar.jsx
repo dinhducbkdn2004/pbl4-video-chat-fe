@@ -10,14 +10,14 @@ const { Text } = Typography;
 const { TabPane } = Tabs;
 
 const SidebarContainer = styled.div`
+    padding: 10px;
     width: 385px;
     background: #fff;
-    height: 100vh;
     position: fixed;
-    left: 72px;
-    top: 0;
+    left: 104px;
+    top: 1;
     z-index: 1000;
-    border-right: 1px solid #f0f0f0;
+    border-radius: 7px;
 `;
 
 const Header = styled.div`
@@ -132,7 +132,7 @@ const NotificationSidebar = ({ onClose, markAllAsRead }) => {
                 ]}
             >
                 <List.Item.Meta
-                    className='hover: bg-gray-300 cursor-pointer'
+                    className='hover: bg-white-default cursor-pointer'
                     avatar={avatarElement}
                     title={<a href={link}>{item.message}</a>}
                     description={moment(item.createdAt).fromNow()}

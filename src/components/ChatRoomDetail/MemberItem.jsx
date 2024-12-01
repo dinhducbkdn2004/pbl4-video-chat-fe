@@ -4,7 +4,7 @@ import { EllipsisOutlined } from '@ant-design/icons';
 
 const MemberItem = ({ member, handleRemoveMember, handleChangeRole, currentUser, currentUserRole, updateChatInfo }) => {
     const menu = (
-        <Menu>
+        <Menu className='dark:bg-black-light dark:text-white-default'>
             <Menu.Item key='remove' onClick={async () => {
                 await handleRemoveMember(member._id);
                 await updateChatInfo();
@@ -31,14 +31,14 @@ const MemberItem = ({ member, handleRemoveMember, handleChangeRole, currentUser,
     );
 
     return (
-        <div className='flex items-center justify-between'>
+        <div className='flex items-center justify-between dark:text-white-default'>
             <div className='flex items-center'>
                 <Avatar src={member.avatar} size='small' className='mr-2' />
                 {member.name}
             </div>
             {member._id !== currentUser._id && currentUserRole !== 'Member' && (
                 <Dropdown overlay={menu} trigger={['click']}>
-                    <Button type='text' icon={<EllipsisOutlined />} />
+                    <Button type='text' icon={<EllipsisOutlined />} className='dark:text-white-default' />
                 </Dropdown>
             )}
         </div>

@@ -10,7 +10,7 @@ const OnlineUsers = ({ handleChatClick }) => {
     const { onlineUsers } = useSocket();
     const { fetchData } = useFetch({ showSuccess: false, showError: false });
     const [oneToOneRooms, setOneToOneRooms] = useState([]);
-    // console.log('online users', onlineUsers);
+
     useEffect(() => {
         const fetchChatRooms = async () => {
             const response = await fetchData(() => RoomChatApi.getAllChatrooms(true));
@@ -21,7 +21,6 @@ const OnlineUsers = ({ handleChatClick }) => {
                     room.participants.length === 2
             );
             setOneToOneRooms(oneToOneRooms);
-            // console.log('one to one rooms', oneToOneRooms);
         };
 
         fetchChatRooms();
@@ -33,15 +32,14 @@ const OnlineUsers = ({ handleChatClick }) => {
                 room.typeRoom === 'OneToOne' && room.participants.some((participant) => participant._id === userId)
         );
         if (chatRoom) {
-            // console.log('chat room', chatRoom);
             handleChatClick(chatRoom);
         }
     };
 
     return (
-        <div className='online-now bg-white-default'>
-            <h4 className='text-gray'>Online Now</h4>
-            <div className='avatars gap-x-5 bg-white-default'>
+        <div className='online-now rounded-lg bg-white-default dark:bg-black-light dark:text-white-default'>
+            <h4 className='dark:text-white-default'>Online Now</h4>
+            <div className='avatars gap-x-4'>
                 {onlineUsers.length === 0
                     ? 'No one online now'
                     : onlineUsers.map((user, index) => (
@@ -66,7 +64,6 @@ const OnlineUsers = ({ handleChatClick }) => {
 };
 
 OnlineUsers.propTypes = {
-    recentChats: PropTypes.array.isRequired,
     handleChatClick: PropTypes.func.isRequired
 };
 
