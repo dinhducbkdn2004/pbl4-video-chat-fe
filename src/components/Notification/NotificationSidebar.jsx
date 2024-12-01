@@ -22,9 +22,9 @@ const SidebarContainer = styled.div`
 
 const Header = styled.div`
     padding: 16px 24px;
-    border-bottom: 1px solid #f0f0f0;
     display: flex;
     justify-content: space-between;
+    border-bottom: 1px solid #f0f0f0;
     align-items: center;
 `;
 
@@ -132,7 +132,7 @@ const NotificationSidebar = ({ onClose, markAllAsRead }) => {
                 ]}
             >
                 <List.Item.Meta
-                    className='hover: bg-white-default cursor-pointer'
+                    className='hover: cursor-pointer bg-white-default dark:bg-black-light'
                     avatar={avatarElement}
                     title={<a href={link}>{item.message}</a>}
                     description={moment(item.createdAt).fromNow()}
@@ -171,8 +171,11 @@ const NotificationSidebar = ({ onClose, markAllAsRead }) => {
     };
 
     return (
-        <SidebarContainer ref={sidebarRef}>
-            <Header>
+        <SidebarContainer
+            className='bg-white-default shadow-lg dark:bg-black-light dark:text-white-default'
+            ref={sidebarRef}
+        >
+            <Header className='dark:border-gray'>
                 <Text
                     className='text-blue'
                     style={{

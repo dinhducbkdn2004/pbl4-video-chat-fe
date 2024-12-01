@@ -33,12 +33,12 @@ const SearchPage = () => {
                 />
             </div>
             <div className='ml-4 flex flex-1 flex-col'>
-                <div className='border-gray-300 sticky top-0 z-10 flex h-[65px] items-center justify-between rounded-lg bg-white-default p-4 dark:bg-black-light'>
-                    <h2 className='text-lg font-bold dark:text-white-dark'>
+                <div className='border-gray-300 sticky top-0 z-10 mb-3 flex h-[65px] items-center justify-between rounded-lg bg-white-default p-4 dark:bg-black-light'>
+                    <h2 className='text-lg p-1 font-bold dark:text-white-dark'>
                         {currentItem?.icon} {currentItem?.label}
                     </h2>
                 </div>
-                <div className='mt-3 flex-1'>
+                <div className='flex-1'>
                     <Outlet />
                 </div>
             </div>
