@@ -34,14 +34,19 @@ const SearchUsers = () => {
         const data = await fetchData(() => userApi.searchUsers(value, 1, 10));
 
         if (data.isOk) {
-            setUsers(data.data);
+            const usersWithStatus = data.data.map((user) => ({
+                ...user,
+                isFriend: user.isFriend,
+                isSentRequest: user.isSentRequest
+            }));
+            setUsers(usersWithStatus);
         }
     };
 
     const debouncedSearch = useCallback(debounce(handleSearchUsers, 300), []);
 
     return (
-        <div className='bg-white rounded-lg p-6 bg-white-default dark:bg-black-light'>
+        <div className='bg-white rounded-lg bg-white-default p-6 dark:bg-black-light'>
             <Paragraph className='text-gray-600 mb-6 dark:text-white-dark'>
                 Use the search box below to find users. You can view their profiles and connect with them.
             </Paragraph>

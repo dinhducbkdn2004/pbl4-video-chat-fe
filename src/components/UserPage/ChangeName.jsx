@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 const ChangeName = ({ name }) => {
     const [selectedChange, setSelectedChange] = useState(false);
     const [input, setInput] = useState(name);
-    const { fetchData, isLoading, contextHolder } = useFetch({ showSuccess: true, showError: true });
+    const { fetchData, isLoading, contextHolder } = useFetch({ showSuccess: false, showError: false });
     const dispatch = useDispatch();
     const handleCancel = () => {
         setInput(name);

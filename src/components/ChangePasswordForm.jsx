@@ -1,17 +1,26 @@
 import React from 'react';
-import { Modal, Form, Input, Button } from 'antd';
+import { Modal, Form, Input, Button, notification } from 'antd';
 import authApi from '../apis/authApi';
 import useFetch from '../hooks/useFetch';
 
 const ChangePasswordForm = ({ visible, onClose }) => {
-    const { fetchData, isLoading, contextHolder } = useFetch({ showSuccess: true, showError: true });
+    const { fetchData, isLoading, contextHolder } = useFetch({ showSuccess: false, showError: false });
 
     const handleFinish = async (values) => {
         const { oldPassword, newPassword } = values;
-        await fetchData(async () => {
-            await authApi.changePassword(oldPassword, newPassword);
+        const { data, isOk } = await fetchData(() => authApi.changePassword(oldPassword, newPassword));
+        if (isOk) {
+            notification.success({
+                message: 'Change password successfully!',
+                description: 'You have successfully changed your password!'
+            });
             onClose();
-        });
+        } else {
+            notification.error({
+                message: 'Change password failed!',
+                description: 'Please check your old password!'
+            });
+        }
     };
 
     return (

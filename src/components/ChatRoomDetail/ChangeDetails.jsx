@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Modal, Input, Upload, Button, Spin, message } from 'antd';
+import { Modal, Input, Upload, Button, Spin, message, notification } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import RoomChatApi from '../../apis/RoomChatApi';
 import useFetch from '../../hooks/useFetch';
@@ -23,6 +23,10 @@ const ChangeDetails = ({ type, chatRoomId, onClose, updateChatInfo }) => {
             setIsUploading(false);
         }
         await fetchData(() => RoomChatApi.changeDetailChatRoom(data));
+        notification.success({
+            message: 'Success',
+            description: 'Chat room details updated successfully!'
+        });
         await updateChatInfo();
         onClose();
     };

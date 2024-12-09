@@ -6,11 +6,11 @@ const { Content, Sider } = Layout;
 const MessagePage = () => {
     return (
         <>
-            <Layout className=' bg-white-dark dark:bg-black-default'>
+            <Layout className='bg-white-dark dark:bg-black-default'>
                 <Sider
-                    className='rounded-lg h-100vh bg-white-dark dark:bg-black-light'
+                    className='h-100vh rounded-lg bg-white-dark dark:bg-black-light'
                     width={385}
-                    breakpoint='md'
+                    breakpoint='sm'
                     collapsedWidth='0'
                 >
                     <ChatList />

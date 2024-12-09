@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Avatar, Typography, Button, Modal, Input } from 'antd';
+import { Card, Avatar, Typography, Button, Modal, Input, notification } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import RoomChatApi from '../../apis/RoomChatApi';
 import useFetch from '../../hooks/useFetch';
@@ -10,7 +10,7 @@ const { Title, Text } = Typography;
 
 const GroupCard = ({ data, isMember }) => {
     const navigate = useNavigate();
-    const { fetchData } = useFetch({ showSuccess: true, showError: true });
+    const { fetchData } = useFetch({ showSuccess: false, showError: false });
     const [isModalVisible, setIsModalVisible] = useState(false);
     const { user: currentUser } = useSelector(authSelector);
     const [requestMessage, setRequestMessage] = useState(
@@ -27,10 +27,21 @@ const GroupCard = ({ data, isMember }) => {
     };
 
     const handleOk = async () => {
-        await fetchData(() => RoomChatApi.createRequest(data._id, requestMessage));
-        setIsModalVisible(false);
-        setRequestMessage('');
-        setRequestSent(true);
+        try {
+            await fetchData(() => RoomChatApi.createRequest(data._id, requestMessage));
+            notification.success({
+                message: 'Request Sent',
+                description: 'Your request to join the group has been sent successfully.',
+            });
+            setIsModalVisible(false);
+            setRequestMessage('');
+            setRequestSent(true);
+        } catch (error) {
+            notification.error({
+                message: 'Request Failed',
+                description: 'There was an error sending your request. Please try again.',
+            });
+        }
     };
 
     const handleCancel = () => {

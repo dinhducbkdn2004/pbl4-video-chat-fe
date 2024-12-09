@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Drawer, message, List, Button, Avatar, Typography } from 'antd';
+import { Drawer, message, List, Button, Avatar, Typography, notification } from 'antd';
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
 import ChangeDetails from '../components/ChatRoomDetail/ChangeDetails';
@@ -9,11 +9,20 @@ import useFetch from '../hooks/useFetch';
 import DrawerTitle from '../components/ChatRoomDetail/DrawerTitle';
 import ChatRoomDetails from '../components/ChatRoomDetail/ChatRoomDetails';
 import MemberItem from '../components/ChatRoomDetail/MemberItem';
-import { InboxOutlined, MailOutlined, AppstoreOutlined, LogoutOutlined, UserAddOutlined } from '@ant-design/icons';
+import {
+    InboxOutlined,
+    MailOutlined,
+    AppstoreOutlined,
+    LogoutOutlined,
+    UserAddOutlined,
+    LinkOutlined
+} from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 
 const { Text } = Typography;
 
 const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
+    const { navigate } = useNavigate();
     const { chatRoomId: currentChatRoomId } = useParams();
     const { name: roomName, participants: members, typeRoom, chatRoomImage, admins, moderators } = chatInfo || {};
     const currentUser = me || {};
@@ -49,6 +58,15 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
 
         if (currentUserRole === 'Admin' || (currentUserRole === 'Moderator' && memberRole === 'Member')) {
             await fetchData(() => RoomChatApi.removeMember(currentChatRoomId, memberId));
+            notification.success({
+                message: 'Success',
+                description: 'Member removed successfully!'
+            });
+        } else {
+            notification.error({
+                message: 'Error',
+                description: 'You do not have permission to remove this member.'
+            });
         }
         await updateChatInfo();
     };
@@ -59,8 +77,23 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
     };
 
     const handleLeaveGroup = async () => {
-        await fetchData(() => RoomChatApi.leaveGroup(currentChatRoomId));
-        await updateChatInfo();
+        if (admins.length === 1 && admins[0]._id === currentUser._id) {
+            notification.error({
+                message: 'Error',
+                description: 'Phải bổ nhiệm Admin khác cho Group trước khi rời nhóm!'
+            });
+            return;
+        }
+        const response = await fetchData(() => RoomChatApi.leaveGroup(currentChatRoomId));
+        if (response) {
+            onClose();
+            navigate('/message');
+        } else {
+            notification.error({
+                message: 'Error',
+                description: 'Failed to leave group!'
+            });
+        }
     };
 
     const handleFetchRequests = async () => {
@@ -75,6 +108,10 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
         await fetchData(() => RoomChatApi.updatedRequest(requestId, 'ACCEPTED'));
         setRequests((prevRequests) => prevRequests.filter((request) => request._id !== requestId));
         setRequestsCount((prevCount) => prevCount - 1);
+        notification.success({
+            message: 'Success',
+            description: 'Request accepted successfully!'
+        });
         await updateChatInfo();
     };
 
@@ -82,6 +119,10 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
         await fetchData(() => RoomChatApi.updatedRequest(requestId, 'DECLINED'));
         setRequests((prevRequests) => prevRequests.filter((request) => request._id !== requestId));
         setRequestsCount((prevCount) => prevCount - 1);
+        notification.success({
+            message: 'Success',
+            description: 'Request rejected successfully!'
+        });
         await updateChatInfo();
     };
 
@@ -101,6 +142,12 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
                     />
                 )
             }));
+
+    const handleShareLink = () => {
+        const groupLink = `${window.location.origin}/chat/${currentChatRoomId}`;
+        navigator.clipboard.writeText(groupLink);
+        message.success('Link nhóm đã được sao chép vào clipboard!');
+    };
 
     const currentUserRole = getRole(currentUser._id);
     const items = [
@@ -160,7 +207,13 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
                                 onClick: handleFetchRequests
                             }
                         ]
-                      : [])
+                      : []),
+                  {
+                      key: '6',
+                      icon: <LinkOutlined className='mr-2 dark:text-white-default' />,
+                      label: 'Chia sẻ link nhóm',
+                      onClick: handleShareLink
+                  }
               ]
             : [])
     ];

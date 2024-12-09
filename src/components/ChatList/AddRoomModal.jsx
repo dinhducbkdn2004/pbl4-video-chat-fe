@@ -1,4 +1,4 @@
-import { Modal, Form, Input, Select } from 'antd';
+import { Modal, Form, Input, Select, notification } from 'antd';
 import PropTypes from 'prop-types';
 
 import { useEffect, useState } from 'react';
@@ -11,7 +11,7 @@ const { Option } = Select;
 
 const AddRoomModal = ({ open, onCreate, onCancel }) => {
     const [users, setUsers] = useState([]);
-    const { isLoading, fetchData } = useFetch({ showSuccess: true, showError: false });
+    const { isLoading, fetchData } = useFetch({ showSuccess: false, showError: false });
     const { user } = useSelector(authSelector);
 
     useEffect(() => {
@@ -39,8 +39,16 @@ const AddRoomModal = ({ open, onCreate, onCancel }) => {
             .then((values) => {
                 form.resetFields();
                 onCreate(values);
+                // notification.success({
+                //     message: 'Success',
+                //     description: 'Chat room created successfully!',
+                // });
             })
             .catch((info) => {
+                notification.error({
+                    message: 'Error',
+                    description: 'Failed to create chat room. Please try again.'
+                });
                 console.log('Validate Failed:', info);
             });
     };
@@ -62,7 +70,7 @@ const AddRoomModal = ({ open, onCreate, onCancel }) => {
                 name='form_in_modal'
                 initialValues={{ modifier: 'public' }}
             >
-                <Form.Item                name='roomName' label='Room Name' rules={[{ message: 'Please enter the room name!' }]}>
+                <Form.Item name='roomName' label='Room Name' rules={[{ message: 'Please enter the room name!' }]}>
                     <Input placeholder='Enter room name' />
                 </Form.Item>
                 <Form.Item
