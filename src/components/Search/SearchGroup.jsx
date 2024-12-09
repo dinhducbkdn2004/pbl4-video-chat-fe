@@ -29,7 +29,9 @@ const SearchGroup = () => {
     const handleSearchGroups = async (value) => {
         const data = await fetchData(() => RoomChatApi.getGroup('PUBLIC', 'Group', 1, 10, false));
         if (data.isOk) {
-            const groupRooms = data.data.filter((room) => room.typeRoom === 'Group' && room.name.includes(value));
+            const groupRooms = data.data.filter(
+                (room) => room.typeRoom === 'Group' && room.name.toLowerCase().includes(value.toLowerCase())
+            );
             setGroups(groupRooms);
         }
     };

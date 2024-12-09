@@ -13,7 +13,7 @@ import ImgCrop from 'antd-img-crop';
 const ChangeBackgroundImage = ({ backgroundImage }) => {
     const [isChangingAvatar, setIsChangingAvatar] = useState(false);
     const [fileList, setFileList] = useState([]);
-    const { fetchData, isLoading, contextHolder } = useFetch({ showSuccess: true, showError: true });
+    const { fetchData, isLoading, contextHolder } = useFetch({ showSuccess: false, showError: false });
     const dispatch = useDispatch();
 
     const onUpload = async (file) => {

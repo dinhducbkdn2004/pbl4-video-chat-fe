@@ -1,4 +1,4 @@
-import { Avatar, Button, Card, Modal, Input, Badge, Tooltip } from 'antd';
+import { Avatar, Button, Card, Modal, Input, Badge, Tooltip, notification } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import RoomChatApi from '../../apis/RoomChatApi';
@@ -42,6 +42,15 @@ const UserCard = ({ data }) => {
             const response = await fetchData(() => userApi.revokeRequest(data._id));
             if (response.isOk) {
                 setSentRequestStatus(false);
+                notification.success({
+                    message: 'Request Revoked',
+                    description: 'Your friend request has been revoked successfully.',
+                });
+            } else {
+                notification.error({
+                    message: 'Revoke Failed',
+                    description: 'There was an error revoking your friend request. Please try again.',
+                });
             }
         } else {
             setIsModalVisible(true);
@@ -53,6 +62,15 @@ const UserCard = ({ data }) => {
         if (response.isOk) {
             setSentRequestStatus(true);
             setIsModalVisible(false);
+            notification.success({
+                message: 'Request Sent',
+                description: 'Your friend request has been sent successfully.',
+            });
+        } else {
+            notification.error({
+                message: 'Request Failed',
+                description: 'There was an error sending your friend request. Please try again.',
+            });
         }
     };
 

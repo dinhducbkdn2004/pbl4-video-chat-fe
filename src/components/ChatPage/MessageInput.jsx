@@ -28,20 +28,28 @@ const MessageInput = () => {
             isChangeMessageRef.current = false;
         }, 2000)
     ).current;
-
+    
     const handleChangeMessage = useCallback(
         (e) => {
-            setMessage(e.target.value);
-
-            if (!isChangeMessageRef.current) {
-                isChangeMessageRef.current = true;
-                socket.emit('user:change-message', { chatRoomId: currentChatRoomId, user });
+            const newMessage = e.target.value;
+            setMessage(newMessage);
+    
+            if (newMessage.length === 0) {
+                if (isChangeMessageRef.current) {
+                    socket.emit('user:stop-change-message', { chatRoomId: currentChatRoomId, user });
+                    isChangeMessageRef.current = false;
+                }
+                debounceEmitStop.cancel();
+            } else {
+                if (!isChangeMessageRef.current) {
+                    isChangeMessageRef.current = true;
+                    socket.emit('user:change-message', { chatRoomId: currentChatRoomId, user });
+                }
+                debounceEmitStop();
             }
-            debounceEmitStop();
         },
         [currentChatRoomId, debounceEmitStop, socket, user]
     );
-
     const handleSendMessage = async () => {
         if (message.length > 0)
             fetchData(() =>
@@ -60,6 +68,7 @@ const MessageInput = () => {
 
         setMessage('');
         setFileList([]);
+        socket.emit('user:stop-change-message', { chatRoomId: currentChatRoomId, user });
     };
 
     const handleEmojiClick = (emojiObject, event) => {
@@ -71,10 +80,7 @@ const MessageInput = () => {
     };
 
     return (
-        <div
-            className='mt-4 mb-8 flex flex-col rounded-lg bg-white-default p-4 dark:bg-black-light dark:text-white-default'
-            style={{ boxShadow: '0 -4px 10px rgba(0, 0, 0, 0.05)' }}
-        >
+        <div className='mb-8 mt-4 flex flex-col rounded-lg bg-white-default p-4 shadow-lg dark:bg-black-light dark:text-white-default'>
             {fileList.length > 0 && (
                 <div className='mb-2'>
                     <Upload
@@ -97,7 +103,7 @@ const MessageInput = () => {
                         beforeUpload={() => false}
                         multiple
                     >
-                        <Button icon={<PaperClipOutlined />} className='mr-2 rounded-full p-2' />
+                        <Button icon={<PaperClipOutlined />} className='mr-2 rounded-full p-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600' />
                     </Upload>
                 </Popover>
 
@@ -119,7 +125,7 @@ const MessageInput = () => {
                         open={isEmojiPickerVisible}
                         onOpenChange={(visible) => setIsEmojiPickerVisible(visible)}
                     >
-                        <Button icon={<SmileOutlined />} className='ml-2 mr-2 rounded-full p-2' />
+                        <Button icon={<SmileOutlined />} className='ml-2 mr-2 rounded-full p-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600' />
                     </Popover>
                 </Popover>
 
@@ -128,10 +134,10 @@ const MessageInput = () => {
                     onChange={handleChangeMessage}
                     onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                     placeholder='Type your message here...'
-                    className='rounded-5 mr-2 flex-1 p-2 dark:bg-black-default dark:text-white-default'
+                    className='rounded-full mr-2 flex-1 p-2 bg-gray-100 dark:bg-gray-700 dark:text-white'
                 />
 
-                <Button className='h-[34px]' type='primary' icon={<SendOutlined />} onClick={handleSendMessage}>
+                <Button className='h-[34px] rounded-full bg-blue-500 text-white hover:bg-blue-600' type='primary' icon={<SendOutlined />} onClick={handleSendMessage}>
                     Send
                 </Button>
             </div>

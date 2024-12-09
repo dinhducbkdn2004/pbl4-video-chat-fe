@@ -1,28 +1,45 @@
 import React from 'react';
-import { Avatar, Dropdown, Menu, Button } from 'antd';
+import { Avatar, Dropdown, Menu, Button, notification } from 'antd';
 import { EllipsisOutlined } from '@ant-design/icons';
 
 const MemberItem = ({ member, handleRemoveMember, handleChangeRole, currentUser, currentUserRole, updateChatInfo }) => {
     const menu = (
         <Menu className='dark:bg-black-light dark:text-white-default'>
-            <Menu.Item key='remove' onClick={async () => {
-                await handleRemoveMember(member._id);
-                await updateChatInfo();
-            }}>
+            <Menu.Item
+                key='remove'
+                onClick={async () => {
+                    await handleRemoveMember(member._id);
+                    await updateChatInfo();
+                }}
+            >
                 Xóa thành viên
             </Menu.Item>
             {currentUserRole === 'Admin' && (
                 <Menu.SubMenu key='changeRole' title='Thay đổi vai trò'>
-                    <Menu.Item key='admin' onClick={async () => {
-                        await handleChangeRole(member._id, 'admin');
-                        await updateChatInfo();
-                    }}>
+                    <Menu.Item
+                        key='admin'
+                        onClick={async () => {
+                            await handleChangeRole(member._id, 'admin');
+                            notification.success({
+                                message: 'Success',
+                                description: 'Role changed to Admin successfully!'
+                            });
+                            await updateChatInfo();
+                        }}
+                    >
                         Admin
                     </Menu.Item>
-                    <Menu.Item key='moderator' onClick={async () => {
-                        await handleChangeRole(member._id, 'moderator');
-                        await updateChatInfo();
-                    }}>
+                    <Menu.Item
+                        key='moderator'
+                        onClick={async () => {
+                            await handleChangeRole(member._id, 'moderator');
+                            notification.success({
+                                message: 'Success',
+                                description: 'Role changed to Moderator successfully!'
+                            });
+                            await updateChatInfo();
+                        }}
+                    >
                         Moderator
                     </Menu.Item>
                 </Menu.SubMenu>
