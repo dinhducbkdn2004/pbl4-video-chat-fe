@@ -55,4 +55,4 @@ jobs:
                       docker rm pbl4-fe-container || true
                       
                       # Chạy container mới
-                      docker run -d -p 5173:80 -p 443:443 --name pbl4-fe-container --env-file /home/${{ secrets.EC2_USER }}/.env ${{ secrets.DOCKER_USERNAME }}/pbl4-fe:latest
+                      docker run -d -p 5173:80 -p 5174:443 --name pbl4-fe-container --env-file /home/${{ secrets.EC2_USER }}/.env ${{ secrets.DOCKER_USERNAME }}/pbl4-fe:latest
