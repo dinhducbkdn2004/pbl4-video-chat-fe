@@ -52,9 +52,6 @@ jobs:
                       # Tạo file .env từ GitHub Secrets
                       echo "${{ secrets.ENV_FILE }}" > /home/${{ secrets.EC2_USER }}/.env
 
-                      cp /etc/nginx/ssl/server.crt /etc/nginx/ssl/server.crt
-                      cp /etc/nginx/ssl/server.key /etc/nginx/ssl/server.key
-
                       # Xóa image cũ nếu có
                       docker image prune -f || true
 
