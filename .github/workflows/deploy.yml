@@ -49,7 +49,10 @@ jobs:
                       
                       # Tạo file .env từ GitHub Secrets
                       echo "${{ secrets.ENV_FILE }}" > /home/${{ secrets.EC2_USER }}/.env
-                      
+
+                      # Xóa image cũ nếu có
+                      docker rmi ${{ secrets.DOCKER_USERNAME }}/pbl4-fe || true
+
                       # Dừng và xóa container cũ nếu có
                       docker stop pbl4-fe-container || true
                       docker rm pbl4-fe-container || true
