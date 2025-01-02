@@ -13,9 +13,6 @@ WORKDIR /app
 # Copy project vào trong workdir của node.
 COPY ${workdir}/ /app/
 
-# Copy file môi trường .env nếu cần
-COPY .env /app/.env
-
 # Cài đặt các thư viện node liên quan.
 RUN npm install
 
