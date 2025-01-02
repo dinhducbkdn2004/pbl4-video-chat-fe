@@ -29,10 +29,13 @@ jobs:
                   username: ${{ secrets.DOCKER_USERNAME }}
                   password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-            - name: Build and push Docker image
+            - name: Build Docker image
               run: |
-                  docker build -t pbl4-fe .
-                  docker push pbl4-fe
+                  docker build -t ${{ secrets.DOCKER_USERNAME }}/pbl4-fe:latest .
+
+            - name: Push Docker image to Docker Hub
+              run: |
+                  docker push ${{ secrets.DOCKER_USERNAME }}/pbl4-fe:latest
 
             - name: Deploy to EC2
               uses: appleboy/ssh-action@v0.1.8
@@ -41,8 +44,15 @@ jobs:
                   username: ${{ secrets.EC2_USER }}
                   key: ${{ secrets.EC2_PRIVATE_KEY }}
                   script: |
-                      docker pull pbl4-fe
-                      echo ${{ secrets.ENV_FILE }} > .env
+                      # Pull the latest Docker image
+                      docker pull ${{ secrets.DOCKER_USERNAME }}/pbl4-fe:latest
+                      
+                      # Tạo file .env từ GitHub Secrets
+                      echo "${{ secrets.ENV_FILE }}" > /home/${{ secrets.EC2_USER }}/.env
+                      
+                      # Dừng và xóa container cũ nếu có
                       docker stop pbl4-fe-container || true
                       docker rm pbl4-fe-container || true
-                      docker run -d -p 80:80 -p 443:443 --name pbl4-fe-container pbl4-fe
+                      
+                      # Chạy container mới
+                      docker run -d -p 80:80 -p 443:443 --name pbl4-fe-container --env-file /home/${{ secrets.EC2_USER }}/.env ${{ secrets.DOCKER_USERNAME }}/pbl4-fe:latest
