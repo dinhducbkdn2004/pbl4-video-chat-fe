@@ -22,7 +22,7 @@ export const SocketContextProvider = ({ children }) => {
     const audioRef = useRef(null);
     const connectSocket = useCallback(
         () =>
-            io(envClient.VITE_BASE_API_URL, {
+            io(import.meta.env.VITE_BASE_API_URL_SOCKET, {
                 extraHeaders: {
                     authorization: accessToken
                 }
