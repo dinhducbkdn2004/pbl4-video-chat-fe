@@ -26,6 +26,4 @@ jobs:
                   ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
                     cd /var/www/pbl4-video-chat-fe
                     git pull origin main
-                    pm2 stop all
-                    pm2 serve dist 3000 --name "vite-app"
                   EOF
