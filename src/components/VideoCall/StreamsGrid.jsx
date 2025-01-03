@@ -7,7 +7,6 @@ import Slider from 'react-slick'; // Thêm slider package
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-
 const sliderSettings = {
     infinite: false,
     dots: false,
@@ -31,7 +30,7 @@ const StreamsGrid = ({ peerStreams }) => {
     };
     if (selectedVideo)
         return (
-            <div className='bg-black flex h-svh gap-3'>
+            <div className='bg-black flex gap-3'>
                 <div className='w-3/4'>
                     <VideoPlayer
                         key={selectedVideo.peerId}
