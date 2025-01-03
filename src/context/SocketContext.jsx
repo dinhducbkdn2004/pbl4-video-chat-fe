@@ -31,6 +31,7 @@ export const SocketContextProvider = ({ children }) => {
     );
 
     useEffect(() => {
+        console.log('chay ne');
         if (!accessToken) return;
 
         const socket = connectSocket();
