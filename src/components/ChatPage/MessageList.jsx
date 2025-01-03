@@ -117,7 +117,12 @@ const MessageList = () => {
                 <Spin size='small' />
             </div>
         );
-    else if (messages.length === 0) return <div className='flex h-full items-center justify-center'>No messages</div>;
+    else if (messages.length === 0)
+        return (
+            <div className='flex h-full items-center justify-center rounded-lg bg-white-default p-5 dark:bg-black-default dark:bg-black-light dark:text-white-default'>
+                No messages
+            </div>
+        );
 
     const groupedMessages = groupMessages(messages);
 

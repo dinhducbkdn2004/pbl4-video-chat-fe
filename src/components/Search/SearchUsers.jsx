@@ -1,9 +1,8 @@
-import { Input, Typography } from 'antd';
+import { Input, Typography, Skeleton, Empty, Row, Col } from 'antd';
 import { useSelector } from 'react-redux';
 import { useEffect, useState, useCallback } from 'react';
 import { debounce } from 'lodash';
 import userApi from './../../apis/userApi';
-import Loading from './../../components/Loading/Loading';
 import useFetch from './../../hooks/useFetch';
 import UserCard from '../../components/Search/UserCard';
 import { authSelector } from '../../redux/features/auth/authSelections';
@@ -15,6 +14,7 @@ const SearchUsers = () => {
     const { user: currentUser } = useSelector(authSelector);
     const { fetchData, isLoading } = useFetch({ showSuccess: false, showError: false });
     const [users, setUsers] = useState([]);
+    const [isSearching, setIsSearching] = useState(false);
 
     useEffect(() => {
         if (currentUser && currentUser._id) {
@@ -31,7 +31,9 @@ const SearchUsers = () => {
     }, [fetchData, currentUser]);
 
     const handleSearchUsers = async (value) => {
+        setIsSearching(true);
         const data = await fetchData(() => userApi.searchUsers(value, 1, 10));
+        setIsSearching(false);
 
         if (data.isOk) {
             const usersWithStatus = data.data.map((user) => ({
@@ -61,12 +63,26 @@ const SearchUsers = () => {
                 />
             </div>
             <div className='flex flex-col gap-6' style={{ height: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-                {isLoading ? (
-                    <Loading />
+                {isLoading || isSearching ? (
+                    <Row gutter={[16, 16]}>
+                        {Array.from({ length: 3 }).map((_, index) => (
+                            <Col key={index} xs={24} sm={24} md={24} lg={24}>
+                                <Skeleton active avatar paragraph={{ rows: 2 }} />
+                            </Col>
+                        ))}
+                    </Row>
+                ) : users.length === 0 ? (
+                    <Empty description='No users found' />
                 ) : (
-                    users
-                        .filter((user) => user._id !== currentUser._id)
-                        .map((user) => <UserCard key={user._id} data={user} />)
+                    <Row gutter={[16, 16]}>
+                        {users
+                            .filter((user) => user._id !== currentUser._id)
+                            .map((user) => (
+                                <Col key={user._id} xs={24} sm={24} md={24} lg={24}>
+                                    <UserCard data={user} />
+                                </Col>
+                            ))}
+                    </Row>
                 )}
             </div>
         </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, List, Typography, Row, Col, Image, Card, Avatar } from 'antd';
+import { Menu, List, Typography, Row, Col, Image, Card, Avatar, Skeleton, Empty } from 'antd';
 import { FileImageOutlined, FileTextOutlined, LinkOutlined } from '@ant-design/icons';
 import RoomChatApi from '../../apis/RoomChatApi';
 import useFetch from '../../hooks/useFetch';
@@ -20,7 +20,7 @@ const FileMediaLinks = ({ stateOpenKeys, onOpenChange, items, chatRoomId }) => {
             }
         });
 
-    const { fetchData } = useFetch({ showSuccess: false, showError: false });
+    const { isLoading, fetchData } = useFetch({ showSuccess: false, showError: false });
     const [content, setContent] = useState([]);
     const [selectedType, setSelectedType] = useState('Media');
 
@@ -68,7 +68,7 @@ const FileMediaLinks = ({ stateOpenKeys, onOpenChange, items, chatRoomId }) => {
                 return (
                     <Card
                         hoverable
-                        className='h-25 w-full  dark:border-gray dark:bg-black-default dark:text-white-default'
+                        className='h-25 w-full dark:border-gray dark:bg-black-default dark:text-white-default'
                     >
                         <Card.Meta
                             avatar={
@@ -147,7 +147,11 @@ const FileMediaLinks = ({ stateOpenKeys, onOpenChange, items, chatRoomId }) => {
                 className='dark:bg-black-default dark:text-white-default'
             />
             <div className='mt-4 w-full'>
-                {selectedType === 'Media' ? (
+                {isLoading ? (
+                    <Skeleton active />
+                ) : content.length === 0 ? (
+                    <Empty description='No data' />
+                ) : selectedType === 'Media' ? (
                     <Row gutter={[16, 16]}>
                         {content.map((item, index) => (
                             <Col key={index} xs={24} sm={12} md={8} lg={8}>

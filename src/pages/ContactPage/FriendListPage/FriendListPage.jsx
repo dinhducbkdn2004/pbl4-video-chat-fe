@@ -63,30 +63,30 @@ const FriendListPage = () => {
     }, {});
 
     return (
-        <div className="h-screen space-y-4 rounded-lg bg-white-default py-4 dark:bg-black-light">
-            <h1 className="ml-5 text-sm font-semibold dark:text-white-default">Bạn bè ({users.length})</h1>
-            <div className="m-0 h-full rounded-lg bg-white-default p-5 dark:bg-black-light">
-                <div className="mb-4 flex items-center justify-between">
+        <div className='h-screen space-y-4 rounded-lg bg-white-default py-4 dark:bg-black-light'>
+            <h1 className='ml-5 text-sm font-semibold dark:text-white-default'>Bạn bè ({users.length})</h1>
+            <div className='m-0 h-full rounded-lg bg-white-default p-5 dark:bg-black-light'>
+                <div className='mb-4 flex items-center justify-between'>
                     <Search
-                        placeholder="Tìm kiếm bạn bè"
+                        placeholder='Tìm kiếm bạn bè'
                         allowClear
                         onChange={handleSearchChange}
-                        className="w-full max-w-xs"
+                        className='w-full max-w-xs'
                     />
-                    <Select defaultValue="asc" className="w-30" onChange={handleSortChange}>
-                        <Option value="asc">Tên A-Z</Option>
-                        <Option value="desc">Tên Z-A</Option>
+                    <Select defaultValue='asc' className='w-30' onChange={handleSortChange}>
+                        <Option value='asc'>Tên A-Z</Option>
+                        <Option value='desc'>Tên Z-A</Option>
                     </Select>
                 </div>
-                <div className="flex flex-wrap gap-4 overflow-y-auto h-[calc(100vh-200px)]">
+                <div className='flex h-[calc(100vh-200px)] flex-wrap gap-4 overflow-y-auto'>
                     {isLoading ? (
                         <Loading />
                     ) : Object.keys(groupedUsers).length === 0 ? (
-                        <Empty description="User not found" />
+                        <Empty description='User not found' />
                     ) : (
                         Object.keys(groupedUsers).map((letter) => (
-                            <div key={letter} className="w-full">
-                                <h2 className="text-lg font-bold dark:text-white-default">{letter}</h2>
+                            <div key={letter} className='w-full'>
+                                <h2 className='text-lg font-bold dark:text-white-default'>{letter}</h2>
                                 {groupedUsers[letter].map((user) => (
                                     <UserCard key={user._id} data={user} />
                                 ))}
