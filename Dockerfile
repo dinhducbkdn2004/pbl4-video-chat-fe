@@ -1,25 +1,22 @@
-FROM node:lts AS build
+# Build docker image.
+FROM node:20 as node
 
+# Khai báo tham số
+ARG workdir=.
+ARG VITE_API_URL
+ARG VITE_APP_NAME
+LABEL description="deploy react app"
+
+# Khai báo workdir trong node.
 WORKDIR /app
 
-COPY package.json /app/package.json
-COPY package-lock.json /app/package-lock.json
-COPY . /app
+# Copy project vào trong workdir của node.
+COPY ${workdir}/ /app/
 
-RUN rm -rf node_modules package-lock.json
-
+# Cài đặt các thư viện node liên quan.
 RUN npm install
 
+# Chạy lệnh build.
 RUN npm run build
 
-FROM nginx:alpine
-# Copy config nginx
-COPY ./.nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
-WORKDIR /usr/share/nginx/html
-# Remove default nginx static assets
-RUN rm -rf ./*
-# Copy static assets from builder stage
-COPY --from=build /app/dist .
-# Containers run nginx with global directives and daemon off
-ENTRYPOINT ["nginx", "-g", "daemon off;"]

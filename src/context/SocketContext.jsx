@@ -22,20 +22,21 @@ export const SocketContextProvider = ({ children }) => {
     const audioRef = useRef(null);
     const connectSocket = useCallback(
         () =>
-            io(envClient.VITE_BASE_API_URL, {
+            io(import.meta.env.VITE_BASE_API_URL_SOCKET, {
                 extraHeaders: {
                     authorization: accessToken
                 }
             }),
         [accessToken]
     );
-
+    console.log('chay ne');
     useEffect(() => {
+        console.log('chay ne');
         if (!accessToken) return;
 
         const socket = connectSocket();
         socketRef.current = socket;
-
+        console.log(socket);
         // Listen for connection
         socket.on('connect', () => {
             console.log('Socket connected: ');
@@ -49,8 +50,6 @@ export const SocketContextProvider = ({ children }) => {
             setOnlineUsers((users) =>
                 users.some((user) => user._id === newOnlineUser._id) ? users : [...users, newOnlineUser]
             );
-
-
         });
 
         socket.on('disconnect friend', (offlineUser) => {

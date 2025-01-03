@@ -1,0 +1,29 @@
+name: Deploy React Vite to EC2
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            # Checkout code từ GitHub
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            # Thiết lập SSH để kết nối với EC2
+            - name: Setup SSH
+              uses: webfactory/ssh-agent@v0.5.3
+              with:
+                  ssh-private-key: ${{ secrets.EC2_PRIVATE_KEY }}
+
+            # Deploy code lên EC2
+            - name: Deploy to EC2
+              run: |
+                  ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
+                    cd /var/www/pbl4-video-chat-fe
+                    sudo git pull origin main
+                  EOF
