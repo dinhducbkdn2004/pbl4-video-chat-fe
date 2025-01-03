@@ -35,7 +35,7 @@ export const SocketContextProvider = ({ children }) => {
 
         const socket = connectSocket();
         socketRef.current = socket;
-
+        console.log(socket);
         // Listen for connection
         socket.on('connect', () => {
             console.log('Socket connected: ');
@@ -49,8 +49,6 @@ export const SocketContextProvider = ({ children }) => {
             setOnlineUsers((users) =>
                 users.some((user) => user._id === newOnlineUser._id) ? users : [...users, newOnlineUser]
             );
-
-
         });
 
         socket.on('disconnect friend', (offlineUser) => {
