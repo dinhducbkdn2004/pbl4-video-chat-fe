@@ -66,7 +66,13 @@ const JoinGroupPage = () => {
     return (
         <div className='flex h-screen items-center justify-center bg-white-dark p-4'>
             <Card
-                style={{ width: 400, textAlign: 'center', borderRadius: '10px', overflow: 'hidden' }}
+                style={{
+                    width: 360,
+                    boxShadow: 'rgba(149, 157, 165, 0.6) 0px 8px 8px',
+                    textAlign: 'center',
+                    borderRadius: '10px',
+                    overflow: 'hidden'
+                }}
                 cover={<img alt='avatar' src={chatRoom?.chatRoomImage} className='mx-auto h-40 w-40 rounded-full' />}
                 actions={[
                     isMember ? (
