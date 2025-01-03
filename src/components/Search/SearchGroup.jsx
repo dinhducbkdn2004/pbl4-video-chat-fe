@@ -58,7 +58,7 @@ const SearchGroup = () => {
             <div className='flex flex-col gap-6 overflow-y-auto' style={{ height: 'calc(100vh - 200px)' }}>
                 {isLoading || isSearching ? (
                     <Row gutter={[16, 16]}>
-                        {Array.from({ length: 6 }).map((_, index) => (
+                        {Array.from({ length: 4 }).map((_, index) => (
                             <Col key={index} xs={24} sm={12} md={12} lg={12} xl={12}>
                                 <Skeleton active avatar paragraph={{ rows: 2 }} />
                             </Col>

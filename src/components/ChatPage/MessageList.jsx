@@ -114,7 +114,7 @@ const MessageList = () => {
     if (isLoading && messages.length === 0)
         return (
             <div className='flex h-full items-center justify-center'>
-                <Spin size='small' />
+                <Spin size='medium' />
             </div>
         );
     else if (messages.length === 0)

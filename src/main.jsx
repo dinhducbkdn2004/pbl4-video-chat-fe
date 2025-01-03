@@ -9,18 +9,22 @@ import { ConfigProvider, theme } from 'antd';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import envClient from './env.js';
 import { SocketContextProvider } from './context/SocketContext.jsx';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CallContextProvider } from './context/CallContext.jsx';
 
 function Main() {
-    const [isDarkMode, setIsDarkMode] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
+
+    useEffect(() => {
+        localStorage.setItem('darkMode', isDarkMode);
+    }, [isDarkMode]);
 
     return (
         <BrowserRouter>
             <Provider store={store}>
                 <ConfigProvider
                     theme={{
-                        algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
+                        algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm
                     }}
                 >
                     <GoogleOAuthProvider clientId={envClient.GOOGLE_OATH_CLIENT_ID}>

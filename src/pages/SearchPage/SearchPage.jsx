@@ -5,12 +5,12 @@ import { UserOutlined, TeamOutlined } from '@ant-design/icons';
 const menuItems = [
     {
         key: 'users',
-        label: 'Tìm kiếm người dùng',
+        label: 'Search Users',
         icon: <UserOutlined className='mr-2' />
     },
     {
         key: 'groups',
-        label: 'Tìm kiếm cộng đồng',
+        label: 'Search Communities',
         icon: <TeamOutlined className='mr-2' />
     }
 ];
@@ -34,7 +34,7 @@ const SearchPage = () => {
             </div>
             <div className='ml-4 flex flex-1 flex-col'>
                 <div className='border-gray-300 sticky top-0 z-10 mb-3 flex h-[65px] items-center justify-between rounded-lg bg-white-default p-4 dark:bg-black-light'>
-                    <h2 className='text-lg p-1 font-bold dark:text-white-dark'>
+                    <h2 className='p-1 text-lg font-bold dark:text-white-dark'>
                         {currentItem?.icon} {currentItem?.label}
                     </h2>
                 </div>
