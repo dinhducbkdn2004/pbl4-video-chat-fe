@@ -1,7 +1,6 @@
-import { Input, Typography, Row, Col } from 'antd';
+import { Input, Typography, Row, Col, Skeleton, Empty } from 'antd';
 import { useEffect, useState, useCallback } from 'react';
 import { debounce } from 'lodash';
-import Loading from './../../components/Loading/Loading';
 import useFetch from './../../hooks/useFetch';
 import GroupCard from './GroupCard';
 import RoomChatApi from '../../apis/RoomChatApi';
@@ -15,6 +14,7 @@ const SearchGroup = () => {
     const { fetchData, isLoading } = useFetch({ showSuccess: false, showError: false });
     const { user: currentUser } = useSelector(authSelector);
     const [groups, setGroups] = useState([]);
+    const [isSearching, setIsSearching] = useState(false);
 
     useEffect(() => {
         (async () => {
@@ -27,7 +27,10 @@ const SearchGroup = () => {
     }, [fetchData]);
 
     const handleSearchGroups = async (value) => {
+        setIsSearching(true);
         const data = await fetchData(() => RoomChatApi.getGroup('PUBLIC', 'Group', 1, 10, false));
+        setIsSearching(false);
+
         if (data.isOk) {
             const groupRooms = data.data.filter(
                 (room) => room.typeRoom === 'Group' && room.name.toLowerCase().includes(value.toLowerCase())
@@ -53,8 +56,16 @@ const SearchGroup = () => {
             />
 
             <div className='flex flex-col gap-6 overflow-y-auto' style={{ height: 'calc(100vh - 200px)' }}>
-                {isLoading ? (
-                    <Loading />
+                {isLoading || isSearching ? (
+                    <Row gutter={[16, 16]}>
+                        {Array.from({ length: 4 }).map((_, index) => (
+                            <Col key={index} xs={24} sm={12} md={12} lg={12} xl={12}>
+                                <Skeleton active avatar paragraph={{ rows: 2 }} />
+                            </Col>
+                        ))}
+                    </Row>
+                ) : groups.length === 0 ? (
+                    <Empty description='No groups found' />
                 ) : (
                     <Row gutter={[16, 16]}>
                         {groups.map((group) => {

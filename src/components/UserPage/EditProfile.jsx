@@ -13,12 +13,11 @@ const EditProfile = ({ data }) => {
 
     return (
         <>
-            <Modal title='Chỉnh sửa trang cá nhân' open={open} footer={null} onCancel={() => setOpen(false)}>
+            <Modal title='Edit Profile' open={open} footer={null} onCancel={() => setOpen(false)}>
                 <div className='flex flex-col gap-y-5'>
                     <ChangeBackgroundImage backgroundImage={backgroundImage} />
                     <ChangeAvatar avatar={avatar} />
                     <ChangeName name={name} />
-
                     <ChangeIntroduction introduction={introduction} />
                 </div>
             </Modal>

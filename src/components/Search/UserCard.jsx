@@ -18,7 +18,7 @@ const UserCard = ({ data }) => {
     const [sentRequestStatus, setSentRequestStatus] = useState(data.isSentRequest);
     const { user: currentUser } = useSelector(authSelector);
     const [caption, setCaption] = useState(
-        `Xin chào mình là ${currentUser.name}, mình biết bạn qua Connectica. Làm bạn với mình nhé!`
+        `Hello, I am ${currentUser.name}, I know you through Connectica. Let's be friends!`
     );
 
     useEffect(() => {
@@ -44,12 +44,12 @@ const UserCard = ({ data }) => {
                 setSentRequestStatus(false);
                 notification.success({
                     message: 'Request Revoked',
-                    description: 'Your friend request has been revoked successfully.',
+                    description: 'Your friend request has been revoked successfully.'
                 });
             } else {
                 notification.error({
                     message: 'Revoke Failed',
-                    description: 'There was an error revoking your friend request. Please try again.',
+                    description: 'There was an error revoking your friend request. Please try again.'
                 });
             }
         } else {
@@ -64,12 +64,12 @@ const UserCard = ({ data }) => {
             setIsModalVisible(false);
             notification.success({
                 message: 'Request Sent',
-                description: 'Your friend request has been sent successfully.',
+                description: 'Your friend request has been sent successfully.'
             });
         } else {
             notification.error({
                 message: 'Request Failed',
-                description: 'There was an error sending your friend request. Please try again.',
+                description: 'There was an error sending your friend request. Please try again.'
             });
         }
     };
@@ -85,29 +85,25 @@ const UserCard = ({ data }) => {
                 className='list-item cursor-pointer bg-white-default transition-transform duration-300 ease-in-out hover:shadow-md dark:bg-black-light dark:hover:shadow-md'
             >
                 <div className='flex items-center gap-2.5 rounded-lg p-4 dark:bg-black-light'>
-                    <Badge
-                        dot={true}
-                        color={friendStatus ? '#52c41a' : '#B6B6B6'}
-                        offset={[-7, 36]}
-                    >
+                    <Badge dot={true} color={friendStatus ? '#52c41a' : '#B6B6B6'} offset={[-7, 36]}>
                         <Avatar src={data.avatar} size={40} />
                     </Badge>
                     <div className='flex-1'>
                         <div className='flex flex-row items-center'>
                             <h1 className='text-black text-lg dark:text-white-default'>{data.name}</h1>
                             <span className='ml-2 text-sm text-blue'>
-                                &#8226; {data.isFriend ? 'Bạn bè' : 'Người dùng trên Connectica'}
+                                &#8226; {data.isFriend ? 'Friend' : 'User on Connectica'}
                             </span>
                         </div>
                         <h2 className='text-md text-gray'>{data.introduction}</h2>
                     </div>
                     <Button onClick={handleChatClick}>
-                        {friendStatus ? 'Nhắn tin' : sentRequestStatus ? 'Huỷ lời mời' : 'Kết bạn'}
+                        {friendStatus ? 'Message' : sentRequestStatus ? 'Cancel Request' : 'Add Friend'}
                     </Button>
                 </div>
             </Card>
             <Modal
-                title='Nhập mô tả'
+                title='Enter Description'
                 visible={isModalVisible}
                 onOk={handleAddFriend}
                 onCancel={() => setIsModalVisible(false)}
@@ -116,7 +112,7 @@ const UserCard = ({ data }) => {
                     style={{ height: '100px', width: '100%' }}
                     value={caption}
                     onChange={(e) => setCaption(e.target.value)}
-                    placeholder='Nhập mô tả cho lời mời kết bạn'
+                    placeholder='Enter a description for the friend request'
                     maxLength={150}
                 />
             </Modal>

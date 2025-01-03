@@ -25,8 +25,8 @@ const ChangeName = ({ name }) => {
         <div>
             {contextHolder}
             <div className='mb-3 flex items-center justify-between'>
-                <h1>Chỉnh sửa tên</h1>
-                <Button onClick={() => setSelectedChange(true)}>Chỉnh sửa</Button>
+                <h1>Edit Name</h1>
+                <Button onClick={() => setSelectedChange(true)}>Edit</Button>
             </div>
             {selectedChange ? (
                 <Input
@@ -41,9 +41,9 @@ const ChangeName = ({ name }) => {
             )}
             {selectedChange && (
                 <div className='mt-2 flex justify-end gap-x-2'>
-                    <Button onClick={handleCancel}>Hủy</Button>
+                    <Button onClick={handleCancel}>Cancel</Button>
                     <Button onClick={handleUpdate} loading={isLoading}>
-                        Xác nhận
+                        Confirm
                     </Button>
                 </div>
             )}

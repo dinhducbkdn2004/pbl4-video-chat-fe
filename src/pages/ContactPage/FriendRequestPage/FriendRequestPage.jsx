@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Tabs } from 'antd';
+import { Tabs, Skeleton, Row, Col } from 'antd';
 import useFetch from '../../../hooks/useFetch';
 import userApi from '../../../apis/userApi';
-import Loading from '../../../components/Loading/Loading';
 import FriendRequestCard from '../../../components/FriendRequest/FriendRequestCard';
 
 const { TabPane } = Tabs;
@@ -13,16 +12,19 @@ const FriendRequestPage = () => {
     const [suggestionCount, setSuggestionCount] = useState(0);
 
     return (
-        <div className="space-y-6 rounded-lg bg-white-default dark:bg-black-light px-3 py-3" style={{ height: '100vh' }}>
-            <div className="m-0 rounded-lg bg-white-default dark:bg-black-light p-5" style={{ height: '100%' }}>
-                <Tabs defaultActiveKey="1">
-                    <TabPane tab={`Lời mời đã nhận (${requestCount})`} key="1">
+        <div
+            className='space-y-6 rounded-lg bg-white-default px-3 py-3 dark:bg-black-light'
+            style={{ height: '100vh' }}
+        >
+            <div className='m-0 rounded-lg bg-white-default p-5 dark:bg-black-light' style={{ height: '100%' }}>
+                <Tabs defaultActiveKey='1'>
+                    <TabPane tab={`Received Requests (${requestCount})`} key='1'>
                         <FriendRequestBox setRequestCount={setRequestCount} />
                     </TabPane>
-                    <TabPane tab={`Lời mời đã gửi (${sentRequestCount})`} key="2">
+                    <TabPane tab={`Sent Requests (${sentRequestCount})`} key='2'>
                         <SentRequests setSentRequestCount={setSentRequestCount} />
                     </TabPane>
-                    <TabPane tab={`Gợi ý kết bạn (${suggestionCount})`} key="3">
+                    <TabPane tab={`Friend Suggestions (${suggestionCount})`} key='3'>
                         <FriendSuggestions setSuggestionCount={setSuggestionCount} />
                     </TabPane>
                 </Tabs>
@@ -46,20 +48,24 @@ const FriendRequestBox = ({ setRequestCount }) => {
     }, [fetchData, setRequestCount]);
 
     return (
-        <div className="space-y-4 overflow-y-auto">
+        <div className='space-y-4 overflow-y-auto'>
             {isLoading ? (
-                <div className="flex h-40 w-full items-center justify-center">
-                    <Loading />
-                </div>
+                <Row gutter={[16, 16]}>
+                    {Array.from({ length: 4 }).map((_, index) => (
+                        <Col key={index} xs={24} sm={24} md={24} lg={24} xl={24}>
+                            <Skeleton active avatar paragraph={{ rows: 2 }} />
+                        </Col>
+                    ))}
+                </Row>
             ) : requests.length > 0 ? (
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2">
+                <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2'>
                     {requests.map((request) => (
                         <FriendRequestCard key={request._id} request={request} />
                     ))}
                 </div>
             ) : (
-                <div className="text-gray-500 dark:text-white-dark flex items-center justify-center rounded-md border border-dashed py-4">
-                    Không có lời kết bạn
+                <div className='text-gray-500 flex items-center justify-center rounded-md border border-dashed py-4 dark:text-white-dark'>
+                    No friend requests
                 </div>
             )}
         </div>
@@ -81,16 +87,20 @@ const SentRequests = ({ setSentRequestCount }) => {
     }, [fetchData, setSentRequestCount]);
 
     return (
-        <div className="space-y-4 overflow-y-auto">
+        <div className='space-y-4 overflow-y-auto'>
             {isLoading ? (
-                <div className="flex h-40 w-full items-center justify-center">
-                    <Loading />
-                </div>
+                <Row gutter={[16, 16]}>
+                    {Array.from({ length: 4 }).map((_, index) => (
+                        <Col key={index} xs={24} sm={24} md={24} lg={24} xl={24}>
+                            <Skeleton active avatar paragraph={{ rows: 2 }} />
+                        </Col>
+                    ))}
+                </Row>
             ) : sentRequests.length > 0 ? (
                 sentRequests.map((request) => <FriendRequestCard key={request._id} request={request} />)
             ) : (
-                <div className="text-gray-500 dark:text-white-dark flex items-center justify-center rounded-md border border-dashed py-4">
-                    Không có lời mời đã gửi
+                <div className='text-gray-500 flex items-center justify-center rounded-md border border-dashed py-4 dark:text-white-dark'>
+                    No sent requests
                 </div>
             )}
         </div>
@@ -103,7 +113,7 @@ const FriendSuggestions = ({ setSuggestionCount }) => {
 
     // useEffect(() => {
     //     (async () => {
-    //         const data = await fetchData(() => userApi.getFriendSuggestions(0, 10)); // chua co api
+    //         const data = await fetchData(() => userApi.getFriendSuggestions(0, 10)); // API not available yet
     //         if (data.isOk) {
     //             setSuggestions(data.data);
     //             setSuggestionCount(data.data.length);
@@ -112,16 +122,20 @@ const FriendSuggestions = ({ setSuggestionCount }) => {
     // }, [fetchData, setSuggestionCount]);
 
     return (
-        <div className="space-y-4 overflow-y-auto">
+        <div className='space-y-4 overflow-y-auto'>
             {isLoading ? (
-                <div className="flex h-40 w-full items-center justify-center">
-                    <Loading />
-                </div>
+                <Row gutter={[16, 16]}>
+                    {Array.from({ length: 4 }).map((_, index) => (
+                        <Col key={index} xs={24} sm={24} md={24} lg={24} xl={24}>
+                            <Skeleton active avatar paragraph={{ rows: 2 }} />
+                        </Col>
+                    ))}
+                </Row>
             ) : suggestions.length > 0 ? (
                 suggestions.map((suggestion) => <FriendRequestCard key={suggestion._id} request={suggestion} />)
             ) : (
-                <div className="text-gray-500 dark:text-white-dark flex items-center justify-center rounded-md border border-dashed py-4">
-                    Không có gợi ý kết bạn
+                <div className='text-gray-500 flex items-center justify-center rounded-md border border-dashed py-4 dark:text-white-dark'>
+                    No friend suggestions
                 </div>
             )}
         </div>

@@ -5,22 +5,22 @@ import { UserOutlined, TeamOutlined, UserAddOutlined, GroupOutlined } from '@ant
 const menuItems = [
     {
         key: 'friend-list',
-        label: 'Danh sách bạn bè',
+        label: 'Friend List',
         icon: <UserOutlined className='mr-2' />
     },
     {
         key: 'groups-list',
-        label: 'Danh sách cộng đồng',
+        label: 'Community List',
         icon: <TeamOutlined className='mr-2' />
     },
     {
         key: 'friend-request',
-        label: 'Lời mời kết bạn',
+        label: 'Friend Requests',
         icon: <UserAddOutlined className='mr-2' />
     },
     {
         key: 'group-request',
-        label: 'Lời mời vào cộng đồng',
+        label: 'Community Invitations',
         icon: <GroupOutlined className='mr-2' />
     }
 ];
@@ -42,12 +42,12 @@ const ContactPage = () => {
                 />
             </div>
             <div className='ml-4 flex flex-1 flex-col'>
-                <div className='mb-3 border-gray-300 sticky top-0 z-10 flex h-[65px] items-center justify-between rounded-lg bg-white-default p-4 dark:bg-black-light'>
-                    <h2 className='text-lg p-1 font-bold dark:text-white-dark'>
+                <div className='border-gray-300 sticky top-0 z-10 mb-3 flex h-[65px] items-center justify-between rounded-lg bg-white-default p-4 dark:bg-black-light'>
+                    <h2 className='p-1 text-lg font-bold dark:text-white-dark'>
                         {currentItem?.icon} {currentItem?.label}
                     </h2>
                 </div>
-                <div className=' flex-1'>
+                <div className='flex-1'>
                     <Outlet />
                 </div>
             </div>

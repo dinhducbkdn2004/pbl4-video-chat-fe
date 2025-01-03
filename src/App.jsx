@@ -20,8 +20,8 @@ import GroupListPage from './pages/ContactPage/GroupListPage/GroupListPage';
 import FriendRequestPage from './pages/ContactPage/FriendRequestPage/FriendRequestPage';
 import VideoCall from './components/VideoCall';
 import SettingPage from './pages/SettingPage/SettingPage';
-
 import GroupRequestPage from './pages/ContactPage/GroupRequestPage/GroupRequestPage';
+import JoinGroupPage from './pages/JoinGroupPage/JoinGroupPage';
 
 function App({ setIsDarkMode, isDarkMode }) {
     return (
@@ -54,6 +54,7 @@ function App({ setIsDarkMode, isDarkMode }) {
                     <Route path='setting' element={<SettingPage />} />
                 </Route>
                 <Route path='/video-call/:chatRoomId' element={<VideoCall />} />
+                <Route path='/join-group/:chatRoomId' element={<JoinGroupPage />} />
             </Route>
 
             {/* Optional: Catch-all route for undefined paths */}

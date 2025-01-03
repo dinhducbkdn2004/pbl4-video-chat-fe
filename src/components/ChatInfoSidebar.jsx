@@ -22,7 +22,7 @@ import { useNavigate } from 'react-router-dom';
 const { Text } = Typography;
 
 const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
-    const { navigate } = useNavigate();
+    const navigate = useNavigate();
     const { chatRoomId: currentChatRoomId } = useParams();
     const { name: roomName, participants: members, typeRoom, chatRoomImage, admins, moderators } = chatInfo || {};
     const currentUser = me || {};
@@ -80,7 +80,7 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
         if (admins.length === 1 && admins[0]._id === currentUser._id) {
             notification.error({
                 message: 'Error',
-                description: 'Phải bổ nhiệm Admin khác cho Group trước khi rời nhóm!'
+                description: 'You must appoint another Admin before leaving the group!'
             });
             return;
         }
@@ -99,7 +99,7 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
     const handleFetchRequests = async () => {
         const response = await fetchData(() => RoomChatApi.getRequestByChatRoomId(currentChatRoomId));
         setRequests(response.data);
-        setDrawerTitle('Yêu cầu vào nhóm');
+        setDrawerTitle('Join Requests');
         setIsRequestsView(true);
         setIsBackButtonVisible(true);
     };
@@ -144,9 +144,9 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
             }));
 
     const handleShareLink = () => {
-        const groupLink = `${window.location.origin}/chat/${currentChatRoomId}`;
+        const groupLink = `${window.location.origin}/join-group/${currentChatRoomId}`;
         navigator.clipboard.writeText(groupLink);
-        message.success('Link nhóm đã được sao chép vào clipboard!');
+        message.success('Group link copied to clipboard!');
     };
 
     const currentUserRole = getRole(currentUser._id);
@@ -156,11 +156,11 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
                   {
                       key: '1',
                       icon: <MailOutlined className='dark:text-white-default' />,
-                      label: 'Tuỳ chỉnh đoạn chat',
+                      label: 'Chat Settings',
                       children: [
-                          { key: '1-1', label: 'Đổi tên đoạn chat', onClick: () => handleChangeDetails('name') },
+                          { key: '1-1', label: 'Change Chat Name', onClick: () => handleChangeDetails('name') },
                           ...(typeRoom === 'Group'
-                              ? [{ key: '1-2', label: 'Thay đổi ảnh', onClick: () => handleChangeDetails('image') }]
+                              ? [{ key: '1-2', label: 'Change Image', onClick: () => handleChangeDetails('image') }]
                               : [])
                       ]
                   }
@@ -171,7 +171,7 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
                   {
                       key: '2',
                       icon: <AppstoreOutlined className='dark:text-white-default' />,
-                      label: 'Thành viên trong đoạn chat',
+                      label: 'Chat Members',
                       children: [
                           { key: '2-1', label: 'Admin', children: createMemberItems('Admin') },
                           { key: '2-2', label: 'Moderator', children: createMemberItems('Moderator') },
@@ -183,11 +183,11 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
         {
             key: '3',
             icon: <InboxOutlined className='dark:text-white-default' />,
-            label: 'File phương tiện, file và liên kết',
+            label: 'Media, Files, and Links',
             children: [
-                { key: '3-1', label: 'File phương tiện' },
-                { key: '3-2', label: 'File' },
-                { key: '3-3', label: 'Liên kết' }
+                { key: '3-1', label: 'Media' },
+                { key: '3-2', label: 'Files' },
+                { key: '3-3', label: 'Links' }
             ]
         },
         ...(typeRoom === 'Group'
@@ -195,7 +195,7 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
                   {
                       key: '4',
                       icon: <LogoutOutlined className='mr-2 dark:text-white-default' />,
-                      label: 'Rời nhóm',
+                      label: 'Leave Group',
                       onClick: handleLeaveGroup
                   },
                   ...(currentUserRole !== 'Member'
@@ -203,7 +203,7 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
                             {
                                 key: '5',
                                 icon: <UserAddOutlined className='mr-2 dark:text-white-default' />,
-                                label: `Yêu cầu vào nhóm (${requestsCount})`,
+                                label: `Join Requests (${requestsCount})`,
                                 onClick: handleFetchRequests
                             }
                         ]
@@ -211,7 +211,7 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
                   {
                       key: '6',
                       icon: <LinkOutlined className='mr-2 dark:text-white-default' />,
-                      label: 'Chia sẻ link nhóm',
+                      label: 'Share Group Link',
                       onClick: handleShareLink
                   }
               ]
@@ -244,7 +244,7 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
                     .filter((key) => levelKeys[key] <= levelKeys[currentOpenKey])
             );
             if (currentOpenKey === '3') {
-                setDrawerTitle('File phương tiện, file và liên kết');
+                setDrawerTitle('Media, Files, and Links');
                 setIsFileView(true);
                 setIsBackButtonVisible(true);
             } else {
@@ -324,14 +324,14 @@ const ChatInfoSidebar = ({ chatInfo, me, open, onClose, updateChatInfo }) => {
                                         onClick={() => handleAcceptRequest(request._id)}
                                         style={{ marginRight: '10px' }}
                                     >
-                                        Chấp nhận
+                                        Accept
                                     </Button>
                                     <Button
                                         key={`reject-${request._id}`}
                                         type='default'
                                         onClick={() => handleRejectRequest(request._id)}
                                     >
-                                        Từ chối
+                                        Reject
                                     </Button>
                                 </div>
                             </List.Item>

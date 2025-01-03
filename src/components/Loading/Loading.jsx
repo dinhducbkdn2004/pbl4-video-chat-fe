@@ -1,12 +1,17 @@
 import { Spin } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
-import 'tailwindcss/tailwind.css';
 import './Loading.css';
 
-const antIcon = <LoadingOutlined className='custom-spinner' />;
-
 function Loading() {
-    return <Spin indicator={antIcon} />;
+    return (
+        <>
+            <div className='flex h-screen items-center justify-center bg-white-dark dark:bg-black-default'>
+                <div className='loader-container'>
+                    <div className='loader'></div>
+                    <div className='loader-text'>Loading...</div>
+                </div>
+            </div>
+        </>
+    );
 }
 
 export default Loading;

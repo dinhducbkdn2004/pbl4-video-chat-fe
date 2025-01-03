@@ -4,10 +4,8 @@ import { authActions } from '../../redux/features/auth/authSlice';
 import { useState } from 'react';
 import useFetch from '../../hooks/useFetch';
 import uploadApi from '../../apis/uploadApi';
-import { Button, Upload, Image as ImageAnt, message } from 'antd';
+import { Button, Upload, Spin, Image as ImageAnt, message } from 'antd';
 import PropTypes from 'prop-types';
-
-import Loading from '../Loading/Loading';
 import ImgCrop from 'antd-img-crop';
 
 const ChangeBackgroundImage = ({ backgroundImage }) => {
@@ -36,14 +34,14 @@ const ChangeBackgroundImage = ({ backgroundImage }) => {
             {contextHolder}
 
             <div className='mb-2 flex items-center justify-between'>
-                <h1>Chỉnh sửa ảnh bìa</h1>
+                <h1>Edit Background Image</h1>
 
                 <Button
                     onClick={() => {
                         isChangingAvatar ? setIsChangingAvatar(false) : setIsChangingAvatar(true);
                     }}
                 >
-                    {isChangingAvatar ? 'Hủy' : 'Thay đổi'}
+                    {isChangingAvatar ? 'Cancel' : 'Change'}
                 </Button>
             </div>
             <div className='flex min-h-[200px] items-center justify-center'>
@@ -65,7 +63,7 @@ const ChangeBackgroundImage = ({ backgroundImage }) => {
                         }}
                     >
                         {isLoading ? (
-                            <Loading />
+                            <Spin />
                         ) : (
                             <Upload
                                 multiple={false}
@@ -75,14 +73,14 @@ const ChangeBackgroundImage = ({ backgroundImage }) => {
                                     const isLt10M = file.size / 1024 / 1024 < 10;
 
                                     if (!isLt10M) {
-                                        message.error('Image must smaller than 10MB!');
+                                        message.error('Image must be smaller than 10MB!');
                                     }
                                     const isJpgOrPngOrGif =
                                         file.type === 'image/jpeg' ||
                                         file.type === 'image/png' ||
                                         file.type === 'image/gif';
                                     if (!isJpgOrPngOrGif) {
-                                        message.error('You can only upload JPG/PNG/GIF file!');
+                                        message.error('You can only upload JPG/PNG/GIF files!');
                                     }
 
                                     if (isJpgOrPngOrGif && isLt10M) await onUpload(file);

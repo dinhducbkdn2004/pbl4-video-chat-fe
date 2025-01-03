@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Tabs, Row, Col } from 'antd';
+import { Tabs, Row, Col, Skeleton } from 'antd';
 import useFetch from '../../../hooks/useFetch';
 import RoomChatApi from '../../../apis/RoomChatApi';
-import Loading from '../../../components/Loading/Loading';
 import GroupCard from '../../../components/Search/GroupCard';
 
 const { TabPane } = Tabs;
@@ -12,13 +11,16 @@ const GroupListPage = () => {
     const [communityGroupCount, setCommunityGroupCount] = useState(0);
 
     return (
-        <div className="space-y-6 rounded-lg bg-white-default dark:bg-black-light px-3 py-3" style={{ height: '100vh' }}>
-            <div className="m-0 rounded-lg bg-white-default dark:bg-black-light p-5" style={{ height: '100%' }}>
-                <Tabs defaultActiveKey="1">
-                    <TabPane tab={`Nhóm riêng tư (${privateGroupCount})`} key="1">
+        <div
+            className='space-y-6 rounded-lg bg-white-default px-3 py-3 dark:bg-black-light'
+            style={{ height: '100vh' }}
+        >
+            <div className='m-0 rounded-lg bg-white-default p-5 dark:bg-black-light' style={{ height: '100%' }}>
+                <Tabs defaultActiveKey='1'>
+                    <TabPane tab={`Private Groups (${privateGroupCount})`} key='1'>
                         <PrivateGroups setPrivateGroupCount={setPrivateGroupCount} />
                     </TabPane>
-                    <TabPane tab={`Cộng Đồng (${communityGroupCount})`} key="2">
+                    <TabPane tab={`Community (${communityGroupCount})`} key='2'>
                         <CommunityGroups setCommunityGroupCount={setCommunityGroupCount} />
                     </TabPane>
                 </Tabs>
@@ -42,11 +44,15 @@ const PrivateGroups = ({ setPrivateGroupCount }) => {
     }, [fetchData, setPrivateGroupCount]);
 
     return (
-        <div className="flex flex-col gap-6 overflow-y-auto" style={{ height: 'calc(100vh - 200px)' }}>
+        <div className='flex flex-col gap-6 overflow-y-auto' style={{ height: 'calc(100vh - 200px)' }}>
             {isLoading ? (
-                <div className="flex h-40 w-full items-center justify-center">
-                    <Loading />
-                </div>
+                <Row gutter={[16, 16]}>
+                    {Array.from({ length: 4 }).map((_, index) => (
+                        <Col key={index} xs={24} sm={12} md={12} lg={12} xl={12}>
+                            <Skeleton active avatar paragraph={{ rows: 2 }} />
+                        </Col>
+                    ))}
+                </Row>
             ) : (
                 <Row gutter={[16, 16]}>
                     {privateGroups.map((group) => (
@@ -75,11 +81,15 @@ const CommunityGroups = ({ setCommunityGroupCount }) => {
     }, [fetchData, setCommunityGroupCount]);
 
     return (
-        <div className="flex flex-col gap-6 overflow-y-auto" style={{ height: 'calc(100vh - 200px)' }}>
+        <div className='flex flex-col gap-6 overflow-y-auto' style={{ height: 'calc(100vh - 200px)' }}>
             {isLoading ? (
-                <div className="flex h-40 w-full items-center justify-center">
-                    <Loading />
-                </div>
+                <Row gutter={[16, 16]}>
+                    {Array.from({ length: 4 }).map((_, index) => (
+                        <Col key={index} xs={24} sm={12} md={12} lg={12} xl={12}>
+                            <Skeleton active avatar paragraph={{ rows: 2 }} />
+                        </Col>
+                    ))}
+                </Row>
             ) : (
                 <Row gutter={[16, 16]}>
                     {communityGroups.map((group) => (

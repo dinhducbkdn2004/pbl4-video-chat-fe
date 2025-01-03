@@ -157,7 +157,7 @@ const MessageComponent = ({ messages, isFirstMessage, isLastMessage }) => {
                                 hasBackground
                                     ? sender._id === currentUser._id
                                         ? 'ml-auto bg-blue text-white-default'
-                                        : ' mr-auto bg-white-dark dark:bg-gray dark:text-white-dark'
+                                        : 'mr-auto bg-white-dark dark:bg-gray dark:text-white-dark'
                                     : ''
                             }`}
                             style={{ wordBreak: 'break-word' }}

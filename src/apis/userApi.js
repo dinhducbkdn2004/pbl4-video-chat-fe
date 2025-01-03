@@ -45,6 +45,13 @@ const userApi = {
     },
     revokeRequest: (receiverId) => {
         return axiosClient.patch(`/friend-requests/revoke/`, { receiverId });
+    },
+    removeFriend: (friendId) => {
+        return axiosClient.delete(`users/remove-friend/`, {
+            params: {
+                friendId
+            }
+        });
     }
 };
 
