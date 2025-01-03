@@ -16,7 +16,7 @@ jobs:
 
             # Thiết lập SSH để kết nối với EC2
             - name: Setup SSH
-              uses: webfactory/ssh-agent
+              uses: webfactory/ssh-agent@v0.5.3
               with:
                   ssh-private-key: ${{ secrets.EC2_PRIVATE_KEY }}
 
