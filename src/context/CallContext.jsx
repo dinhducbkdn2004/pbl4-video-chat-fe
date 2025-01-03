@@ -16,19 +16,15 @@ export const CallContextProvider = ({ children }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const audioRef = useRef(null);
 
-    const showModal = () => {
-        setIsModalOpen(true);
-    };
-
     const cancelCall = useCallback(() => {
         socket?.emit('callee:cancel_call', {
-            chatRoomId: chatRoomData?._id,
+            chatRoomId: chatRoomData.chatRoom._id,
             message: `${currentUser.name} không chấp nhận cuộc gọi`
         });
         audioRef.current && audioRef.current.pause();
         audioRef.current.currentTime = 0;
         setIsModalOpen(false);
-    }, [socket, chatRoomData?._id, currentUser?.name]);
+    }, [socket, chatRoomData?.chatRoom?._id, currentUser?.name]);
 
     const handleButtonStart = useCallback(() => {
         const baseUrl = window.location.origin;
@@ -42,7 +38,7 @@ export const CallContextProvider = ({ children }) => {
 
     useEffect(() => {
         socket?.on('server:send_new_call', ({ from, chatRoom }) => {
-            console.log('new video call', from, chatRoom);
+            console.log('new video call', { chatRoom, from });
             setChatRoomData({ chatRoom, from });
 
             setIsModalOpen(true);

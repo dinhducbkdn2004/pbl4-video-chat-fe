@@ -29,9 +29,8 @@ export const SocketContextProvider = ({ children }) => {
             }),
         [accessToken]
     );
-    console.log('chay ne');
+
     useEffect(() => {
-        console.log('chay ne');
         if (!accessToken) return;
 
         const socket = connectSocket();

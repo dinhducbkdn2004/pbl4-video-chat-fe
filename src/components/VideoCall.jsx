@@ -24,16 +24,18 @@ const VideoCall = () => {
     const [isMuted, setIsMuted] = useState(false);
     const [peerStreams, setPeerStreams] = useState([]);
     const [isVideoStopped, setIsVideoStopped] = useState(false);
-    const [callStatus, setCallStatus] = useState(() => (typeCall === 'answer' ? 'connected' : 'calling')); // calling, connected, end-calling
+    const [callStatus, setCallStatus] = useState(() => 'calling'); // calling, connected, end-calling
     const [isScreenSharing, setIsScreenSharing] = useState(false);
 
     useEffect(() => {
+        if (peerStreams.length == 1 && callStatus === 'connected') {
+            setCallStatus('end-calling');
+        }
+
         if (peerStreams.length >= 2) {
             setCallStatus('connected');
-        } else {
-            setCallStatus((pre) => (pre === 'connected' ? 'end-calling' : pre));
         }
-    }, [peerStreams]);
+    }, [callStatus, peerStreams.length]);
 
     console.log(peerStreams);
 
@@ -87,7 +89,7 @@ const VideoCall = () => {
             updatePeerStreams();
             setIsScreenSharing(false);
         } catch (err) {
-            console.error('Error switching back to camera:', err);
+            MessageComponent.error('Error switching back to camera:', err);
         }
     }, [updatePeerStreams]);
 
@@ -116,7 +118,7 @@ const VideoCall = () => {
 
                 setIsScreenSharing(true);
             } catch (err) {
-                console.error('Error sharing screen:', err);
+                MessageComponent.error('Error sharing screen:', err);
             }
         } else {
             stopScreenShare();
@@ -187,9 +189,10 @@ const VideoCall = () => {
             connectToNewUser(peerId, myStreamRef.current, user); // Gửi stream của bạn đến người mới
         };
 
-        const handleUserDisconnected = ({ userId }) => {
-            console.log(`User ${userId} disconnected`);
-            removePeer(userId); // Loại bỏ peer khi người dùng rời khỏi
+        const handleUserDisconnected = ({ user }) => {
+            console.log(`User ${user.name} disconnected`);
+            MessageComponent.error(`User ${user.name} đã thoát`);
+            removePeer(user._id); // Loại bỏ peer khi người dùng rời khỏi
         };
 
         socket?.on('user-connected', handleUserConnected);
@@ -229,7 +232,7 @@ const VideoCall = () => {
 
                     if (typeCall === 'calling') {
                         console.log('calling');
-                        console.log(socket);
+
                         socket.emit('caller:start_new_call', { chatRoomId: currentChatRoomId });
                         return;
                     }
@@ -266,11 +269,32 @@ const VideoCall = () => {
     }, [addVideoStream, currentChatRoomId, currentUser, joinRoom, socket, typeCall]);
 
     useEffect(() => {
+        socket?.on('server:send_callee_response', ({ result, message }) => {
+            console.log({ result, message });
+            if (result === 'accept') {
+                MessageComponent.success(message);
+                return;
+            }
+            if (result === 'decline') {
+                MessageComponent.error(message);
+                return;
+            }
+            MessageComponent.error('khong biet');
+        });
+        socket?.on('server:send_call_error', ({ message }) => {
+            MessageComponent.error(message);
+            setCallStatus('end-calling');
+        });
+        return () => {
+            socket?.off('server:send_callee_response');
+            socket?.off('server:send_call_error');
+        };
+    }, [socket]);
+
+    useEffect(() => {
         const handleBeforeUnload = (event) => {
             leaveCall();
             // Ngăn trình duyệt đóng tab ngay lập tức
-            event.preventDefault();
-            event.returnValue = ''; // Cách làm cũ để hiển thị thông báo rời trang
         };
 
         // Lắng nghe sự kiện beforeunload
@@ -286,7 +310,7 @@ const VideoCall = () => {
                 {callStatus === 'calling' && <audio src='/sounds/calling-state.mp3' loop autoPlay />}
                 {callStatus === 'end-calling' && <audio src='/sounds/end-calling-state.mp3' autoPlay />}
 
-                <div className='flex h-lvh flex-col justify-between overflow-auto bg-black-default px-10 pt-10'>
+                <div className='flex h-lvh flex-col gap-5 overflow-auto bg-black-default px-10 pt-10'>
                     <StreamsGrid peerStreams={peerStreams} />
                     {callStatus !== 'end-calling' && (
                         <div className='flex items-center justify-center gap-4 p-10'>
@@ -301,10 +325,18 @@ const VideoCall = () => {
 
                     {callStatus === 'end-calling' && (
                         <>
-                            <div>Đã kết thúc cuộc gọi</div>
-                            <div className='flex items-center justify-center gap-4 p-10'>
+                            <div className='text-center text-[30px] text-[#fff]'>Đã kết thúc cuộc gọi</div>
+                            <div className='flex items-center justify-center gap-4 p-5'>
                                 <Button onClick={leaveCall}>Thoát</Button>
-                                <Button onClick={() => window.location.reload()}>Gọi lại</Button>
+                                <Button
+                                    onClick={() => {
+                                        const baseUrl = window.location.origin;
+                                        const videoCallUrl = `${baseUrl}/video-call/${currentChatRoomId}?type=calling`; // Concatenate the video call route
+                                        window.open(videoCallUrl);
+                                    }}
+                                >
+                                    Gọi lại
+                                </Button>
                             </div>
                         </>
                     )}

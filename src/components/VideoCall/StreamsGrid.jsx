@@ -6,19 +6,7 @@ import { authSelector } from '../../redux/features/auth/authSelections';
 import Slider from 'react-slick'; // Thêm slider package
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-const CustomArrow = ({ className, onClick, direction }) => {
-    return (
-        <button
-            className={`${className} ${
-                direction === 'up' ? 'top-0' : 'bottom-0'
-            } bg-white absolute z-10 translate-x-[-50%] rounded-full p-2`}
-            style={{ transform: 'translateX(-50%)' }}
-            onClick={onClick}
-        >
-            {direction === 'up' ? '1' : '▼'}
-        </button>
-    );
-};
+
 
 const sliderSettings = {
     infinite: false,
@@ -90,7 +78,7 @@ const VideoPlayer = ({ peerStream, onClick }) => {
             videoRef.current.srcObject = peerStream.stream; // Gắn stream vào video element
         }
     }, [peerStream]);
-    console.log(peerStream.user._id === currentUser._id);
+
     return (
         <div onClick={onClick} className='cursor-pointer'>
             <video
@@ -98,7 +86,7 @@ const VideoPlayer = ({ peerStream, onClick }) => {
                 muted={peerStream.user._id === currentUser._id}
                 autoPlay
                 playsInline
-                className='border-gray-500 h-full w-full rounded-lg border'
+                className='border-gray-500 h-full w-full rounded-lg'
             />
             <h6 className='mt-2 text-center text-white-default'>{peerStream.user.name}</h6>
         </div>
