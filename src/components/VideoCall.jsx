@@ -155,7 +155,7 @@ const VideoCall = () => {
         myStreamRef.current?.getTracks().forEach((track) => track.stop());
         socket.emit('user:leave_call', { roomId: currentChatRoomId });
         socket.disconnect();
-        peerRef.current?.destroy()
+        peerRef.current?.destroy();
         window.close();
     }, [currentChatRoomId, socket]);
 
