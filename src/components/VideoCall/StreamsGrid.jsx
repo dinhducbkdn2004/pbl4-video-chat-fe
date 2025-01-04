@@ -38,20 +38,15 @@ const StreamsGrid = ({ peerStreams }) => {
                         onClick={() => handleSelectVideo(selectedVideo)}
                     />
                 </div>
-                <div className='h-full w-1/4 overflow-hidden'>
-                    <div className='flex h-full w-1/4 flex-col gap-3 overflow-hidden'>
-                        {peerStreams
-                            .filter((peerStream) => peerStream.peerId !== selectedVideo.peerId)
-                            .slice(0, 2)
-                            .map((peerStream, index) => (
-                                <div key={peerStream.peerId || index} className='h-auto w-full'>
-                                    <VideoPlayer
-                                        peerStream={peerStream}
-                                        onClick={() => handleSelectVideo(peerStream)}
-                                    />
-                                </div>
-                            ))}
-                    </div>
+                <div className='flex h-full w-1/4 flex-col gap-3 overflow-hidden'>
+                    {peerStreams
+                        .filter((peerStream) => peerStream.peerId !== selectedVideo.peerId)
+                        .slice(0, 2)
+                        .map((peerStream, index) => (
+                            <div key={peerStream.peerId || index} className='h-auto w-full'>
+                                <VideoPlayer peerStream={peerStream} onClick={() => handleSelectVideo(peerStream)} />
+                            </div>
+                        ))}
                 </div>
             </div>
         );
