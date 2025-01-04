@@ -153,11 +153,11 @@ const VideoCall = () => {
 
     const leaveCall = useCallback(() => {
         myStreamRef.current?.getTracks().forEach((track) => track.stop());
-        socket.emit('user:leave_call');
+        socket.emit('user:leave_call', { roomId: currentChatRoomId });
         window.close();
         // Destroy the peer connection
         peerRef.current?.destroy();
-    }, [socket]);
+    }, [currentChatRoomId, socket]);
 
     const toggleVideo = useCallback(() => {
         const videoTrack = myStreamRef.current?.getVideoTracks()?.[0];
@@ -292,16 +292,11 @@ const VideoCall = () => {
     }, [socket]);
 
     useEffect(() => {
-        const handleBeforeUnload = (event) => {
-            leaveCall();
-            // Ngăn trình duyệt đóng tab ngay lập tức
-        };
-
         // Lắng nghe sự kiện beforeunload
-        window.addEventListener('beforeunload', handleBeforeUnload);
+        window.addEventListener('beforeunload', leaveCall);
 
         // Cleanup listener khi component unmount
-        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', leaveCall);
     }, [leaveCall]);
 
     return (
