@@ -39,7 +39,7 @@ const StreamsGrid = ({ peerStreams }) => {
                     />
                 </div>
                 <div className='h-full w-1/4 overflow-hidden'>
-                    <div className='flex-col gap-3'>
+                    <div className='flex h-full w-1/4 flex-col gap-3 overflow-hidden'>
                         {peerStreams
                             .filter((peerStream) => peerStream.peerId !== selectedVideo.peerId)
                             .slice(0, 2)
