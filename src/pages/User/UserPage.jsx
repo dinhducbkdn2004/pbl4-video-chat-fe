@@ -40,7 +40,10 @@ const UserPage = () => {
     const handleOk = async () => {
         const response = await fetchData(() => userApi.addFriend({ friendId: id, caption }));
         if (response.isOk) {
-            setUser((prevUser) => ({ ...prevUser, isFriend: true }));
+            const data = await fetchData(() => userApi.getUser(id));
+            if (data.isOk) {
+                setUser(data.data);
+            }
         }
         setIsModalVisible(false);
     };
@@ -51,6 +54,12 @@ const UserPage = () => {
 
     const handleRevokeRequest = async () => {
         const response = await fetchData(() => userApi.revokeRequest(id));
+        if (response.isOk) {
+            const data = await fetchData(() => userApi.getUser(id));
+            if (data.isOk) {
+                setUser(data.data);
+            }
+        }
     };
 
     useEffect(() => {
@@ -92,6 +101,8 @@ const UserPage = () => {
                                 <>
                                     {user?.isFriend ? (
                                         <Button onClick={handleRemoveFriend}>Remove Friend</Button>
+                                    ) : user?.isSentRequest ? (
+                                        <Button onClick={handleRevokeRequest}>Cancel Request</Button>
                                     ) : (
                                         <Button onClick={handleAddFriend}>Add Friend</Button>
                                     )}

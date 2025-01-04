@@ -44,14 +44,14 @@ const FriendRequestCard = ({ request }) => {
                         handleButtonClick('DECLINED');
                     }}
                 >
-                    Từ chối
+                    Decline
                 </Button>
                 <Button
                     onClick={() => {
                         handleButtonClick('ACCEPTED');
                     }}
                 >
-                    Đồng ý
+                    Accept
                 </Button>
             </div>
         </Card>
