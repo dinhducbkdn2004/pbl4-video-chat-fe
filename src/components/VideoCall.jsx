@@ -271,15 +271,16 @@ const VideoCall = () => {
     useEffect(() => {
         socket?.on('server:send_callee_response', ({ result, message }) => {
             console.log({ result, message });
-            if (result === 'accept') {
-                MessageComponent.success(message);
-                return;
+            switch (result) {
+                case 'accept':
+                    MessageComponent.success(message);
+                    break;
+                case 'decline':
+                    MessageComponent.error(message);
+                    break;
+                default:
+                    MessageComponent.error('khong biet');
             }
-            if (result === 'decline') {
-                MessageComponent.error(message);
-                return;
-            }
-            MessageComponent.error('khong biet');
         });
         socket?.on('server:send_call_error', ({ message }) => {
             MessageComponent.error(message);
