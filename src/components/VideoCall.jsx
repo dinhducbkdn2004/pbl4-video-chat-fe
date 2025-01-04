@@ -153,11 +153,11 @@ const VideoCall = () => {
 
     const leaveCall = useCallback(() => {
         myStreamRef.current?.getTracks().forEach((track) => track.stop());
-        socket.emit('user:leave_call', { roomId: currentChatRoomId });
+        //socket.emit('user:leave_call', { roomId: currentChatRoomId });
         socket.disconnect();
         peerRef.current?.destroy();
         window.close();
-    }, [currentChatRoomId, socket]);
+    }, [socket]);
 
     const toggleVideo = useCallback(() => {
         const videoTrack = myStreamRef.current?.getVideoTracks()?.[0];
