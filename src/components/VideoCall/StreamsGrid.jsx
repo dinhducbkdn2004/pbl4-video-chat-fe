@@ -40,8 +40,8 @@ const StreamsGrid = ({ peerStreams }) => {
                 </div>
                 <div className='h-full w-1/4 overflow-hidden'>
                     {peerStreams
-                        .slice(0, 1)
                         .filter((peerStream) => peerStream.peerId !== selectedVideo.peerId)
+                        .slice(0, 3)
                         .map((peerStream, index) => (
                             <div key={peerStream.peerId || index} className='h-1/2 p-2'>
                                 <VideoPlayer peerStream={peerStream} onClick={() => handleSelectVideo(peerStream)} />
