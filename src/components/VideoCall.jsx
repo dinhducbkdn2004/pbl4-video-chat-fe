@@ -269,7 +269,9 @@ const VideoCall = () => {
     }, [addVideoStream, currentChatRoomId, currentUser, joinRoom, socket, typeCall]);
 
     useEffect(() => {
-        socket?.on('server:send_callee_response', ({ result, message }) => {
+        if (!socket) return;
+
+        const handleCalleeResponse = ({ result, message }) => {
             console.log({ result, message });
             switch (result) {
                 case 'accept':
@@ -279,16 +281,23 @@ const VideoCall = () => {
                     MessageComponent.error(message);
                     break;
                 default:
-                    MessageComponent.error('khong biet');
+                    MessageComponent.error('Không biết');
             }
-        });
-        socket?.on('server:send_call_error', ({ message }) => {
+        };
+
+        const handleCallError = ({ message }) => {
             MessageComponent.error(message);
             setCallStatus('end-calling');
-        });
+        };
+
+        // Đăng ký sự kiện
+        socket.on('server:send_callee_response', handleCalleeResponse);
+        socket.on('server:send_call_error', handleCallError);
+
+        // Hủy đăng ký sự kiện khi socket thay đổi hoặc component bị unmount
         return () => {
-            socket?.off('server:send_callee_response');
-            socket?.off('server:send_call_error');
+            socket.off('server:send_callee_response', handleCalleeResponse);
+            socket.off('server:send_call_error', handleCallError);
         };
     }, [socket]);
 
