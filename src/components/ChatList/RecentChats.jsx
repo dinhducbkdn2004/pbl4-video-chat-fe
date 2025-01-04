@@ -16,6 +16,7 @@ const RecentChats = ({ recentChats, handleChatClick, isFirstLoad, loadMoreChats,
     const { user } = useSelector(authSelector);
 
     const setData = useSetDataOneToOneRoom();
+
     const filteredChats = recentChats
         .filter((chat) => chat.lastMessage)
         .map((chat) => {
@@ -24,6 +25,7 @@ const RecentChats = ({ recentChats, handleChatClick, isFirstLoad, loadMoreChats,
             }
             return chat;
         });
+    console.log('recentChats', recentChats);
     useEffect(() => {
         if (loading) return;
         const observer = new IntersectionObserver((entries) => {
@@ -99,9 +101,7 @@ const RecentChats = ({ recentChats, handleChatClick, isFirstLoad, loadMoreChats,
                                     }
                                     title={
                                         <div className='meta'>
-                                            <span className='title  dark:text-white-default'>
-                                                {item.name}
-                                            </span>
+                                            <span className='title dark:text-white-default'>{item.name}</span>
                                         </div>
                                     }
                                     description={

@@ -153,11 +153,11 @@ const VideoCall = () => {
 
     const leaveCall = useCallback(() => {
         myStreamRef.current?.getTracks().forEach((track) => track.stop());
-        socket.emit('user:leave_call');
-        window.close();
-        // Destroy the peer connection
+        socket.emit('user:leave_call', { roomId: currentChatRoomId });
+        socket.disconnect();
         peerRef.current?.destroy();
-    }, [socket]);
+        window.close();
+    }, [currentChatRoomId, socket]);
 
     const toggleVideo = useCallback(() => {
         const videoTrack = myStreamRef.current?.getVideoTracks()?.[0];
@@ -269,39 +269,44 @@ const VideoCall = () => {
     }, [addVideoStream, currentChatRoomId, currentUser, joinRoom, socket, typeCall]);
 
     useEffect(() => {
-        socket?.on('server:send_callee_response', ({ result, message }) => {
+        if (!socket) return;
+
+        const handleCalleeResponse = ({ result, message }) => {
             console.log({ result, message });
-            if (result === 'accept') {
-                MessageComponent.success(message);
-                return;
+            switch (result) {
+                case 'accept':
+                    MessageComponent.success(message);
+                    break;
+                case 'decline':
+                    MessageComponent.error(message);
+                    break;
+                default:
+                    MessageComponent.error('Không biết');
             }
-            if (result === 'decline') {
-                MessageComponent.error(message);
-                return;
-            }
-            MessageComponent.error('khong biet');
-        });
-        socket?.on('server:send_call_error', ({ message }) => {
+        };
+
+        const handleCallError = ({ message }) => {
             MessageComponent.error(message);
             setCallStatus('end-calling');
-        });
+        };
+
+        // Đăng ký sự kiện
+        socket.on('server:send_callee_response', handleCalleeResponse);
+        socket.on('server:send_call_error', handleCallError);
+
+        // Hủy đăng ký sự kiện khi socket thay đổi hoặc component bị unmount
         return () => {
-            socket?.off('server:send_callee_response');
-            socket?.off('server:send_call_error');
+            socket.off('server:send_callee_response', handleCalleeResponse);
+            socket.off('server:send_call_error', handleCallError);
         };
     }, [socket]);
 
     useEffect(() => {
-        const handleBeforeUnload = (event) => {
-            leaveCall();
-            // Ngăn trình duyệt đóng tab ngay lập tức
-        };
-
         // Lắng nghe sự kiện beforeunload
-        window.addEventListener('beforeunload', handleBeforeUnload);
+        window.addEventListener('beforeunload', leaveCall);
 
         // Cleanup listener khi component unmount
-        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', leaveCall);
     }, [leaveCall]);
 
     return (
