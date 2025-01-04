@@ -23,10 +23,6 @@ const ChangeDetails = ({ type, chatRoomId, onClose, updateChatInfo }) => {
             setIsUploading(false);
         }
         await fetchData(() => RoomChatApi.changeDetailChatRoom(data));
-        notification.success({
-            message: 'Success',
-            description: 'Chat room details updated successfully!'
-        });
         await updateChatInfo();
         onClose();
     };

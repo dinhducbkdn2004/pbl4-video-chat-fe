@@ -1,4 +1,4 @@
-import { Button, Input } from 'antd';
+import { Button, Input, notification } from 'antd';
 import { authActions } from '../../redux/features/auth/authSlice';
 import userApi from '../../apis/userApi';
 import { useDispatch } from 'react-redux';
@@ -18,6 +18,17 @@ const ChangeIntroduction = ({ introduction }) => {
         const data = await fetchData(() => userApi.editProfile({ introduction: input }));
         if (data.isOk) {
             dispatch(authActions.setProfile(data.data));
+            notification.success({
+                message: 'Introduction changed successfully',
+                description: 'Your introduction has been updated',
+                showProgress: true
+            });
+        } else {
+            notification.error({
+                message: 'Failed to change introduction',
+                description: 'There was an error while changing your introduction',
+                showProgress: true
+            });
         }
     };
     return (

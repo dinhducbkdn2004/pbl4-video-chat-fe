@@ -77,7 +77,7 @@ const FriendListPage = () => {
                         <Option value='desc'>Name Z-A</Option>
                     </Select>
                 </div>
-                <div className='flex h-[calc(100vh-200px)] flex-wrap gap-4 overflow-y-auto'>
+                <div className='flex h-[calc(100vh-200px)] flex-col gap-4 overflow-y-auto'>
                     {isLoading ? (
                         <div className='w-full'>
                             <Row gutter={[16, 16]}>

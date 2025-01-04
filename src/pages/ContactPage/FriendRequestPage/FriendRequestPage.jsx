@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Tabs, Skeleton, Row, Col } from 'antd';
+import { Tabs, Skeleton, Row, Col, Button, message } from 'antd';
 import useFetch from '../../../hooks/useFetch';
 import userApi from '../../../apis/userApi';
 import FriendRequestCard from '../../../components/FriendRequest/FriendRequestCard';
+import SentFriendRequestCard from '../../../components/FriendRequest/SentFriendRequestCard';
 
 const { TabPane } = Tabs;
 
@@ -78,13 +79,24 @@ const SentRequests = ({ setSentRequestCount }) => {
 
     useEffect(() => {
         (async () => {
-            const data = await fetchData(() => userApi.getSentRequests(0, 10));
+            const data = await fetchData(() => userApi.getSentRequests());
             if (data.isOk) {
                 setSentRequests(data.data);
                 setSentRequestCount(data.data.length);
             }
         })();
     }, [fetchData, setSentRequestCount]);
+
+    const handleRevokeRequest = async (receiverId) => {
+        const response = await fetchData(() => userApi.revokeRequest(receiverId));
+        if (response.isOk) {
+            setSentRequests((prevRequests) => prevRequests.filter((request) => request.receiver._id !== receiverId));
+            setSentRequestCount((prevCount) => prevCount - 1);
+            message.success('Friend request revoked successfully');
+        } else {
+            message.error('Failed to revoke friend request');
+        }
+    };
 
     return (
         <div className='space-y-4 overflow-y-auto'>
@@ -97,7 +109,13 @@ const SentRequests = ({ setSentRequestCount }) => {
                     ))}
                 </Row>
             ) : sentRequests.length > 0 ? (
-                sentRequests.map((request) => <FriendRequestCard key={request._id} request={request} />)
+                sentRequests.map((request) => (
+                    <SentFriendRequestCard
+                        key={request._id}
+                        request={request}
+                        onRevoke={() => handleRevokeRequest(request.receiver._id)}
+                    />
+                ))
             ) : (
                 <div className='text-gray-500 flex items-center justify-center rounded-md border border-dashed py-4 dark:text-white-dark'>
                     No sent requests

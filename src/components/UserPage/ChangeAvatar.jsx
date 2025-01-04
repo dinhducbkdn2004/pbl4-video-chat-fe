@@ -4,7 +4,7 @@ import { authActions } from '../../redux/features/auth/authSlice';
 import { useState } from 'react';
 import useFetch from '../../hooks/useFetch';
 import uploadApi from '../../apis/uploadApi';
-import { Button, Upload, Spin, Image as ImageAnt, message } from 'antd';
+import { Button, Upload, Spin, Image as ImageAnt, notification, message } from 'antd';
 import PropTypes from 'prop-types';
 import ImgCrop from 'antd-img-crop';
 
@@ -25,6 +25,17 @@ const ChangeAvatar = ({ avatar }) => {
 
         if (isOk) {
             dispatch(authActions.setProfile(data));
+            notification.success({
+                message: 'Avatar changed successfully',
+                description: 'Your avatar has been updated',
+                showProgress: true
+            });
+        } else {
+            notification.error({
+                message: 'Failed to change avatar',
+                description: 'There was an error while changing your avatar',
+                showProgress: true
+            });
         }
     };
 
