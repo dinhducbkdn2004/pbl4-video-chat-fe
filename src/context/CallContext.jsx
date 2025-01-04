@@ -19,7 +19,7 @@ export const CallContextProvider = ({ children }) => {
     const cancelCall = useCallback(() => {
         socket?.emit('callee:cancel_call', {
             chatRoomId: chatRoomData.chatRoom._id,
-            message: `${currentUser.name} không chấp nhận cuộc gọi`
+            message: `${currentUser.name} declined the call`
         });
         audioRef.current && audioRef.current.pause();
         audioRef.current.currentTime = 0;
@@ -54,22 +54,35 @@ export const CallContextProvider = ({ children }) => {
         <CallContext.Provider value={{ chatRoomData }}>
             <audio src='/sounds/thongbao-cuocgoi.mp3' ref={audioRef} loop />
             {chatRoomData && (
-                <Modal title='Cuộc gọi đến' open={isModalOpen} footer={null} onCancel={cancelCall}>
-                    {chatRoomData.chatRoom.typeRoom === 'OneToOne' && (
-                        <>
-                            <Avatar src={chatRoomData.from.avatar} />
-                            <h2>{`${chatRoomData.chatRoom.name} Đang gọi cho bạn`}</h2>
-                        </>
-                    )}
-                    {chatRoomData.chatRoom.typeRoom === 'Group' && (
-                        <>
-                            <Avatar src={chatRoomData.chatRoom.chatRoomImage} />
-                            <h2>{`${chatRoomData.from.name} đang bắt đầu 1 cuộc gọi trong phòng ${chatRoomData.chatRoom.name}`}</h2>
-                        </>
-                    )}
-
-                    <Button onClick={handleButtonStart}>bắt máy</Button>
-                    <Button onClick={cancelCall}>hủy bỏ</Button>
+                <Modal
+                    title='Incoming Call'
+                    open={isModalOpen}
+                    footer={null}
+                    onCancel={cancelCall}
+                    className='text-center'
+                >
+                    <div className='flex flex-col items-center'>
+                        {chatRoomData.chatRoom.typeRoom === 'OneToOne' && (
+                            <>
+                                <Avatar src={chatRoomData.from.avatar} size={64} className='mb-4' />
+                                <h2 className='text-lg font-semibold'>{`${chatRoomData.chatRoom.name} is calling you`}</h2>
+                            </>
+                        )}
+                        {chatRoomData.chatRoom.typeRoom === 'Group' && (
+                            <>
+                                <Avatar src={chatRoomData.chatRoom.chatRoomImage} size={64} className='mb-4' />
+                                <h2 className='text-lg font-semibold'>{`${chatRoomData.from.name} is starting a call in ${chatRoomData.chatRoom.name}`}</h2>
+                            </>
+                        )}
+                        <div className='mt-4 flex gap-4'>
+                            <Button type='primary' onClick={handleButtonStart} className='bg-blue-500 text-white'>
+                                Answer
+                            </Button>
+                            <Button type='danger' onClick={cancelCall} className='bg-red-500 text-white-default'>
+                                Decline
+                            </Button>
+                        </div>
+                    </div>
                 </Modal>
             )}
             {children}

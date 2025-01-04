@@ -17,11 +17,6 @@ const menuItems = [
         key: 'friend-request',
         label: 'Friend Requests',
         icon: <UserAddOutlined className='mr-2' />
-    },
-    {
-        key: 'group-request',
-        label: 'Community Invitations',
-        icon: <GroupOutlined className='mr-2' />
     }
 ];
 

@@ -68,8 +68,8 @@ const SearchBar = ({ handleChatClick }) => {
                                 descriptionContent = (
                                     <span className='participants text-xs dark:text-white-default'>
                                         {otherParticipant && isFriend(otherParticipant._id)
-                                            ? 'Bạn bè'
-                                            : 'Người dùng trên Connectica'}
+                                            ? 'Friend'
+                                            : 'User on Connectica'}
                                     </span>
                                 );
                             } else if (item.typeRoom === 'Group') {

@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch';
 import userApi from '../../apis/userApi';
-import authApi from '../../apis/authApi';
-import { Button, Image, Modal, Input, notification, Skeleton } from 'antd';
+import { Button, Image, Modal, Input, Skeleton } from 'antd';
 import Container from '../../components/Container';
 import EditProfile from '../../components/UserPage/EditProfile';
 import { useSelector } from 'react-redux';
@@ -17,7 +16,7 @@ const UserPage = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [caption, setCaption] = useState('');
     const { user: currentUser } = useSelector(authSelector);
-    const { isLoading, fetchData, contextHolder } = useFetch({ showSuccess: true, showError: true });
+    const { isLoading, fetchData, contextHolder } = useFetch({ showSusccess: false, showError: true });
     const navigate = useNavigate();
     console.log('user: ', user);
 
@@ -34,6 +33,7 @@ const UserPage = () => {
     };
 
     const handleAddFriend = async () => {
+        setCaption(`Hello, I am ${currentUser.name}, I know you through Connectica. Let's be friends!`);
         setIsModalVisible(true);
     };
 
@@ -91,11 +91,11 @@ const UserPage = () => {
                             {currentUser && currentUser._id !== id && (
                                 <>
                                     {user?.isFriend ? (
-                                        <Button onClick={handleRemoveFriend}>Huỷ kết bạn</Button>
+                                        <Button onClick={handleRemoveFriend}>Remove Friend</Button>
                                     ) : (
-                                        <Button onClick={handleAddFriend}>Kết bạn</Button>
+                                        <Button onClick={handleAddFriend}>Add Friend</Button>
                                     )}
-                                    <Button onClick={handleContact}>Nhắn tin</Button>
+                                    <Button onClick={handleContact}>Message</Button>
                                 </>
                             )}
 
@@ -110,14 +110,14 @@ const UserPage = () => {
                         <p>{user?.introduction}</p>
                     </div>
                     <Modal
-                        title='Kết bạn'
+                        title='Add Friend'
                         visible={isModalVisible}
                         onOk={handleOk}
                         onCancel={handleCancel}
                         className='dark:bg-black-light dark:text-white-default'
                     >
                         <Input
-                            placeholder='Nhập mô tả...'
+                            placeholder='Enter a description...'
                             value={caption}
                             onChange={(e) => setCaption(e.target.value)}
                             required

@@ -113,13 +113,13 @@ const MessageList = () => {
     };
     if (isLoading && messages.length === 0)
         return (
-            <div className='flex h-full items-center justify-center'>
+            <div className='flex h-full items-center justify-center rounded-lg bg-white-default p-5 dark:bg-black-light dark:text-white-default'>
                 <Spin size='medium' />
             </div>
         );
     else if (messages.length === 0)
         return (
-            <div className='flex h-full items-center justify-center rounded-lg bg-white-default p-5 dark:bg-black-default dark:bg-black-light dark:text-white-default'>
+            <div className='flex h-full items-center justify-center rounded-lg bg-white-default p-5 dark:bg-black-light dark:text-white-default'>
                 No messages
             </div>
         );

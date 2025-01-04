@@ -18,7 +18,7 @@ import NotificationSidebar from '../../components/Notification/NotificationSideb
 import ChangePasswordForm from '../../components/ChangePasswordForm';
 const { Sider } = Layout;
 
-const Sidebar = ({setIsDarkMode, isDarkMode}) => {
+const Sidebar = ({ setIsDarkMode, isDarkMode }) => {
     const [isNotificationSidebarVisible, setNotificationSidebarVisible] = useState(false);
     const [isChangePasswordVisible, setChangePasswordVisible] = useState(false);
     const [notifications, setNotifications] = useState([]);
@@ -118,7 +118,7 @@ const Sidebar = ({setIsDarkMode, isDarkMode}) => {
         {
             key: 'notification',
             icon: (
-                <Badge count={unreadCount}>
+                <Badge dot={unreadCount > 0} offset={[-3, 3]}>
                     <IoNotificationsOutline size={20} />
                 </Badge>
             ),

@@ -20,7 +20,6 @@ import GroupListPage from './pages/ContactPage/GroupListPage/GroupListPage';
 import FriendRequestPage from './pages/ContactPage/FriendRequestPage/FriendRequestPage';
 import VideoCall from './components/VideoCall';
 import SettingPage from './pages/SettingPage/SettingPage';
-import GroupRequestPage from './pages/ContactPage/GroupRequestPage/GroupRequestPage';
 import JoinGroupPage from './pages/JoinGroupPage/JoinGroupPage';
 
 function App({ setIsDarkMode, isDarkMode }) {
@@ -43,8 +42,6 @@ function App({ setIsDarkMode, isDarkMode }) {
                         <Route path='friend-list' element={<FriendListPage />} />
                         <Route path='groups-list' element={<GroupListPage />} />
                         <Route path='friend-request' element={<FriendRequestPage />} />
-
-                        <Route path='group-request' element={<GroupRequestPage />} />
                     </Route>
                     <Route path='search' element={<SearchPage />}>
                         <Route path='users' element={<SearchUsers />} />
