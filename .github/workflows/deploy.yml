@@ -20,12 +20,20 @@ jobs:
               with:
                   ssh-private-key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
 
-            
+            # Cài đặt và build ứng dụng React
+            - name: Build React App
+              run: |
+                  npm install --legacy-peer-deps
+                  npm run build
+
+            # Sao chép tệp build (dist folder) lên Azure VM
             - name: Deploy to Azure VM
               run: |
+                  scp -r dist/* ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }}:/var/www/pbl4-video-chat-fe/
+                  
+            # Kết nối với Azure VM để khởi động lại Nginx hoặc thực hiện các tác vụ cần thiết
+            - name: Restart Nginx on Azure VM
+              run: |
                   ssh -o StrictHostKeyChecking=no ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} << EOF
-                    cd /var/www/pbl4-video-chat-fe
-                    sudo git pull origin main
-                    npm install --legacy-peer-deps
-                    npm run build
+                    sudo systemctl restart nginx
                   EOF

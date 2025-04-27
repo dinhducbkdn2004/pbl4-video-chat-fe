@@ -61,7 +61,6 @@ const VideoCall = () => {
             });
         }
 
-        // Cập nhật lại danh sách `peerStreams` để đảm bảo UI đồng bộ
         setPeerStreams((prevPeerStreams) =>
             prevPeerStreams.map((peerStream) => ({
                 ...peerStream,
