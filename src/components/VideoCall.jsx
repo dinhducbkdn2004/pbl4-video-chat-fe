@@ -43,7 +43,7 @@ const VideoCall = () => {
         setPeerStreams((prevPeerStreams) => {
             if (prevPeerStreams.some((ps) => ps.user._id === user._id)) {
                 return prevPeerStreams;
-
+            }
             return [...prevPeerStreams, { peerId, stream, user }];
         });
     }, []);
