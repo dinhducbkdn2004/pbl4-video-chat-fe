@@ -1,4 +1,4 @@
-name: Deploy React Vite to EC2
+name: Deploy React Vite to Azure VM
 
 on:
     push:
@@ -14,16 +14,18 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v3
 
-            # Thiết lập SSH để kết nối với EC2
+            # Thiết lập SSH để kết nối với Azure VM
             - name: Setup SSH
               uses: webfactory/ssh-agent@v0.5.3
               with:
-                  ssh-private-key: ${{ secrets.EC2_PRIVATE_KEY }}
+                  ssh-private-key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
 
-            # Deploy code lên EC2
-            - name: Deploy to EC2
+            
+            - name: Deploy to Azure VM
               run: |
-                  ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
+                  ssh -o StrictHostKeyChecking=no ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} << EOF
                     cd /var/www/pbl4-video-chat-fe
                     sudo git pull origin main
+                    npm install --legacy-peer-deps
+                    npm run build
                   EOF
