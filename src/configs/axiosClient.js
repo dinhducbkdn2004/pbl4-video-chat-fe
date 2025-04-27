@@ -29,7 +29,7 @@ axiosClient.interceptors.request.use(
 );
 let isRefreshing = false;
 let failedQueue = [];
-// Add a response interceptor
+
 axiosClient.interceptors.response.use(
     (response) => {
         return response.data;
