@@ -24,7 +24,7 @@ const VideoCall = () => {
     const [isMuted, setIsMuted] = useState(false);
     const [peerStreams, setPeerStreams] = useState([]);
     const [isVideoStopped, setIsVideoStopped] = useState(false);
-    const [callStatus, setCallStatus] = useState(() => 'calling'); // calling, connected, end-calling
+    const [callStatus, setCallStatus] = useState(() => 'calling');
     const [isScreenSharing, setIsScreenSharing] = useState(false);
 
     useEffect(() => {

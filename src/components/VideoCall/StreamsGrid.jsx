@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { authActions } from '../../redux/features/auth/authSlice';
 import { authSelector } from '../../redux/features/auth/authSelections';
-import Slider from 'react-slick'; // Thêm slider package
+import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
@@ -70,7 +70,7 @@ const VideoPlayer = ({ peerStream, onClick }) => {
     useEffect(() => {
         console.log(peerStream);
         if (videoRef.current) {
-            videoRef.current.srcObject = peerStream.stream; // Gắn stream vào video element
+            videoRef.current.srcObject = peerStream.stream;
         }
     }, [peerStream]);
 
