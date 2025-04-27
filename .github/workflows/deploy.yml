@@ -20,17 +20,27 @@ jobs:
               with:
                   ssh-private-key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
 
-            
-            - name: Deploy to Azure VM
+            # Cài đặt và build ứng dụng React trong thư mục ~/docker/pbl4-video-chat-fe
+            - name: Build React App
               run: |
                   ssh -o StrictHostKeyChecking=no ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} << EOF
                     cd ~/docker/pbl4-video-chat-fe
-
                     npm install --legacy-peer-deps
                     npm run build
+                  EOF
 
-                    scp -r dist/* ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }}:/var/www/pbl4-video-chat-fe/
+            # Thêm Azure VM vào known_hosts để tránh lỗi xác minh khóa host
+            - name: Add Azure VM to known_hosts
+              run: |
+                mkdir -p ~/.ssh
+                ssh-keyscan -H ${{ secrets.AZURE_VM_HOST }} >> ~/.ssh/known_hosts
 
+            # Sao chép tệp build (dist folder) lên Azure VM
+            - name: Deploy to Azure VM
+              run: |
+                  scp -o StrictHostKeyChecking=no -r dist/* ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }}:/var/www/pbl4-video-chat-fe/
+
+            # Khởi động lại Nginx trên Azure VM
             - name: Restart Nginx on Azure VM
               run: |
                   ssh -o StrictHostKeyChecking=no ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} << EOF
