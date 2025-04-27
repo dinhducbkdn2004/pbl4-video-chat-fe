@@ -41,7 +41,6 @@ const VideoCall = () => {
 
     const addVideoStream = useCallback(({ peerId, stream, user }) => {
         setPeerStreams((prevPeerStreams) => {
-            // Check if the peerId already exists in the current state
             if (prevPeerStreams.some((ps) => ps.user._id === user._id)) {
                 return prevPeerStreams; // Return the current state if the peerId exists
             }
