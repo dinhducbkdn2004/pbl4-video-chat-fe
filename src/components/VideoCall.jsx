@@ -42,10 +42,8 @@ const VideoCall = () => {
     const addVideoStream = useCallback(({ peerId, stream, user }) => {
         setPeerStreams((prevPeerStreams) => {
             if (prevPeerStreams.some((ps) => ps.user._id === user._id)) {
-                return prevPeerStreams; // Return the current state if the peerId exists
-            }
+                return prevPeerStreams;
 
-            // Add the new peerId and stream to the array
             return [...prevPeerStreams, { peerId, stream, user }];
         });
     }, []);
