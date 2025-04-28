@@ -39,6 +39,9 @@ jobs:
             # Sao chép tệp build (dist folder) lên Azure VM
             - name: Deploy to Azure VM
               run: |
+                  ssh -o StrictHostKeyChecking=no ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} << EOF
+                    rm -rf /var/www/pbl4-video-chat-fe/*
+                  EOF
                   scp -o StrictHostKeyChecking=no -r dist/* ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }}:/var/www/pbl4-video-chat-fe/
 
             # Khởi động lại Nginx trên Azure VM
