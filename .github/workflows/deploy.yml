@@ -1,52 +1,41 @@
 name: Deploy React Vite to Azure VM
 
 on:
-    push:
-        branches:
-            - main
+  push:
+    branches:
+      - main
 
 jobs:
-    deploy:
-        runs-on: ubuntu-latest
+  deploy:
+    runs-on: ubuntu-latest
 
-        steps:
-            # Checkout code từ GitHub
-            - name: Checkout code
-              uses: actions/checkout@v3
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-            # Thiết lập SSH để kết nối với Azure VM
-            - name: Setup SSH
-              uses: webfactory/ssh-agent@v0.5.3
-              with:
-                  ssh-private-key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
 
-            # Cài đặt và build ứng dụng React trong thư mục ~/docker/pbl4-video-chat-fe
-            - name: Build React App
-              run: |
-                  ssh -o StrictHostKeyChecking=no ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} << EOF
-                    cd ~/docker/pbl4-video-chat-fe
-                    git pull origin main
-                    npm install --legacy-peer-deps
-                    npm run build
-                  EOF
+      - name: Install and Build React App
+        run: |
+          npm install --legacy-peer-deps
+          npm run build
 
-            # Thêm Azure VM vào known_hosts để tránh lỗi xác minh khóa host
-            - name: Add Azure VM to known_hosts
-              run: |
-                  mkdir -p ~/.ssh
-                  ssh-keyscan -H ${{ secrets.AZURE_VM_HOST }} >> ~/.ssh/known_hosts
+      - name: Add Azure VM to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.AZURE_VM_HOST }} >> ~/.ssh/known_hosts
 
-            # Sao chép tệp build (dist folder) lên Azure VM
-            - name: Deploy to Azure VM
-              run: |
-                  ssh -o StrictHostKeyChecking=no ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} << EOF
-                    rm -rf /var/www/pbl4-video-chat-fe/*
-                  EOF
-                  scp -o StrictHostKeyChecking=no -r dist/* ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }}:/var/www/pbl4-video-chat-fe/
+      - name: Clear old files on Azure VM
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} "rm -rf /var/www/pbl4-video-chat-fe/*"
 
-            # Khởi động lại Nginx trên Azure VM
-            - name: Restart Nginx on Azure VM
-              run: |
-                  ssh -o StrictHostKeyChecking=no ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} << EOF
-                    sudo systemctl restart nginx
-                  EOF
+      - name: Deploy new build to Azure VM
+        run: |
+          scp -o StrictHostKeyChecking=no -r dist/* ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }}:/var/www/pbl4-video-chat-fe/
+
+      - name: Restart Nginx on Azure VM
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} "sudo systemctl restart nginx"
