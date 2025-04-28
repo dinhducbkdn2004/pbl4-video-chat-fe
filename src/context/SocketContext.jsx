@@ -25,7 +25,13 @@ export const SocketContextProvider = ({ children }) => {
             io(import.meta.env.VITE_BASE_API_URL_SOCKET, {
                 extraHeaders: {
                     authorization: accessToken
-                }
+                },
+                secure: import.meta.env.VITE_SOCKET_SECURE === 'true',
+                rejectUnauthorized: false,
+                transports: ['websocket', 'polling'],
+                reconnection: true,
+                reconnectionAttempts: 5,
+                reconnectionDelay: 1000
             }),
         [accessToken]
     );
@@ -35,10 +41,15 @@ export const SocketContextProvider = ({ children }) => {
 
         const socket = connectSocket();
         socketRef.current = socket;
-        console.log(socket);
+        console.log('Socket attempting connection to:', import.meta.env.VITE_BASE_API_URL_SOCKET);
+
         // Listen for connection
         socket.on('connect', () => {
-            console.log('Socket connected: ');
+            console.log('Socket connected successfully');
+        });
+
+        socket.on('connect_error', (error) => {
+            console.error('Socket connection error:', error.message);
         });
 
         socket.on('online friends', (users) => {
