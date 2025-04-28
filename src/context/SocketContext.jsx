@@ -33,6 +33,7 @@ export const SocketContextProvider = ({ children }) => {
                 reconnectionAttempts: 5,
                 reconnectionDelay: 1000
             }),
+
         [accessToken]
     );
 
