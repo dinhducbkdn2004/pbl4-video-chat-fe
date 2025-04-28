@@ -28,3 +28,7 @@ yarn.lock
 
 # Environment variables
 .env
+
+# Local build directories
+dist
+dist/
