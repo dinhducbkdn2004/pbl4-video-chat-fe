@@ -44,7 +44,6 @@ export const SocketContextProvider = ({ children }) => {
         socketRef.current = socket;
         console.log('Socket attempting connection to:', import.meta.env.VITE_BASE_API_URL_SOCKET);
 
-        // Listen for connection
         socket.on('connect', () => {
             console.log('Socket connected successfully');
         });
