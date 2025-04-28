@@ -1,41 +1,43 @@
 name: Deploy React Vite to Azure VM
 
 on:
-  push:
-    branches:
-      - main
+    push:
+        branches:
+            - main
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+    deploy:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
 
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
+            - name: Setup SSH
+              uses: webfactory/ssh-agent@v0.5.3
+              with:
+                  ssh-private-key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
 
-      - name: Install and Build React App
-        run: |
-          npm install --legacy-peer-deps
-          npm run build
+            - name: Install and Build React App
+              run: |
+                  cd ~/docker/pbl4-video-chat-fe
+                  git pull origin main
+                  npm install --legacy-peer-deps
+                  npm run build
 
-      - name: Add Azure VM to known_hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.AZURE_VM_HOST }} >> ~/.ssh/known_hosts
+            - name: Add Azure VM to known_hosts
+              run: |
+                  mkdir -p ~/.ssh
+                  ssh-keyscan -H ${{ secrets.AZURE_VM_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Clear old files on Azure VM
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} "rm -rf /var/www/pbl4-video-chat-fe/*"
+            - name: Clear old files on Azure VM
+              run: |
+                  ssh -o StrictHostKeyChecking=no ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} "rm -rf /var/www/pbl4-video-chat-fe/*"
 
-      - name: Deploy new build to Azure VM
-        run: |
-          scp -o StrictHostKeyChecking=no -r dist/* ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }}:/var/www/pbl4-video-chat-fe/
+            - name: Deploy new build to Azure VM
+              run: |
+                  scp -o StrictHostKeyChecking=no -r dist/* ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }}:/var/www/pbl4-video-chat-fe/
 
-      - name: Restart Nginx on Azure VM
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} "sudo systemctl restart nginx"
+            - name: Restart Nginx on Azure VM
+              run: |
+                  ssh -o StrictHostKeyChecking=no ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} "sudo systemctl restart nginx"
