@@ -7,7 +7,7 @@ function Loading() {
             <div className='flex h-screen items-center justify-center bg-white-dark dark:bg-black-default'>
                 <div className='loader-container'>
                     <div className='loader'></div>
-                    <div className='loader-text'>Loading...</div>
+                    <div className='loader-text'></div>
                 </div>
             </div>
         </>

@@ -8,10 +8,10 @@ const SkeletonChatItem = () => (
                 avatar={<Avatar shape='circle' />}
                 title={
                     <div className='meta'>
-                        <span className='title'>Loading...</span>
+                        <span className='title'></span>
                     </div>
                 }
-                description={<div className='description'>Loading...</div>}
+                description={<div className='description'></div>}
             />
         </Skeleton>
     </List.Item>

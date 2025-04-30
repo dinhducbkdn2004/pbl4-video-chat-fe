@@ -14,7 +14,7 @@ const SidebarContainer = styled.div`
     width: 385px;
     background: #fff;
     position: fixed;
-    left: 104px;
+    ${window.innerWidth <= 768 ? 'left: 90px;' : 'left: 100px'};
     top: 1;
     z-index: 1000;
     border-radius: 7px;
@@ -172,7 +172,7 @@ const NotificationSidebar = ({ onClose, markAllAsRead }) => {
 
     return (
         <SidebarContainer
-            className='bg-white-default shadow-lg dark:bg-black-light dark:text-white-default'
+            className='mt-4 bg-white-default shadow-lg dark:bg-black-light dark:text-white-default'
             ref={sidebarRef}
         >
             <Header className='dark:border-gray'>

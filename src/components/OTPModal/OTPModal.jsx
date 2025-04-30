@@ -36,7 +36,6 @@ const OTPModal = ({ isVisible, email, handleCloseOtpModal, onSuccess }) => {
         const otpCode = otp.join('');
         try {
             const { isOk, data } = await fetchData(() => authApi.checkOtp(email, otpCode));
-            console.log(data);
             if (isOk) {
                 localStorage.setItem('verifiedOtp', otpCode);
                 onSuccess();
@@ -49,22 +48,40 @@ const OTPModal = ({ isVisible, email, handleCloseOtpModal, onSuccess }) => {
     return (
         <>
             {contextHolder}
-            <Modal open={isVisible} title={null} footer={null} centered closable={false} className='otp-modal'>
+            <Modal
+                open={isVisible}
+                title={null}
+                footer={null}
+                centered
+                closable={false}
+                className='otp-modal'
+                width={350}
+                styles={{
+                    body: {
+                        padding: '20px',
+                        borderRadius: '8px'
+                    }
+                }}
+            >
                 <Button
                     type='text'
                     icon={<CloseOutlined />}
                     onClick={handleCloseOtpModal}
-                    className='absolute right-2.5 top-2.5'
+                    className='absolute right-2 top-2'
+                    size='small'
                 />
-                <div className='mb-5 text-center'>
-                    <InfoCircleOutlined className='text-3xl text-green-500' />
-                    <h3 className='text-lg font-semibold'>Verify account</h3>
-                    <p>
-                        Please enter the OTP code sent to email <strong>{email}</strong> to verify your account
+                <div className='mb-4 text-center'>
+                    <div className='mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full bg-green-50'>
+                        <InfoCircleOutlined className='text-xl text-green-500' />
+                    </div>
+                    <h3 className='text-gray-700 mb-1 text-lg font-medium'>Verify Account</h3>
+                    <p className='text-gray-500 text-sm'>
+                        Please enter the OTP code sent to email <br />
+                        <strong className='text-gray-600 break-all'>{email}</strong>
                     </p>
                 </div>
-                <div className='mb-5 flex justify-center'>
-                    <div className='flex gap-2'>
+                <div className='mb-4 flex justify-center'>
+                    <div className='flex gap-1'>
                         {otp.map((data, index) => (
                             <Input
                                 key={index}
@@ -72,12 +89,18 @@ const OTPModal = ({ isVisible, email, handleCloseOtpModal, onSuccess }) => {
                                 value={data}
                                 onChange={(e) => handleOtpChange(e.target, index)}
                                 maxLength='1'
-                                className='h-12 w-12 text-center'
+                                className='text-gray-700 h-10 w-10 rounded-md text-center text-base'
+                                style={{ fontWeight: '500' }}
                             />
                         ))}
                     </div>
                 </div>
-                <Button className='h-12 w-full' type='primary' onClick={handleOtpSubmit} loading={isLoading}>
+                <Button
+                    className='bg-blue-600 hover:bg-blue-700 h-9 w-full rounded-md text-sm font-medium shadow-sm transition-colors'
+                    type='primary'
+                    onClick={handleOtpSubmit}
+                    loading={isLoading}
+                >
                     Confirm
                 </Button>
             </Modal>

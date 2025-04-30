@@ -1,6 +1,7 @@
 # Build docker image.
 FROM node:20 as node
 
+
 # Khai báo tham số
 ARG workdir=.
 ARG VITE_API_URL

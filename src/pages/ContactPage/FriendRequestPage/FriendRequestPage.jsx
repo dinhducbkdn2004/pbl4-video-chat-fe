@@ -11,22 +11,36 @@ const FriendRequestPage = () => {
     const [requestCount, setRequestCount] = useState(0);
     const [sentRequestCount, setSentRequestCount] = useState(0);
     const [suggestionCount, setSuggestionCount] = useState(0);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     return (
         <div
-            className='space-y-6 rounded-lg bg-white-default px-3 py-3 dark:bg-black-light'
+            className='space-y-4 rounded-lg bg-white-default px-2 py-2 dark:bg-black-light md:space-y-6 md:px-3 md:py-3'
             style={{ height: '100vh' }}
         >
-            <div className='m-0 rounded-lg bg-white-default p-5 dark:bg-black-light' style={{ height: '100%' }}>
-                <Tabs defaultActiveKey='1'>
+            <div className='m-0 rounded-lg bg-white-default p-2 dark:bg-black-light md:p-5' style={{ height: '100%' }}>
+                <Tabs defaultActiveKey='1' size={isMobile ? 'small' : 'default'}>
                     <TabPane tab={`Received Requests (${requestCount})`} key='1'>
-                        <FriendRequestBox setRequestCount={setRequestCount} />
+                        <FriendRequestBox setRequestCount={setRequestCount} isMobile={isMobile} />
                     </TabPane>
                     <TabPane tab={`Sent Requests (${sentRequestCount})`} key='2'>
-                        <SentRequests setSentRequestCount={setSentRequestCount} />
+                        <SentRequests setSentRequestCount={setSentRequestCount} isMobile={isMobile} />
                     </TabPane>
                     <TabPane tab={`Friend Suggestions (${suggestionCount})`} key='3'>
-                        <FriendSuggestions setSuggestionCount={setSuggestionCount} />
+                        <FriendSuggestions setSuggestionCount={setSuggestionCount} isMobile={isMobile} />
                     </TabPane>
                 </Tabs>
             </div>
@@ -34,7 +48,7 @@ const FriendRequestPage = () => {
     );
 };
 
-const FriendRequestBox = ({ setRequestCount }) => {
+const FriendRequestBox = ({ setRequestCount, isMobile }) => {
     const { fetchData, isLoading } = useFetch({ showSuccess: false, showError: false });
     const [requests, setRequests] = useState([]);
 
@@ -49,7 +63,7 @@ const FriendRequestBox = ({ setRequestCount }) => {
     }, [fetchData, setRequestCount]);
 
     return (
-        <div className='space-y-4 overflow-y-auto'>
+        <div className='space-y-4 overflow-y-auto pb-16 pt-2 md:pb-0'>
             {isLoading ? (
                 <Row gutter={[16, 16]}>
                     {Array.from({ length: 4 }).map((_, index) => (
@@ -59,7 +73,7 @@ const FriendRequestBox = ({ setRequestCount }) => {
                     ))}
                 </Row>
             ) : requests.length > 0 ? (
-                <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2'>
+                <div className='grid grid-cols-1 gap-3 sm:grid-cols-1 md:grid-cols-2 md:gap-4 lg:grid-cols-2'>
                     {requests.map((request) => (
                         <FriendRequestCard key={request._id} request={request} />
                     ))}
@@ -73,7 +87,7 @@ const FriendRequestBox = ({ setRequestCount }) => {
     );
 };
 
-const SentRequests = ({ setSentRequestCount }) => {
+const SentRequests = ({ setSentRequestCount, isMobile }) => {
     const { fetchData, isLoading } = useFetch({ showSuccess: false, showError: false });
     const [sentRequests, setSentRequests] = useState([]);
 
@@ -99,7 +113,7 @@ const SentRequests = ({ setSentRequestCount }) => {
     };
 
     return (
-        <div className='space-y-4 overflow-y-auto'>
+        <div className='space-y-4 overflow-y-auto pb-16 pt-2 md:pb-0'>
             {isLoading ? (
                 <Row gutter={[16, 16]}>
                     {Array.from({ length: 4 }).map((_, index) => (
@@ -125,7 +139,7 @@ const SentRequests = ({ setSentRequestCount }) => {
     );
 };
 
-const FriendSuggestions = ({ setSuggestionCount }) => {
+const FriendSuggestions = ({ setSuggestionCount, isMobile }) => {
     const { fetchData, isLoading } = useFetch({ showSuccess: false, showError: false });
     const [suggestions, setSuggestions] = useState([]);
 
@@ -140,7 +154,7 @@ const FriendSuggestions = ({ setSuggestionCount }) => {
     // }, [fetchData, setSuggestionCount]);
 
     return (
-        <div className='space-y-4 overflow-y-auto'>
+        <div className='space-y-4 overflow-y-auto pb-16 pt-2 md:pb-0'>
             {isLoading ? (
                 <Row gutter={[16, 16]}>
                     {Array.from({ length: 4 }).map((_, index) => (

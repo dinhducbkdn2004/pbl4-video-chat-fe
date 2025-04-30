@@ -1,6 +1,7 @@
 import { UsergroupAddOutlined } from '@ant-design/icons';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import RoomChatApi from '../../../apis/RoomChatApi';
 import AddRoomModal from '../../../components/ChatList/AddRoomModal';
 import OnlineUsers from '../../../components/ChatList/OnlineUsers';
@@ -12,7 +13,7 @@ import './ChatList.css';
 import { useSelector } from 'react-redux';
 import { authSelector } from '../../../redux/features/auth/authSelections.js';
 
-const ChatList = () => {
+const ChatList = ({ onSelectChat }) => {
     const navigate = useNavigate();
     const { user } = useSelector(authSelector);
     const { fetchData } = useFetch({ showSuccess: false, showError: false });
@@ -24,6 +25,20 @@ const ChatList = () => {
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const audioRef = useRef(null);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     const showAddRoomModal = () => {
         setIsAddRoomModalVisible(true);
@@ -61,6 +76,11 @@ const ChatList = () => {
         navigate(`/message/${chatRoomData._id}`, {
             state: chatRoomData
         });
+
+        // Gọi callback khi chat được chọn (cho mobile view)
+        if (onSelectChat) {
+            onSelectChat();
+        }
     };
 
     const fetchAndSetChatrooms = async () => {
@@ -104,11 +124,14 @@ const ChatList = () => {
     return (
         <>
             <audio src={'/sounds/tin-nhan.mp3'} ref={audioRef} />
-            <div className='chat-list h-100vh rounded-md overflow-hidden bg-white-dark dark:bg-black-default'>
-                <div className='header rounded-lg bg-white-default dark:bg-black-default'>
-                    <div className='title text-blue'>All Chats</div>
+            <div className={`chat-list h-full w-full overflow-hidden rounded-md bg-white-dark dark:bg-black-default ${isMobile ? 'pl-2' : 'pl-[4px]'}`}>
+                <div className='header rounded-lg bg-white-default px-4 py-3 dark:bg-black-default'>
+                    <div className='title text-lg font-medium text-blue'>All Chats</div>
                     <div className='icons'>
-                        <UsergroupAddOutlined className='icon text-gray' onClick={showAddRoomModal} />
+                        <UsergroupAddOutlined
+                            className='icon hover:text-blue-500 cursor-pointer text-xl text-gray'
+                            onClick={showAddRoomModal}
+                        />
                     </div>
                 </div>
                 <SearchBar handleChatClick={handleChatClick} />
@@ -125,6 +148,10 @@ const ChatList = () => {
             </div>
         </>
     );
+};
+
+ChatList.propTypes = {
+    onSelectChat: PropTypes.func
 };
 
 export default ChatList;

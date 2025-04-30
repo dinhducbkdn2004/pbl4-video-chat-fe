@@ -18,7 +18,7 @@ const UserPage = () => {
     const { user: currentUser } = useSelector(authSelector);
     const { isLoading, fetchData, contextHolder } = useFetch({ showSusccess: false, showError: true });
     const navigate = useNavigate();
-    console.log('user: ', user);
+    //console.log('user: ', user);
 
     const handleContact = async () => {
         const { data, isOk } = await RoomChatApi.getOneToOneChatRoom(id);
@@ -122,7 +122,7 @@ const UserPage = () => {
                     </div>
                     <Modal
                         title='Add Friend'
-                        visible={isModalVisible}
+                        open={isModalVisible}
                         onOk={handleOk}
                         onCancel={handleCancel}
                         className='dark:bg-black-light dark:text-white-default'

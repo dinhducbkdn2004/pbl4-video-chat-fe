@@ -37,58 +37,70 @@ const RegisterForm = () => {
             <Form
                 name='register'
                 layout='vertical'
-                style={{
-                    maxWidth: 600,
-                    margin: '0 auto'
-                }}
+                className='w-full px-2'
                 initialValues={{
                     remember: true
                 }}
+                requiredMark={false}
                 onFinish={onFinish}
                 autoComplete='on'
+                size="middle"
             >
                 <Form.Item
-                    label='Name'
+                    label={<span className="text-gray-600 font-medium">Full Name</span>}
                     name='name'
                     rules={[
                         {
                             required: true,
-                            message: 'Please input your name!'
+                            message: 'Please enter your name!'
                         }
                     ]}
                 >
-                    <Input prefix={<UserOutlined />} placeholder='Enter your full name' />
+                    <Input 
+                        prefix={<UserOutlined className="text-gray-400" />} 
+                        placeholder='Enter your full name'
+                        className="rounded-md py-1 text-gray-700" 
+                    />
                 </Form.Item>
 
                 <Form.Item
-                    label='Email'
+                    label={<span className="text-gray-600 font-medium">Email</span>}
                     name='email'
                     rules={[
                         {
                             required: true,
                             type: 'email',
-                            message: 'Please input a valid email!'
+                            message: 'Please enter a valid email!'
                         }
                     ]}
                 >
-                    <Input prefix={<MailOutlined />} placeholder='Enter your email' />
+                    <Input 
+                        prefix={<MailOutlined className="text-gray-400" />} 
+                        placeholder='Enter your email' 
+                        className="rounded-md py-1 text-gray-700"
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
                 </Form.Item>
 
                 <Form.Item
-                    label='Password'
+                    label={<span className="text-gray-600 font-medium">Password</span>}
                     name='password'
                     rules={[
                         {
                             required: true,
-                            message: 'Please input your password!'
+                            message: 'Please enter your password!'
                         }
                     ]}
                 >
-                    <Input.Password prefix={<LockOutlined />} placeholder='Enter your password' />
+                    <Input.Password 
+                        prefix={<LockOutlined className="text-gray-400" />} 
+                        placeholder='Enter your password'
+                        className="rounded-md py-1 text-gray-700" 
+                    />
                 </Form.Item>
 
                 <Form.Item
-                    label='Confirm Password'
+                    label={<span className="text-gray-600 font-medium">Confirm Password</span>}
                     name='confirmPassword'
                     dependencies={['password']}
                     rules={[
@@ -106,25 +118,21 @@ const RegisterForm = () => {
                         })
                     ]}
                 >
-                    <Input.Password prefix={<LockOutlined />} placeholder='Repeat password' />
+                    <Input.Password 
+                        prefix={<LockOutlined className="text-gray-400" />} 
+                        placeholder='Repeat your password'
+                        className="rounded-md py-1 text-gray-700" 
+                    />
                 </Form.Item>
 
-                <Form.Item
-                    wrapperCol={{
-                        span: 24
-                    }}
-                >
+                <Form.Item className="mt-2">
                     <Button
                         type='primary'
                         htmlType='submit'
                         loading={isLoading}
-                        style={{
-                            width: '100%',
-                            borderRadius: 30,
-                            padding: '15px 20px'
-                        }}
+                        className='h-9 w-full rounded-md bg-blue-600 hover:bg-blue-700 shadow-sm transition-colors font-medium text-sm'
                     >
-                        Register
+                        Sign up
                     </Button>
                 </Form.Item>
             </Form>

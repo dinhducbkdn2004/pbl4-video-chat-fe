@@ -9,9 +9,9 @@ const AuthTabs = () => {
         {
             key: '1',
             label: (
-                <span>
-                    <LoginOutlined style={{ marginRight: '10px' }} />
-                    Login
+                <span className='text-gray-600 flex items-center font-medium'>
+                    <LoginOutlined style={{ marginRight: '8px' }} />
+                    <span className='inline'>Login</span>
                 </span>
             ),
             children: <LoginForm />
@@ -19,9 +19,9 @@ const AuthTabs = () => {
         {
             key: '2',
             label: (
-                <span>
-                    <UserAddOutlined style={{ marginRight: '10px' }} />
-                    Register
+                <span className='text-gray-600 flex items-center font-medium'>
+                    <UserAddOutlined style={{ marginRight: '8px' }} />
+                    <span className='inline'>Register</span>
                 </span>
             ),
             children: <RegisterForm />
@@ -29,22 +29,17 @@ const AuthTabs = () => {
     ];
 
     return (
-        <div
-            style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100%'
-            }}
-        >
+        <div className='flex w-full justify-center'>
             <Tabs
                 defaultActiveKey='1'
                 centered
                 items={items}
-                style={{
-                    width: '70%',
-                    maxWidth: '400px',
-                    maxHeight: '500px'
+                className='w-full max-w-md'
+                size='middle'
+                tabBarStyle={{
+                    marginBottom: '10px',
+                    fontWeight: 500,
+                    color: '#6B7280'
                 }}
             />
         </div>

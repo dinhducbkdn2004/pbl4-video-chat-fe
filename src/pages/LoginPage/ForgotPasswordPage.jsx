@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { Form, Input, Button, Typography, Space, Card, notification } from 'antd';
-import { MailOutlined, LockOutlined } from '@ant-design/icons';
+import { MailOutlined, LockOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import useFetch from '../../hooks/useFetch';
 import { useNavigate } from 'react-router-dom';
 import authApi from '../../apis/authApi';
@@ -61,20 +61,33 @@ const ForgotPassword = () => {
         <>
             {contextHolder}
             <div
-                className='bg-gray-100 flex min-h-screen items-center justify-center bg-cover bg-no-repeat p-5'
+                className='flex min-h-screen items-center justify-center bg-cover bg-center bg-no-repeat p-4'
                 style={{ backgroundImage: `url(${asset.bg})` }}
             >
                 <Card
-                    className='bg-white w-full max-w-md rounded-lg p-5 shadow-lg'
+                    className='w-full max-w-sm overflow-hidden rounded-lg shadow-md'
                     style={{
-                        boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)'
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)'
                     }}
+                    bodyStyle={{ padding: '20px' }}
                 >
-                    <Space direction='vertical' size='large' className='w-full'>
-                        <Title level={2} className='text-center'>
-                            Forgot Password
+                    <div className="flex items-center mb-3">
+                        <Button 
+                            type="text" 
+                            icon={<ArrowLeftOutlined />} 
+                            onClick={() => navigate('/login')}
+                            className="p-0 flex items-center text-gray-500 hover:text-blue-600"
+                            size="small"
+                        >
+                            <span className="ml-1">Back to Login</span>
+                        </Button>
+                    </div>
+                    
+                    <Space direction='vertical' size='middle' className='w-full'>
+                        <Title level={3} className='text-center mt-1 mb-0 text-gray-700'>
+                            {formState.isEmailVerified ? 'Reset Password' : 'Forgot Password'}
                         </Title>
-                        <Text className='text-gray-500 text-center'>
+                        <Text className='text-gray-500 text-center block mb-4 text-sm'>
                             {formState.isEmailVerified
                                 ? 'Enter your new password.'
                                 : 'Enter your email address to receive a verification code.'}
@@ -84,22 +97,26 @@ const ForgotPassword = () => {
                             layout='vertical'
                             onFinish={formState.isEmailVerified ? handlePasswordSubmit : handleEmailSubmit}
                             autoComplete='on'
+                            className='w-full'
+                            size="middle"
+                            requiredMark={false}
                         >
                             {!formState.isEmailVerified && (
                                 <Form.Item
-                                    label='Email'
+                                    label={<span className="text-gray-600 font-medium">Email</span>}
                                     name='email'
                                     rules={[
                                         {
                                             required: true,
                                             type: 'email',
-                                            message: 'Please input a valid email!'
+                                            message: 'Please enter a valid email!'
                                         }
                                     ]}
                                 >
                                     <Input
-                                        prefix={<MailOutlined />}
+                                        prefix={<MailOutlined className="text-gray-400" />}
                                         placeholder='Enter your email'
+                                        className="rounded-md py-1 text-gray-700"
                                         onChange={(e) =>
                                             setFormState((prevState) => ({
                                                 ...prevState,
@@ -113,18 +130,19 @@ const ForgotPassword = () => {
                             {formState.isEmailVerified && (
                                 <>
                                     <Form.Item
-                                        label='New Password'
+                                        label={<span className="text-gray-600 font-medium">New Password</span>}
                                         name='password'
                                         rules={[
                                             {
                                                 required: true,
-                                                message: 'Please input your new password!'
+                                                message: 'Please enter your new password!'
                                             }
                                         ]}
                                     >
                                         <Input.Password
-                                            prefix={<LockOutlined />}
+                                            prefix={<LockOutlined className="text-gray-400" />}
                                             placeholder='Enter new password'
+                                            className="rounded-md py-1 text-gray-700"
                                             onChange={(e) =>
                                                 setFormState((prevState) => ({
                                                     ...prevState,
@@ -134,7 +152,7 @@ const ForgotPassword = () => {
                                         />
                                     </Form.Item>
                                     <Form.Item
-                                        label='Confirm Password'
+                                        label={<span className="text-gray-600 font-medium">Confirm Password</span>}
                                         name='confirmPassword'
                                         rules={[
                                             {
@@ -144,8 +162,9 @@ const ForgotPassword = () => {
                                         ]}
                                     >
                                         <Input.Password
-                                            prefix={<LockOutlined />}
+                                            prefix={<LockOutlined className="text-gray-400" />}
                                             placeholder='Confirm new password'
+                                            className="rounded-md py-1 text-gray-700"
                                             onChange={(e) =>
                                                 setFormState((prevState) => ({
                                                     ...prevState,
@@ -157,15 +176,15 @@ const ForgotPassword = () => {
                                 </>
                             )}
 
-                            <Form.Item>
+                            <Form.Item className="mt-3">
                                 <Button
                                     type='primary'
                                     htmlType='submit'
                                     loading={isLoading}
                                     block
-                                    className='text-white rounded-full border-none bg-gradient-to-r from-blue-600 to-blue-900 px-5 py-3 font-bold transition duration-300 ease-in-out hover:from-blue-900 hover:to-blue-600 focus:from-blue-600 focus:to-blue-900 focus:ring-2 focus:ring-blue-900'
+                                    className='h-9 w-full rounded-md bg-blue-600 hover:bg-blue-700 shadow-sm transition-colors font-medium text-sm'
                                 >
-                                    {formState.isEmailVerified ? 'Reset Password' : 'Submit'}
+                                    {formState.isEmailVerified ? 'Reset Password' : 'Continue'}
                                 </Button>
                             </Form.Item>
                         </Form>

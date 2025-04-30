@@ -4,10 +4,11 @@ import { Avatar, Badge, Button, Dropdown, Layout, Menu } from 'antd';
 import { RiLogoutCircleRLine } from 'react-icons/ri';
 import { BiMessageSquareDots } from 'react-icons/bi';
 import { FiSun } from 'react-icons/fi';
+import PropTypes from 'prop-types';
 
 import { IoNotificationsOutline, IoSettingsOutline, IoMoonSharp } from 'react-icons/io5';
 import { LuContact2 } from 'react-icons/lu';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { handleLogout } from '../../components/Logout';
 import { authSelector } from '../../redux/features/auth/authSelections';
 import notificationsApi from '../../apis/notificationApi';
@@ -18,11 +19,12 @@ import NotificationSidebar from '../../components/Notification/NotificationSideb
 import ChangePasswordForm from '../../components/ChangePasswordForm';
 const { Sider } = Layout;
 
-const Sidebar = ({ setIsDarkMode, isDarkMode }) => {
+const Sidebar = ({ setIsDarkMode, isDarkMode, isMobile = false }) => {
     const [isNotificationSidebarVisible, setNotificationSidebarVisible] = useState(false);
     const [isChangePasswordVisible, setChangePasswordVisible] = useState(false);
     const [notifications, setNotifications] = useState([]);
     const [theme, setTheme] = useState('light');
+    const location = useLocation();
     const logout = handleLogout();
     const navigate = useNavigate();
     const { user } = useSelector(authSelector);
@@ -135,41 +137,54 @@ const Sidebar = ({ setIsDarkMode, isDarkMode }) => {
 
     return (
         <>
-            <Sider
-                width={72}
-                className='sidebar-container flex flex-col items-center justify-between rounded-lg bg-white-default p-4 py-2 dark:bg-black-light'
-            >
-                <div className='mb-5 flex items-center justify-center'>
-                    <img
-                        src={assets.Designer}
-                        alt='Logo'
-                        className='h-12 w-12 cursor-pointer rounded-full'
-                        onClick={() => navigate('/message')}
+            {/* Sidebar - only rendered on non-mobile devices */}
+            <div className='z-50 mr-0 h-full p-4 pr-0'>
+                <Sider
+                    width={isMobile ? 60 : 72}
+                    className='sidebar-container flex h-full flex-col items-center justify-between rounded-lg bg-white-default py-2 dark:bg-black-light'
+                    trigger={null}
+                >
+                    <div className='mb-5 flex items-center justify-center'>
+                        <img
+                            src={assets.Designer}
+                            alt='Logo'
+                            className='h-12 w-12 cursor-pointer rounded-full'
+                            onClick={() => {
+                                navigate('/message');
+                            }}
+                        />
+                    </div>
+                    <Menu
+                        mode='vertical'
+                        className='flex flex-grow flex-col items-center justify-start bg-white-default dark:bg-black-light dark:text-white-default'
+                        onClick={handleMenuClick}
+                        items={sidebarItems}
                     />
-                </div>
-                <Menu
-                    mode='vertical'
-                    className='flex flex-grow flex-col items-center justify-start bg-white-default dark:bg-black-light dark:text-white-default'
-                    onClick={handleMenuClick}
-                    items={sidebarItems}
-                />
-                <div className='mt-auto flex flex-col items-center'>
-                    <Dropdown menu={{ items: menuItems }} trigger={['click']}>
-                        <div className='mt-4 flex cursor-pointer flex-col items-center'>
-                            <Avatar size={46} src={user?.avatar} />
-                        </div>
-                    </Dropdown>
-                </div>
-            </Sider>
+                    <div className='mt-auto flex flex-col items-center'>
+                        <Dropdown menu={{ items: menuItems }} trigger={['click']}>
+                            <div className='mt-4 flex cursor-pointer flex-col items-center'>
+                                <Avatar size={46} src={user?.avatar} />
+                            </div>
+                        </Dropdown>
+                    </div>
+                </Sider>
+            </div>
+
             {isNotificationSidebarVisible && (
                 <NotificationSidebar
                     onClose={() => setNotificationSidebarVisible(false)}
                     markAllAsRead={markAllAsRead}
                 />
             )}
-            <ChangePasswordForm visible={isChangePasswordVisible} onClose={() => setChangePasswordVisible(false)} />
+            <ChangePasswordForm open={isChangePasswordVisible} onClose={() => setChangePasswordVisible(false)} />
         </>
     );
+};
+
+Sidebar.propTypes = {
+    setIsDarkMode: PropTypes.func.isRequired,
+    isDarkMode: PropTypes.bool.isRequired,
+    isMobile: PropTypes.bool
 };
 
 export default Sidebar;

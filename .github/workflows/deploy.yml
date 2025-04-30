@@ -14,18 +14,26 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v3
 
+            # Thêm Azure VM vào known_hosts để tránh lỗi xác minh khóa host
+            - name: Add Azure VM to known_hosts
+              run: |
+                  mkdir -p ~/.ssh
+                  ssh-keyscan -H ${{ secrets.AZURE_VM_HOST }} >> ~/.ssh/known_hosts
+
             # Thiết lập SSH để kết nối với Azure VM
             - name: Setup SSH
               uses: webfactory/ssh-agent@v0.5.3
               with:
                   ssh-private-key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
 
-            
-            - name: Deploy to Azure VM
+            # Cài đặt và build ứng dụng React trong thư mục ~/docker/pbl4-video-chat-fe
+            - name: Build React App and Deploy
               run: |
                   ssh -o StrictHostKeyChecking=no ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} << EOF
-                    cd /var/www/pbl4-video-chat-fe
-                    sudo git pull origin main
+                    cd ~/docker/pbl4-video-chat-fe
+                    git pull origin main
                     npm install --legacy-peer-deps
                     npm run build
+                    sudo cp -r dist/* /var/www/pbl4-video-chat-fe/
+                    sudo systemctl restart nginx
                   EOF

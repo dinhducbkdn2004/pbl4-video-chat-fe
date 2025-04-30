@@ -4,7 +4,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 4px 0;
 }
 .custom-menu-item .ant-menu-item-icon {
     color: #000;
@@ -24,7 +23,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 15px;
     cursor: pointer;
 }
 
@@ -32,7 +30,6 @@
     border-inline-end: none;
 }
 .ant-menu .ant-menu-item .ant-menu-item-icon + span {
-    margin-inline-start: 10px;
     margin-inline: 0;
     opacity: 1;
     transition:
@@ -46,7 +43,6 @@
 .ant-layout-sider-children {
     display: flex;
     flex-direction: column;
-    height: 100%;
 }
 
 
@@ -83,4 +79,75 @@
 
 .dark .ant-dropdown-menu-item:hover {
     color: #0066FF;
+}
+
+.sidebar-container {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.sidebar-container .ant-menu {
+    border-right: none;
+    padding: 0;
+}
+
+.sidebar-container .ant-menu-item {
+    border-radius: 10px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+    transition: all 0.2s ease-in-out;
+}
+
+.sidebar-container .ant-menu-item:hover {
+    background-color: rgba(22, 119, 255, 0.1);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+/* Mobile Menu Button Effect */
+@media (max-width: 767px) {
+    .mobile-menu-button {
+        transition: all 0.3s ease;
+    }
+    
+    .mobile-menu-button:hover {
+        transform: scale(1.05);
+    }
+    
+    .mobile-menu-button:active {
+        transform: scale(0.95);
+    }
+}
+
+/* Animate sidebar entrance */
+.sidebar-animate-in {
+    animation: slideIn 0.3s ease forwards, fadeIn 0.3s ease forwards;
+}
+
+/* Sidebar overlay effect */
+.sidebar-overlay {
+    animation: fadeIn 0.3s ease forwards;
+    backdrop-filter: blur(2px);
 }
