@@ -25,7 +25,6 @@ const RecentChats = ({ recentChats, handleChatClick, isFirstLoad, loadMoreChats,
             }
             return chat;
         });
-    console.log('recentChats', recentChats);
     useEffect(() => {
         if (loading) return;
         const observer = new IntersectionObserver((entries) => {
@@ -44,7 +43,7 @@ const RecentChats = ({ recentChats, handleChatClick, isFirstLoad, loadMoreChats,
     }, [loading, loadMoreChats]);
 
     return (
-        <div className='body-chat mb-8 rounded-lg bg-white-default dark:bg-black-light'>
+        <div className='body-chat rounded-lg bg-white-default dark:bg-black-light'>
             <div className='p-3'>
                 <Divider
                     orientation='left'

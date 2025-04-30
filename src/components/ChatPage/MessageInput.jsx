@@ -28,12 +28,12 @@ const MessageInput = () => {
             isChangeMessageRef.current = false;
         }, 2000)
     ).current;
-    
+
     const handleChangeMessage = useCallback(
         (e) => {
             const newMessage = e.target.value;
             setMessage(newMessage);
-    
+
             if (newMessage.length === 0) {
                 if (isChangeMessageRef.current) {
                     socket.emit('user:stop-change-message', { chatRoomId: currentChatRoomId, user });
@@ -103,7 +103,10 @@ const MessageInput = () => {
                         beforeUpload={() => false}
                         multiple
                     >
-                        <Button icon={<PaperClipOutlined />} className='mr-2 rounded-full p-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600' />
+                        <Button
+                            icon={<PaperClipOutlined />}
+                            className='bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 mr-2 rounded-full p-2'
+                        />
                     </Upload>
                 </Popover>
 
@@ -125,7 +128,10 @@ const MessageInput = () => {
                         open={isEmojiPickerVisible}
                         onOpenChange={(visible) => setIsEmojiPickerVisible(visible)}
                     >
-                        <Button icon={<SmileOutlined />} className='ml-2 mr-2 rounded-full p-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600' />
+                        <Button
+                            icon={<SmileOutlined />}
+                            className='bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 ml-2 mr-2 rounded-full p-2'
+                        />
                     </Popover>
                 </Popover>
 
@@ -134,10 +140,15 @@ const MessageInput = () => {
                     onChange={handleChangeMessage}
                     onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                     placeholder='Type your message here...'
-                    className='rounded-full mr-2 flex-1 p-2 bg-gray-100 dark:bg-gray-700 dark:text-white'
+                    className='bg-gray-100 dark:bg-gray-700 dark:text-white mr-2 flex-1 rounded-full p-2'
                 />
 
-                <Button className='h-[34px] rounded-full bg-blue-500 text-white hover:bg-blue-600' type='primary' icon={<SendOutlined />} onClick={handleSendMessage}>
+                <Button
+                    className='bg-blue-500 text-white hover:bg-blue-600 h-[34px] rounded-full'
+                    type='primary'
+                    icon={<SendOutlined />}
+                    onClick={handleSendMessage}
+                >
                     Send
                 </Button>
             </div>

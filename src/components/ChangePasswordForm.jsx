@@ -3,8 +3,10 @@ import { Modal, Form, Input, Button, notification } from 'antd';
 import authApi from '../apis/authApi';
 import useFetch from '../hooks/useFetch';
 
-const ChangePasswordForm = ({ visible, onClose }) => {
+const ChangePasswordForm = ({ visible, open, onClose }) => {
     const { fetchData, isLoading, contextHolder } = useFetch({ showSuccess: false, showError: false });
+    // Use open prop if available, otherwise fall back to visible for backwards compatibility
+    const isOpen = open !== undefined ? open : visible;
 
     const handleFinish = async (values) => {
         const { oldPassword, newPassword } = values;
@@ -24,7 +26,7 @@ const ChangePasswordForm = ({ visible, onClose }) => {
     };
 
     return (
-        <Modal title='Change Password' visible={visible} onCancel={onClose} footer={null}>
+        <Modal title='Change Password' open={isOpen} onCancel={onClose} footer={null}>
             {contextHolder}
             <Form onFinish={handleFinish} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
                 <Form.Item

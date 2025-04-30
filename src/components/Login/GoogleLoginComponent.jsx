@@ -1,36 +1,46 @@
+import React from 'react';
 import { GoogleLogin } from '@react-oauth/google';
-import { authActions } from '../../redux/features/auth/authSlice';
 import authApi from '../../apis/authApi';
-import { store } from '../../redux/store';
 import { useNavigate } from 'react-router-dom';
+import useFetch from '../../hooks/useFetch';
+import { store } from '../../redux/store';
+import { authActions } from '../../redux/features/auth/authSlice';
 
 const GoogleLoginComponent = () => {
     const navigate = useNavigate();
-    const onLoginGoogleSuccess = async (res) => {
-        try {
-            const { data, isOk } = await authApi.loginByGoogle(res.credential);
-            if (isOk) {
-                const { accessToken, refreshToken } = data;
-                store.dispatch(authActions.setCredentials({ accessToken, refreshToken }));
-                navigate('/');
-            }
-        } catch (error) {
-            console.error('Google login failed:', error);
+    const { fetchData, contextHolder } = useFetch();
+
+    const handleGoogleLogin = async (credentialResponse) => {
+        const { isOk, data } = await fetchData(() => authApi.loginByGoogle(credentialResponse.credential));
+        if (isOk) {
+            const { accessToken, refreshToken } = data;
+            store.dispatch(
+                authActions.setCredentials({
+                    accessToken,
+                    refreshToken
+                })
+            );
+            navigate('/');
         }
     };
-    const onLoginGoogleFailure = async (res) => {
-        console.log(res);
-    };
+
     return (
-        <GoogleLogin
-            onSuccess={onLoginGoogleSuccess}
-            onError={onLoginGoogleFailure}
-            style={{
-                width: '100%',
-                borderRadius: 30,
-                padding: '15px 20px'
-            }}
-        />
+        <div className='flex w-full justify-center px-2'>
+            {contextHolder}
+            <div className='w-full max-w-[240px]'>
+                <GoogleLogin
+                    onSuccess={handleGoogleLogin}
+                    onError={() => console.log('Login failed')}
+                    size='large'
+                    width='100%'
+                    text='signin_with'
+                    useOneTap
+                    theme='outline'
+                    shape='square'
+                    locale='en'
+                />
+            </div>
+        </div>
     );
 };
 

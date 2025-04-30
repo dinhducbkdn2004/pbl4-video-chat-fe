@@ -1,4 +1,4 @@
-import { Input, Typography, Skeleton, Empty, Row, Col } from 'antd';
+import { Input, Typography, Skeleton, Empty, Row, Col, Card } from 'antd';
 import { useSelector } from 'react-redux';
 import { useEffect, useState, useCallback } from 'react';
 import { debounce } from 'lodash';
@@ -15,6 +15,34 @@ const SearchUsers = () => {
     const { fetchData, isLoading } = useFetch({ showSuccess: false, showError: false });
     const [users, setUsers] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+    const [screenSize, setScreenSize] = useState('md');
+
+    useEffect(() => {
+        const handleResize = () => {
+            const width = window.innerWidth;
+            setIsMobile(width < 768);
+
+            if (width < 576) {
+                setScreenSize('xs');
+            } else if (width < 768) {
+                setScreenSize('sm');
+            } else if (width < 992) {
+                setScreenSize('md');
+            } else if (width < 1200) {
+                setScreenSize('lg');
+            } else {
+                setScreenSize('xl');
+            }
+        };
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     useEffect(() => {
         if (currentUser && currentUser._id) {
@@ -32,60 +60,89 @@ const SearchUsers = () => {
 
     const handleSearchUsers = async (value) => {
         setIsSearching(true);
-        const data = await fetchData(() => userApi.searchUsers(value, 1, 10));
-        setIsSearching(false);
-
-        if (data.isOk) {
-            const usersWithStatus = data.data.map((user) => ({
-                ...user,
-                isFriend: user.isFriend,
-                isSentRequest: user.isSentRequest
-            }));
-            setUsers(usersWithStatus);
+        try {
+            const data = await fetchData(() => userApi.searchUsers(value));
+            if (data.isOk) {
+                setUsers(data.data);
+            }
+        } finally {
+            setIsSearching(false);
         }
     };
 
-    const debouncedSearch = useCallback(debounce(handleSearchUsers, 300), []);
+    const debouncedSearch = useCallback(debounce(handleSearchUsers, 500), []);
+
+    const getColSpans = () => {
+        switch (screenSize) {
+            case 'xs':
+                return { xs: 24 };
+            case 'sm':
+                return { xs: 24, sm: 12 };
+            case 'md':
+                return { xs: 24, sm: 12, md: 8 };
+            case 'lg':
+                return { xs: 24, sm: 12, md: 8, lg: 6 };
+            case 'xl':
+            default:
+                return { xs: 24, sm: 12, md: 8, lg: 6, xl: 6 };
+        }
+    };
+
+    // Calculate dynamic content height based on screen size
+    const getContentHeight = () => {
+        const baseHeight = isMobile ? 'calc(100vh - 180px)' : 'calc(100vh - 220px)';
+        return baseHeight;
+    };
 
     return (
-        <div className='bg-white rounded-lg bg-white-default p-6 dark:bg-black-light'>
-            <Paragraph className='text-gray-600 mb-6 dark:text-white-dark'>
+        <Card className='rounded-lg shadow-sm dark:bg-black-light' bodyStyle={{ padding: isMobile ? '12px' : '24px' }}>
+            <Paragraph className='text-gray-600 mb-3 text-sm dark:text-white-dark md:mb-4 md:text-base'>
                 Use the search box below to find users. You can view their profiles and connect with them.
             </Paragraph>
-            <div className='mb-6 flex items-center'>
+
+            <div className='mb-3 md:mb-5'>
                 <Search
                     placeholder='Search user'
                     onChange={(e) => debouncedSearch(e.target.value)}
                     loading={isLoading}
-                    className='flex-grow'
-                    size='large'
+                    size={isMobile ? 'middle' : 'large'}
                     enterButton
+                    className='w-full'
                 />
             </div>
-            <div className='flex flex-col gap-6' style={{ height: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+
+            <div
+                className='overflow-y-auto'
+                style={{
+                    height: getContentHeight(),
+                    paddingBottom: isMobile ? '60px' : '0',
+                    scrollbarWidth: 'thin',
+                    scrollbarColor: '#d1d5db transparent'
+                }}
+            >
                 {isLoading || isSearching ? (
-                    <Row gutter={[16, 16]}>
+                    <Row gutter={[12, 12]}>
                         {Array.from({ length: 3 }).map((_, index) => (
-                            <Col key={index} xs={24} sm={24} md={24} lg={24}>
+                            <Col key={index} {...getColSpans()}>
                                 <Skeleton active avatar paragraph={{ rows: 2 }} />
                             </Col>
                         ))}
                     </Row>
                 ) : users.length === 0 ? (
-                    <Empty description='No users found' />
+                    <Empty description='No users found' style={{ marginTop: isMobile ? '40px' : '80px' }} />
                 ) : (
-                    <Row gutter={[16, 16]}>
+                    <Row gutter={[12, 12]}>
                         {users
                             .filter((user) => user._id !== currentUser._id)
                             .map((user) => (
-                                <Col key={user._id} xs={24} sm={24} md={24} lg={24}>
+                                <Col key={user._id} {...getColSpans()}>
                                     <UserCard data={user} />
                                 </Col>
                             ))}
                     </Row>
                 )}
             </div>
-        </div>
+        </Card>
     );
 };
 

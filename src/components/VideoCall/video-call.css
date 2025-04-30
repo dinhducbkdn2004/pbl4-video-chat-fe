@@ -1,0 +1,56 @@
+/* 
+ * This CSS file handles both the deprecated -ms-high-contrast media feature
+ * and the newer forced-colors media feature for better accessibility
+ */
+
+/* Support for modern forced-colors mode */
+@media (forced-colors: active) {
+  button, 
+  .ant-btn,
+  .video-controls button {
+    forced-color-adjust: none;
+  }
+  
+  /* Ensure video call UI elements are visible in high contrast mode */
+  .video-controls-container {
+    background: ButtonFace;
+  }
+  
+  .video-controls button {
+    background: ButtonFace;
+    color: ButtonText;
+    border: 1px solid ButtonText;
+  }
+  
+  .video-controls button:hover,
+  .video-controls button:focus {
+    background: Highlight;
+    color: HighlightText;
+  }
+}
+
+/* Legacy support for -ms-high-contrast (will be removed in future) */
+@media (-ms-high-contrast: active) {
+  button,
+  .ant-btn,
+  .video-controls button {
+    -ms-high-contrast-adjust: none;
+  }
+  
+  /* Same overrides as above for legacy support */
+  .video-controls-container {
+    background: ButtonFace;
+  }
+  
+  .video-controls button {
+    background: ButtonFace;
+    color: ButtonText;
+    border: 1px solid ButtonText;
+  }
+  
+  .video-controls button:hover,
+  .video-controls button:focus {
+    background: Highlight;
+    color: HighlightText;
+  }
+}

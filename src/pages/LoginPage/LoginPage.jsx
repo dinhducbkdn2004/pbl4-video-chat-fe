@@ -6,28 +6,35 @@ const LoginPage = () => {
     return (
         <Row
             className='h-screen w-full bg-cover bg-no-repeat'
-            style={{ backgroundImage: `url(${asset.bg})` }}
+            style={{
+                backgroundImage: `url(${asset.bg})`,
+                backgroundPosition: 'center'
+            }}
             justify='center'
             align='middle'
         >
             <Col
-                className='bg-white flex h-4/5 justify-center rounded-lg shadow-lg'
-                span={14}
+                className='bg-white flex flex-col justify-center overflow-hidden rounded-xl shadow-xl md:flex-row'
+                xs={22}
+                sm={20}
+                md={18}
+                lg={16}
+                xl={14}
                 style={{
-                    maxWidth: '100%',
+                    maxWidth: '1000px',
                     backgroundColor: 'white',
-                    borderRadius: '10px',
-                    boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)'
+                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)'
                 }}
             >
-                <Col className='h-full overflow-hidden rounded-lg' span={12}>
+                <Col className='hidden overflow-hidden md:block md:h-full' xs={0} sm={0} md={12}>
                     <img
-                        className='border-gray-200 h-full w-full rounded-lg object-cover shadow-lg'
+                        className='h-full w-full object-cover'
                         src={asset.loginpage}
                         alt='Logo'
+                        style={{ objectPosition: 'center' }}
                     />
                 </Col>
-                <Col span={12}>
+                <Col xs={24} md={12} className='flex items-center justify-center px-4 py-8 md:px-6 md:py-10'>
                     <AuthTabs />
                 </Col>
             </Col>

@@ -1,6 +1,37 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    font-size: 16px;
+    height: -webkit-fill-available;
+    overflow-x: hidden;
+  }
+  
+  body {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    overflow-x: hidden;
+    overscroll-behavior: none;
+    text-rendering: optimizeSpeed;
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  /* Responsive font sizing */
+  @media (max-width: 640px) {
+    html {
+      font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    html {
+      font-size: 12px;
+    }
+  }
+}
+
 * {
     padding: 0;
     margin: 0;
@@ -13,7 +44,7 @@
 }
 
 *::-webkit-scrollbar {
-    width: 2px;
+    width: 6px;
 }
 
 *::-webkit-scrollbar-track {
@@ -21,12 +52,53 @@
 }
 
 *::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     border: 2px solid transparent;
     background-clip: content-box;
 }
 
-body {
-    overscroll-behavior: none;
+/* Fix for mobile scroll bouncing issues */
+html, body {
+    position: relative;
+    overscroll-behavior-y: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Fix for horizontal overflow issues */
+.overflow-x-hidden {
+    overflow-x: hidden !important;
+}
+
+/* Responsive container class */
+.responsive-container {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+@media (min-width: 576px) {
+    .responsive-container {
+        max-width: 540px;
+    }
+}
+
+@media (min-width: 768px) {
+    .responsive-container {
+        max-width: 720px;
+    }
+}
+
+@media (min-width: 992px) {
+    .responsive-container {
+        max-width: 960px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .responsive-container {
+        max-width: 1140px;
+    }
 }

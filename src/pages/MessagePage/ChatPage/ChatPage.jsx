@@ -43,7 +43,7 @@ const ChatPage = () => {
     };
 
     return (
-        <div className='flex ml-4 h-screen flex-col'>
+        <div className='ml-2 flex h-screen flex-col'>
             <Header chatInfo={chatInfo} me={me} toggleSidebar={toggleSidebar} />
             <MessageList />
             <MessageInput />

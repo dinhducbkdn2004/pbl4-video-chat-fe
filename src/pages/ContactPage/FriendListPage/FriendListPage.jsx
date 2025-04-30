@@ -15,6 +15,20 @@ const FriendListPage = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const { isLoading, fetchData } = useFetch({ showSuccess: false, showError: false });
     const { user } = useSelector(authSelector);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     useEffect(() => {
         if (user && user._id) {
@@ -64,20 +78,24 @@ const FriendListPage = () => {
     return (
         <div className='h-screen space-y-4 rounded-lg bg-white-default py-4 dark:bg-black-light'>
             <h1 className='ml-5 text-sm font-semibold dark:text-white-default'>Friends ({users.length})</h1>
-            <div className='m-0 h-full rounded-lg bg-white-default p-5 dark:bg-black-light'>
-                <div className='mb-4 flex items-center justify-between'>
+            <div className='m-0 h-full rounded-lg bg-white-default p-3 dark:bg-black-light md:p-5'>
+                <div className='mb-4 flex flex-col items-center justify-between gap-2 md:flex-row md:gap-0'>
                     <Search
                         placeholder='Search friends'
                         allowClear
                         onChange={handleSearchChange}
                         className='w-full max-w-xs'
                     />
-                    <Select defaultValue='asc' className='w-30' onChange={handleSortChange}>
+                    <Select
+                        defaultValue='asc'
+                        className={`${isMobile ? 'w-full' : 'w-30'}`}
+                        onChange={handleSortChange}
+                    >
                         <Option value='asc'>Name A-Z</Option>
                         <Option value='desc'>Name Z-A</Option>
                     </Select>
                 </div>
-                <div className='flex h-[calc(100vh-200px)] flex-col gap-4 overflow-y-auto'>
+                <div className='flex h-[calc(100vh-200px)] flex-col gap-4 overflow-y-auto pb-16 md:pb-0'>
                     {isLoading ? (
                         <div className='w-full'>
                             <Row gutter={[16, 16]}>

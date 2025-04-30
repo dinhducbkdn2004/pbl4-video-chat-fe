@@ -34,7 +34,7 @@ const LoginForm = () => {
                 setIsOtpVisible(true);
             }
         } catch (error) {
-            console.log('Login failed:', error);
+            //console.log('Login failed:', error);
         }
     };
 
@@ -55,90 +55,81 @@ const LoginForm = () => {
                 <Form
                     name='login'
                     layout='vertical'
-                    style={{
-                        maxWidth: 600,
-                        margin: '0 auto'
-                    }}
+                    className='w-full px-2'
                     initialValues={{
                         remember: true
                     }}
-                    requiredMark='optional'
+                    requiredMark={false}
                     onFinish={onFinish}
                     autoComplete='on'
+                    size="middle"
                 >
                     <Form.Item
-                        label='Email'
+                        label={<span className="text-gray-600 font-medium">Email</span>}
                         name='email'
                         rules={[
                             {
                                 required: true,
                                 type: 'email',
-                                message: 'Please input a valid email!'
+                                message: 'Please enter a valid email!'
                             }
                         ]}
                     >
                         <Input
-                            prefix={<MailOutlined />}
+                            prefix={<MailOutlined className="text-gray-400" />}
                             placeholder='Enter your email'
+                            className="rounded-md py-1 text-gray-700"
                             onChange={(e) => setEmail(e.target.value)}
                         />
                     </Form.Item>
 
                     <Form.Item
-                        label='Password'
+                        label={<span className="text-gray-600 font-medium">Password</span>}
                         name='password'
                         rules={[
                             {
                                 required: true,
-                                message: 'Please input your password!'
+                                message: 'Please enter your password!'
                             }
                         ]}
                     >
-                        <Input.Password prefix={<LockOutlined />} placeholder='Enter your password' />
+                        <Input.Password 
+                            prefix={<LockOutlined className="text-gray-400" />} 
+                            placeholder='Enter your password'
+                            className="rounded-md py-1 text-gray-700" 
+                        />
                     </Form.Item>
 
                     <Form.Item>
-                        <Form.Item name='remember' valuePropName='checked' noStyle>
-                            <Checkbox>Remember me</Checkbox>
-                        </Form.Item>
-                        <a
-                            style={{
-                                float: 'right',
-                                color: '#1890ff'
-                            }}
-                            href=''
-                            onClick={handleForgotPasswordClick}
-                        >
-                            Forgot password?
-                        </a>
+                        <div className='flex flex-wrap items-center justify-between'>
+                            <Form.Item name='remember' valuePropName='checked' noStyle>
+                                <Checkbox className="text-gray-600">Remember me</Checkbox>
+                            </Form.Item>
+                            <a
+                                className='text-blue-500 hover:text-blue-700 transition-colors font-medium'
+                                href=''
+                                onClick={handleForgotPasswordClick}
+                            >
+                                Forgot password?
+                            </a>
+                        </div>
                     </Form.Item>
 
-                    <Form.Item
-                        wrapperCol={{
-                            span: 24
-                        }}
-                    >
+                    <Form.Item>
                         <Button
                             type='primary'
                             htmlType='submit'
                             loading={isLoading}
-                            style={{
-                                width: '100%',
-                                borderRadius: 30,
-                                padding: '15px 20px'
-                            }}
+                            className='h-9 w-full rounded-md bg-blue-600 hover:bg-blue-700 shadow-sm transition-colors font-medium text-sm'
                         >
-                            Submit
+                            Sign in
                         </Button>
                     </Form.Item>
 
-                    <div className='relative my-5 flex items-center'>
-                        <div
-                            className='border-gray-100 red flex-grow border-t'
-                            style={{ borderColor: '#e0e0e0' }}
-                        ></div>
-                        <span className='text-gray-600 bg-white px-2 text-sm'>Or</span>
-                        <div className='border-gray-100 flex-grow border-t' style={{ borderColor: '#e0e0e0' }}></div>
+                    <div className='relative my-4 flex items-center'>
+                        <div className='border-gray-200 flex-grow border-t'></div>
+                        <span className='text-gray-400 bg-white px-3 text-xs'>Or sign in with</span>
+                        <div className='border-gray-200 flex-grow border-t'></div>
                     </div>
                 </Form>
             </div>
