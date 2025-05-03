@@ -6,15 +6,14 @@ const uploadApi = {
     getPresignedUrl: async function (folder, fileName) {
         return axiosClient.post('/upload/get-presigned-url', {
             folder,
-            fileName // Thêm fileName vào request
+            fileName
         });
     },
     upload: async function (file, folder) {
-        const res = await this.getPresignedUrl(folder, file.name); // Truyền file.name vào getPresignedUrl
-        // console.log(res.data);
+        const res = await this.getPresignedUrl(folder, file.name);
         const formData = new FormData();
 
-        formData.append('file', file); // File cần upload
+        formData.append('file', file);
         formData.append('api_key', res.data.apiKey);
         formData.append('timestamp', res.data.timestamp);
         formData.append('signature', res.data.signature);
