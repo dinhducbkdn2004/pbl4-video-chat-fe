@@ -18,6 +18,7 @@
     -webkit-font-smoothing: antialiased;
   }
   
+  /* Responsive font sizing */
   @media (max-width: 640px) {
     html {
       font-size: 14px;
