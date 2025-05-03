@@ -17,8 +17,8 @@ const uploadApi = {
         formData.append('api_key', res.data.apiKey);
         formData.append('timestamp', res.data.timestamp);
         formData.append('signature', res.data.signature);
-        formData.append('folder', res.data.folder); // Thư mục lưu trữ
-        formData.append('public_id', res.data.public_id); // Đặt tên gốc làm public_id
+        formData.append('folder', res.data.folder);
+        formData.append('public_id', res.data.public_id);
 
         let uploadEndpoint;
         switch (typeOfFile(file)) {
