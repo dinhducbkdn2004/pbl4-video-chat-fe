@@ -15,7 +15,6 @@ const notificationsApi = {
     },
 
     updatedNotification: async (notificationId, isRead) => {
-        // isRead = true or false
         return axiosClient.patch(`/notifications/update-notification`, {
             notificationId,
             isRead
